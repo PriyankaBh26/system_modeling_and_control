@@ -14,11 +14,11 @@ class NewtonRaphson {
         // the jacobian dfdq(q)
         virtual MatrixXd dfdq(VectorXd q);
         // iteration q = q0 - pinv(dfdq(q0)) * g(q0);
-        VectorXd iterate();
+        VectorXd Iterate();
         // save q history
-        std::vector<VectorXd> get_q_history();
+        std::vector<VectorXd> GetSolutionHistory();
         // check for convergence and print success or failure message
-        void convergence_check(double error, int num_iterations);
+        void ConvergenceCheck(double error, int num_iterations);
 
     private:
         int num_states;
