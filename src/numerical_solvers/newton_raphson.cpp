@@ -27,12 +27,14 @@ VectorXd NewtonRaphson::Iterate() {
     VectorXd error = f(q);
     int num_iterations = 0;
     while (error.norm() > epsilon & num_iterations < max_iterations) {
+        // calculate error
+        error = f(q);
         // compute jacobian
         MatrixXd jacobian = dfdq(q);
         // Compute the pseudo-inverse
         MatrixXd pinv_j = Eigen::CompleteOrthogonalDecomposition<MatrixXd>(jacobian).pseudoInverse();
         // update q
-        q = q + pinv_j * error;
+        q = q - jacobian.inverse() * error;
         // save q history
         q_history.push_back(q);
         // increment number of iterations
@@ -52,15 +54,10 @@ void NewtonRaphson::ConvergenceCheck(double error, int num_iterations) {
         std::cout << "Number of iterations = " << num_iterations << "\n";
         std::cout << "Final error = " << error << "\n";
         success = true;
-    } else if (error > epsilon && num_iterations > max_iterations) {
+    } else if (error > epsilon || num_iterations > max_iterations) {
         std::cout << "Failure to converge!\n";
         std::cout << "Maximum number of iterations "  << max_iterations << " reached.\n";
         std::cout << "Final error = " << error << "\n";
-    } else {
-        std::cout << "Successfully achieved convergence!\n";
-        std::cout << "Number of iterations = " << num_iterations << "\n";
-        std::cout << "Final error = " << error << "\n";        
-        success = true;
     }
 }
 
