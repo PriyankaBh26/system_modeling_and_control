@@ -34,7 +34,7 @@ VectorXd NewtonRaphson::Iterate() {
         // Compute the pseudo-inverse
         MatrixXd pinv_j = Eigen::CompleteOrthogonalDecomposition<MatrixXd>(jacobian).pseudoInverse();
         // update q
-        q = q - jacobian.inverse() * error;
+        q = q - pinv_j * error;
         // save q history
         q_history.push_back(q);
         // increment number of iterations
