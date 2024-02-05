@@ -34,3 +34,6 @@
 # Data logging
 *.csv
 *.png
+
+# build folder
+build/myprogram
