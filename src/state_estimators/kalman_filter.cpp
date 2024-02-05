@@ -1,7 +1,7 @@
 # include <iostream>
 # include <vector>
 # include <Eigen/Dense>
-# include "kalman_filter.h"
+# include "state_estimators/kalman_filter.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -16,17 +16,18 @@ void KalmanFilter::predict() {
 }
 // compute Kalman gain
 MatrixXd KalmanFilter::compute_kalman_gain() {
-    MatrixXd K = P * H.transpose * (H * P * H.transpose + R).inverse();
+    MatrixXd K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
+    return K;
 }
 // compute the estimate
 VectorXd KalmanFilter::compute_estimate(VectorXd z) {
     predict();
     MatrixXd K = compute_kalman_gain();
-    update(K);
+    update(K, z);
     return x;
 }
 // update the error covariance
-void KalmanFilter::update(MatrixXd K) {
+void KalmanFilter::update(MatrixXd K, VectorXd z) {
     x = x + K * (z - H * x);
     P = P - K * H * P;
 }
