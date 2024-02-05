@@ -39,7 +39,7 @@ int main() {
 
     eq1->Iterate();
     std::vector<VectorXd> q_history = eq1->GetSolutionHistory();
-    std::cout << q_history[0] << "\n";
+    std::cout << "Solution, q = " << q_history.back() << "\n";
     delete eq1;
     return 0;
 }
