@@ -8,7 +8,7 @@ using Eigen::VectorXd;
 
 class NewtonRaphson {
     public:
-        NewtonRaphson(int num_states, int num_equations, VectorXd q0, double epsilon, int max_iterations);
+        NewtonRaphson(int num_states, int num_equations, VectorXd q0, double tolerance, int max_iterations);
         virtual ~NewtonRaphson();
         
         // the equation f(q) = 0
@@ -27,7 +27,7 @@ class NewtonRaphson {
         int num_equations;
         VectorXd q;
         std::vector<VectorXd> q_history;
-        double epsilon;
+        double tolerance;
         int max_iterations;
         bool success;
 

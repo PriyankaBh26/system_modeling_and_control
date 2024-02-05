@@ -11,7 +11,7 @@ using Eigen::VectorXd;
 
 NewtonRaphson::NewtonRaphson(int n, int m, VectorXd q0, 
                             double eps, int N0) : num_states(n), num_equations(m), q(q0), 
-                            epsilon(eps), max_iterations(N0) {q_history.push_back(q0);
+                            tolerance(eps), max_iterations(N0) {q_history.push_back(q0);
                                                                 success = false;};
 
 // the equation f(q) = 0
@@ -26,7 +26,7 @@ MatrixXd NewtonRaphson::dfdq(VectorXd q) {
 VectorXd NewtonRaphson::Iterate() {
     VectorXd error = f(q);
     int num_iterations = 0;
-    while (error.norm() > epsilon & num_iterations < max_iterations) {
+    while (error.norm() > tolerance & num_iterations < max_iterations) {
         // calculate error
         error = f(q);
         // compute jacobian
@@ -49,12 +49,12 @@ std::vector<VectorXd> NewtonRaphson::GetSolutionHistory() {
 }
 
 void NewtonRaphson::ConvergenceCheck(double error, int num_iterations) {
-    if (error < epsilon) {
+    if (error < tolerance) {
         std::cout << "Successfully achieved convergence!\n"; 
         std::cout << "Number of iterations = " << num_iterations << "\n";
         std::cout << "Final error = " << error << "\n";
         success = true;
-    } else if (error > epsilon || num_iterations > max_iterations) {
+    } else if (error > tolerance || num_iterations > max_iterations) {
         std::cout << "Failure to converge!\n";
         std::cout << "Maximum number of iterations "  << max_iterations << " reached.\n";
         std::cout << "Final error = " << error << "\n";
