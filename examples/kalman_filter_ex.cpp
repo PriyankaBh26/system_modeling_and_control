@@ -18,17 +18,6 @@ class solve_mass_spring_damper : public OdeSolver {
                                  A(num_states, num_states) {};
 
         VectorXd f(double t, VectorXd y, VectorXd u) override {
-            MatrixXd B(2,2);
-            B(0,0) = 0;
-            B(0,1) = 0;
-            B(1,0) = 0;
-            B(1,1) = 0;
-
-            VectorXd yd = A * y + B * u;
-            return yd;
-        }
-
-        MatrixXd GetA() {
             double k = 1.0;
             double c = 0.5;
             double m = 1.0;
@@ -37,8 +26,16 @@ class solve_mass_spring_damper : public OdeSolver {
             A(0,1) = 1;
             A(1,0) = -k/m;
             A(1,1) = -c/m;
-            return A;
+
+            MatrixXd B(2,2);
+            B(0,0) = 0;
+            B(0,1) = 0;
+            B(1,0) = 0;
+            B(1,1) = 0;
+            VectorXd yd = A * y + B * u;
+            return yd;
         }
+
         std::string GetName() override {
             return "msd_w_kalman_filter";
         }
@@ -102,24 +99,29 @@ int main() {
     int num_states = 2;
     // initialize state vector
     VectorXd x0(num_states);
-    x0 << 0.0, 1.0;
+    x0 << 0.0, 5;
     // initialize error covariance matrix
     MatrixXd P0(num_states, num_states);
-    P0 << 1e-2, 0.0,
-          0.0, 1e-2;
+    P0 << 10, 0.0,
+          0.0, 10;
 
     // define mass-spring-damper system variables
     double t0 = 0.0;
     double dh = 1e-4;
     solve_mass_spring_damper* system = new solve_mass_spring_damper(x0, t0, dh, num_states);
 
-    // define state matrix
-    MatrixXd A = system->GetA();
-    std::cout << "A =\n" << A << "\n";
+    // set integration duration
+    double dt = 1e-2; 
+    double time_final = 10.0;
+
+    // define state matrix A for discrete system
+    MatrixXd A_state(num_states, num_states);
+    A_state << 1, dt,
+               0, 1;
     // define process noise matrix
     MatrixXd Q(num_states, num_states);
-    Q << 1.0, 0.0,
-          0.0, 1.0;
+    Q << 1e-2, 0.0,
+          0.0, 1e-2;
     // define output matrix
     MatrixXd H(num_states, num_states);
     H << 1.0, 0.0,
@@ -131,12 +133,8 @@ int main() {
 
     // initialize kalman filter object
     VectorXd x0_m(num_states);
-    x0_m << 0.0, 1.0;
-    KalmanFilter* kf = new KalmanFilter(x0_m, P0, A, Q, H, R);
-
-    // set integration duration
-    double dt = 1e-2; 
-    double time_final = 10.0;
+    x0_m << 0.0, 0.0;
+    KalmanFilter* kf = new KalmanFilter(x0_m, P0, A_state, Q, H, R);
 
     // initialize measurement z
     std::vector<VectorXd> z_history;
