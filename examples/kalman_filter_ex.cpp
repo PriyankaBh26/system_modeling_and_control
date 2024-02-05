@@ -49,29 +49,6 @@ class solve_mass_spring_damper : public OdeSolver {
 
 };
 
-VectorXd CalculateXref(std::string reference_trajectory_type, int num_states, double t) {
-    VectorXd x_ref(num_states);
-    if (reference_trajectory_type == "step") {
-        double A = 1.0;
-        x_ref << A, 0.0;
-    } else if (reference_trajectory_type == "sine") {
-        double A = 1.0;
-        double f = 1;
-        x_ref << A*sin(2*M_PI*f*t), A*2*M_PI*f*cos(2*M_PI*f*t);
-    } else if (reference_trajectory_type == "ramp") {
-        double A = 1.0;
-        double ramp_slope = 1.0;
-        double max_ramp_time = 10;
-        if (t < max_ramp_time) {
-            x_ref << A*ramp_slope*t, A*ramp_slope;
-        } else {
-            x_ref << ramp_slope*max_ramp_time, 0;
-
-        }
-    }
-    return x_ref;
-}
-
 
 void SaveSimulationData(OdeSolver* ode, std::vector<VectorXd>& x_history, std::vector<double> t_history, std::vector<VectorXd>& x_est_history, std::vector<VectorXd>& z_history) {
 
