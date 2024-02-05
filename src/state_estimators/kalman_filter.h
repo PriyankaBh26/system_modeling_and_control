@@ -20,7 +20,7 @@ class KalmanFilter {
         VectorXd compute_estimate(VectorXd z);
 
         // update the error covariance
-        void update(MatrixXd K);
+        void update(MatrixXd K, VectorXd z);
 
     private:
         VectorXd x;
