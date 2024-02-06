@@ -24,12 +24,12 @@ class UnscentedKalmanFilter {
         void compute_weights();
 
         // predict state and error covariance
-        VectorXd predict_mean(VectorXd Xi);
-        MatrixXd predict_covariance(VectorXd x_mean, VectorXd Xi, MatrixXd err_cov);
+        VectorXd predict_mean(MatrixXd Xi);
+        MatrixXd predict_covariance(VectorXd x_mean, MatrixXd Xi, MatrixXd err_cov);
 
         // compute Kalman gain
-        MatrixXd compute_kalman_gain(MatrixXd Pz, VectorXd f_xi, 
-                                    VectorXd h_xi, VectorXd z_cap);
+        MatrixXd compute_kalman_gain(MatrixXd Pz, MatrixXd f_xi, 
+                                    MatrixXd h_xi, VectorXd z_cap);
 
         // compute the estimate
         VectorXd compute_estimate(VectorXd z);
