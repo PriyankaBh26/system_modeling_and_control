@@ -7,6 +7,7 @@
 # include "numerical_solvers/solver_helper_funs.h"
 # include "controllers/pidcontroller.h"
 # include "data_logging/savecsv.h"
+# include "data_logging/data_logging_helper_funs.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

@@ -20,7 +20,9 @@ LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
 # Source files
 # SRCS="rk_ode_solver.cpp savecsv.cpp"
-SRCS="examples/solve_ode.cpp src/numerical_solvers/rk_ode_solver.cpp src/data_logging/savecsv.cpp"
+SRCS="examples/solve_ode.cpp 
+     src/numerical_solvers/rk_ode_solver.cpp 
+     src/data_logging/savecsv.cpp"
 
 # Output executable name
 TARGET="build/myprogram"

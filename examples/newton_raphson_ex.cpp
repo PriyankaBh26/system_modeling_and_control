@@ -4,7 +4,6 @@
 # include <Eigen/Dense>
 
 # include "numerical_solvers/newton_raphson.h"
-# include "data_logging/savecsv.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

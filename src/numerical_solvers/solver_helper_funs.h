@@ -13,21 +13,4 @@ VectorXd CalculateControlInput(VectorXd& x_ref, VectorXd& x, PID* pid_controller
 
 VectorXd CalculateControlInput(VectorXd& x_ref, int num_states);
 
-void SaveSimulationData(OdeSolver* ode, PID* pid_controller, std::vector<VectorXd>& x_history, std::vector<double> t_history);
-
-void SaveSimulationData(OdeSolver* ode, std::vector<VectorXd>& x_history, std::vector<double> t_history, std::vector<VectorXd>& u_history);
-
-void SaveKFSimulationData(OdeSolver* ode, 
-                          std::vector<VectorXd>& x_history, 
-                          std::vector<double> t_history, 
-                          std::vector<VectorXd>& x_est_history, 
-                          std::vector<VectorXd>& z_history);
-
-void SaveKFPIDSimulationData(OdeSolver* ode, 
-                        std::vector<VectorXd>& x_history, 
-                        std::vector<double> t_history, 
-                        std::vector<VectorXd>& x_est_history, 
-                        std::vector<VectorXd>& z_history,
-                        std::vector<VectorXd>& u_history);
-
 #endif

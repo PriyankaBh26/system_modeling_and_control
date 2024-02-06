@@ -11,25 +11,38 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q_
                                                                             R(R_in), dt(dt), n(n_in), m(m_in) {};
 
 // update state variables
-virtual VectorXd ExtendedKalmanFilter::f(VectorXd x) {return VectorXd x(n);};
+VectorXd ExtendedKalmanFilter::f() {
+    VectorXd x(n); 
+    return x;
+};
 
 // update outputs
-virtual VectorXd ExtendedKalmanFilter::h(vectorXd x) {return VectorXd y(n);};
+VectorXd ExtendedKalmanFilter::h() {
+    VectorXd y(n);
+    return y;
+};
 
 // calculate f jacobian A
-virtual MatrixXd calculate_f_jacobian() {return MatrixXd A(n, n);};
+MatrixXd ExtendedKalmanFilter::calculate_f_jacobian() {
+    MatrixXd A(n, n);
+    return A;
+};
 
 // calculate h jacobian H 
-virtual MatrixXd calculate_h_jacobian() {return MatrixXd H(m, n);};
+MatrixXd ExtendedKalmanFilter::calculate_h_jacobian() {
+    MatrixXd H(m, n);
+    return H;
+};
 
 // predict state and error covariance
 void ExtendedKalmanFilter::predict(MatrixXd A) {
-    x = f(x);
+    x = f();
     P = A * P * A.transpose() + Q;
 }
 // compute Kalman gain
 MatrixXd ExtendedKalmanFilter::compute_kalman_gain(MatrixXd H) {
-    MatrixXd K = P * H.transpose * (H * P * H.transpose + R).inverse();
+    MatrixXd K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
+    return K;
 }
 // compute the estimate
 VectorXd ExtendedKalmanFilter::compute_estimate(VectorXd z) {
@@ -37,11 +50,22 @@ VectorXd ExtendedKalmanFilter::compute_estimate(VectorXd z) {
     MatrixXd H = calculate_h_jacobian();
     predict(A);
     MatrixXd K = compute_kalman_gain(H);
-    update(K, H);
+    update(K, H, z);
     return x;
 }
 // update the error covariance
 void ExtendedKalmanFilter::update(MatrixXd K, MatrixXd H, VectorXd z) {
-    x = x + K * (z - h(x));
+    x = x + K * (z - h());
     P = P - K * H * P;
 }
+
+// getter functions
+int ExtendedKalmanFilter::GetN() {return n;}
+
+int ExtendedKalmanFilter::GetM() {return m;}
+
+double ExtendedKalmanFilter::GetDt() {return dt;}
+
+VectorXd ExtendedKalmanFilter::GetX() {return x;}
+
+ExtendedKalmanFilter::~ExtendedKalmanFilter() {}

@@ -19,7 +19,8 @@ LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_c
 LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
 # Source files
-SRCS="examples/newton_raphson_ex.cpp src/numerical_solvers/newton_raphson.cpp src/data_logging/savecsv.cpp"
+SRCS="examples/newton_raphson_ex.cpp 
+      src/numerical_solvers/newton_raphson.cpp" 
 
 # Output executable name
 TARGET="build/myprogram"
