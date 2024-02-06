@@ -7,7 +7,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 ExtendedKalmanFilter::ExtendedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q_in, 
-                             MatrixXd R_in, int n_in, int m_in) : x(x0), P(P0), Q(Q_in), R(R_in), n(n_in), m(m_in) {};
+                             MatrixXd R_in, double dt, int n_in, int m_in) : x(x0), P(P0), Q(Q_in), R(R_in), dt(dt), n(n_in), m(m_in) {};
 
 // update state variables
 virtual VectorXd ExtendedKalmanFilter::f(VectorXd x) {return VectorXd x(n);};
