@@ -72,39 +72,6 @@ VectorXd CalculateXref(std::string reference_trajectory_type, int num_states, do
     return x_ref;
 }
 
-
-void SaveSimulationData(OdeSolver* ode, 
-                        std::vector<VectorXd>& x_history, 
-                        std::vector<double> t_history, 
-                        std::vector<VectorXd>& x_est_history, 
-                        std::vector<VectorXd>& z_history,
-                        std::vector<VectorXd>& u_history) {
-
-    // save final output x to csv file
-    std::string filename = "examples/" + ode->GetName() + "_solution.csv";
-    std::vector<std::string> column_names = ode->GetColumnNames();
-    WriteMatToFile(filename, column_names, x_history);
-    std::cout << x_history.size() << " " << x_history[0].size();
-
-    // save control history to csv file
-    filename = "examples/" + ode->GetName() + "_control_history.csv";
-    std::vector<std::string> u_column_names = {"U1", "U2"};
-    WriteMatToFile(filename, u_column_names, u_history);
-
-    // save measured state history to csv file
-    filename = "examples/" + ode->GetName() + "_meas_history.csv";
-    WriteMatToFile(filename, column_names, z_history);
-
-    // save estimated state history to csv file
-    filename = "examples/" + ode->GetName() + "_est_history.csv";
-    WriteMatToFile(filename, column_names, x_est_history);
-
-    // save time to csv file
-    filename = "examples/" + ode->GetName() + "_time.csv";
-    column_names = {"time"};
-    WriteVecToFile(filename, column_names, t_history);
-}
-
 int main() {
     int num_states = 2;
     // initialize state vector
@@ -204,7 +171,7 @@ int main() {
         t_history.push_back(t);
     }
     // save simulation data for plotting
-    SaveSimulationData(system, x_history, t_history, x_est_history, z_history, u_history);
+    SaveKFPIDSimulationData(system, x_history, t_history, x_est_history, z_history, u_history);
 
     delete kf;
     return 0;
