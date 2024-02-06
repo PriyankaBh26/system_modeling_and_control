@@ -19,7 +19,11 @@ LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_c
 LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
 # Source files
-SRCS="examples/pid_msd.cpp src/controllers/pid_controller.cpp src/numerical_solvers/rk_ode_solver.cpp src/numerical_solvers/solver_helper_funs.cpp src/data_logging/savecsv.cpp"
+SRCS="examples/pid_msd.cpp 
+      src/controllers/pid_controller.cpp 
+      src/numerical_solvers/rk_ode_solver.cpp 
+      src/numerical_solvers/solver_helper_funs.cpp 
+      src/data_logging/savecsv.cpp"
 
 # Output executable name
 TARGET="build/myprogram"
