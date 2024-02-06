@@ -14,10 +14,10 @@ class UnscentedKalmanFilter {
         virtual ~UnscentedKalmanFilter();
 
         // update state variables
-        virtual VectorXd f(VectorXd x);
+        virtual VectorXd f(VectorXd Y);
 
         // update outputs
-        virtual VectorXd h(vectorXd x);
+        virtual VectorXd h(VectorXd Y);
 
         // find Xi and W
         MatrixXd sigma_points_Xi();
@@ -25,13 +25,21 @@ class UnscentedKalmanFilter {
 
         // predict state and error covariance
         VectorXd predict_mean(VectorXd Xi);
-        MatrixXd predict_covariance(VectorXd Xi, MatrixXd err_cov);
+        MatrixXd predict_covariance(VectorXd x_mean, VectorXd Xi, MatrixXd err_cov);
 
         // compute Kalman gain
-        MatrixXd compute_kalman_gain(MatrixXd H);
+        MatrixXd compute_kalman_gain(MatrixXd Pz, VectorXd f_xi, 
+                                    VectorXd h_xi, VectorXd z_cap);
 
         // compute the estimate
         VectorXd compute_estimate(VectorXd z);
+
+        // getter functions
+        int GetN();
+
+        int GetM();
+
+        double GetDt();
 
     private:
         VectorXd x;
