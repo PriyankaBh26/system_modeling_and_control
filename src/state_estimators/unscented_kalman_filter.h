@@ -9,7 +9,7 @@ using Eigen::VectorXd;
 class UnscentedKalmanFilter {
     public:
         UnscentedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q, 
-                              MatrixXd R, int n, int m, double kappa);
+                              MatrixXd R, double dt, int n, int m, double kappa);
 
         virtual ~UnscentedKalmanFilter();
 
@@ -38,6 +38,7 @@ class UnscentedKalmanFilter {
         MatrixXd P;
         MatrixXd Q;
         MatrixXd R;
+        double dt;
         int n;
         int m;
         double kappa;

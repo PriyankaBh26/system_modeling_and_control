@@ -2,14 +2,14 @@
 # include <vector>
 # include <Eigen/Dense>
 
-# include "unscented_kalman_filter.h"
+# include "state_estimators/unscented_kalman_filter.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::LLT;
 
 UnscentedKalmanFilter::UnscentedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q, 
-                        MatrixXd R, int n, int m, double kappa) : x(x0), P(P0), Q(Q), R(R), n(n), 
+                        MatrixXd R, double dt, int n, int m, double kappa) : x(x0), P(P0), Q(Q), R(R), dt(dt), n(n), 
                                                                   m(m), kappa(kappa), W(2*n+1);
 
 // update state variables
