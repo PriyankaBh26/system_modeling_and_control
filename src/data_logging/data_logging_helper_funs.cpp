@@ -3,6 +3,7 @@
 # include <iostream>
 # include <Eigen/Dense>
 
+# include "data_logging/data_logging_helper_funs.h"
 # include "numerical_solvers/rk_ode_solver.h"
 # include "controllers/pidcontroller.h"
 # include "data_logging/savecsv.h"
