@@ -40,6 +40,8 @@ class ExtendedKalmanFilter {
         MatrixXd Q;
         MatrixXd R;
         double dt;
+        int n;
+        int m;
 
 };
 
