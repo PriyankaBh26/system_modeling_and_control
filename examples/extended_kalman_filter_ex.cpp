@@ -44,7 +44,7 @@ VectorXd ExtendedKalmanFilter::f(VectorXd x) override {
 };
 
 // update outputs, y = h(x)
-VectorXd ExtendedKalmanFilter::h(vectorXd x) override {
+VectorXd ExtendedKalmanFilter::h(VectorXd x) override {
     VectorXd y(n);
     MatrixXd H(m, n);
     H << 1, 0,
