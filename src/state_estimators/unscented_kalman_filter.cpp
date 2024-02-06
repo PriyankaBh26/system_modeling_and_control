@@ -105,3 +105,5 @@ VectorXd UnscentedKalmanFilter::compute_estimate(VectorXd z) {
 
     return x;
 };
+
+UnscentedKalmanFilter::~UnscentedKalmanFilter() {}

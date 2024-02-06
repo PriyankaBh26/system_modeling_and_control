@@ -11,6 +11,8 @@ class UnscentedKalmanFilter {
         UnscentedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q, 
                               MatrixXd R, int n, int m, double kappa);
 
+        virtual ~UnscentedKalmanFilter();
+
         // update state variables
         virtual VectorXd f(VectorXd x);
 
