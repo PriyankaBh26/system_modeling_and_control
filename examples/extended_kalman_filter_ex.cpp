@@ -34,40 +34,48 @@ class VanDerPolOscillator : public OdeSolver {
         }
 };
 
-// update state variables, f(x) = [x1dot, x2dot .. xndot]T
-VectorXd ExtendedKalmanFilter::f(VectorXd x) override {
-    MatrixXd xdot(n, 1);
-    xdot << x[1] + u[0], mu * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
-    
-    x = x + xdot*dt;
-    return x;
-};
+class EKF: public ExtendedKalmanFilter {
 
-// update outputs, y = h(x)
-VectorXd ExtendedKalmanFilter::h(VectorXd x) override {
-    VectorXd y(n);
-    MatrixXd H(m, n);
-    H << 1, 0,
-         0, 1;
-    y = H * x;
-    return y;
-};
+    public:
+    EKF(VectorXd x0, MatrixXd P0, MatrixXd Q_in, 
+        MatrixXd R_in, double dt, int n_in, int m_in) : ExtendedKalmanFilter(x0, P0, Q_in, R_in, dt, n_in, m_in) {};
+        
+    // update state variables, f(x) = [x1dot, x2dot .. xndot]T
+    VectorXd f(VectorXd x) override {
+        MatrixXd xdot(n, 1);
+        xdot << x[1] + u[0], mu * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
+        
+        x = x + xdot*dt;
+        return x;
+    };
 
-// calculate f jacobian = [df/dx1 df/dx2 .. df/dxn]
-MatrixXd calculate_f_jacobian() override {
-    MatrixXd A(n, n);
-    A << 0, 1, 
-        mu * 2 * x[0] * x[1] - 1, mu *  (1 - std::pow(x[0], 2));
-    A = MatrixXd::Identity(n, n) + A * dt;
-    return A;
-};
+    // update outputs, y = h(x)
+    VectorXd h(VectorXd x) override {
+        VectorXd y(n);
+        MatrixXd H(m, n);
+        H << 1, 0,
+            0, 1;
+        y = H * x;
+        return y;
+    };
 
-// calculate h jacobian H 
-MatrixXd calculate_h_jacobian() override {
-    MatrixXd H(m, n);
-    H << 1, 0,
-         0, 1;
-    return H;
+    // calculate f jacobian = [df/dx1 df/dx2 .. df/dxn]
+    MatrixXd calculate_f_jacobian() override {
+        MatrixXd A(n, n);
+        A << 0, 1, 
+            mu * 2 * x[0] * x[1] - 1, mu *  (1 - std::pow(x[0], 2));
+        A = MatrixXd::Identity(n, n) + A * dt;
+        return A;
+    };
+
+    // calculate h jacobian H 
+    MatrixXd calculate_h_jacobian() override {
+        MatrixXd H(m, n);
+        H << 1, 0,
+            0, 1;
+        return H;
+    };
+
 };
 
 int main() {
@@ -102,7 +110,7 @@ int main() {
     // initialize kalman filter object
     VectorXd x0_m(num_states);
     x0_m << 0.0, 0.0;
-    ExtendedKalmanFilter* ekf = new ExtendedKalmanFilter(x0_m, P0, Q, R, dt, num_states, num_outputs);
+    EKF* ekf = new EKF(x0_m, P0, Q, R, dt, num_states, num_outputs);
 
     // initialize measurement z
     std::vector<VectorXd> z_history;
