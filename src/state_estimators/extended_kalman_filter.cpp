@@ -17,10 +17,10 @@ VectorXd ExtendedKalmanFilter::f(VectorXd x) {return VectorXd x(n);};
 VectorXd ExtendedKalmanFilter::h(VectorXd x) {return VectorXd y(n);};
 
 // calculate f jacobian A
-MatrixXd calculate_f_jacobian() {return MatrixXd A(n, n);};
+MatrixXd ExtendedKalmanFilter::calculate_f_jacobian() {return MatrixXd A(n, n);};
 
 // calculate h jacobian H 
-MatrixXd calculate_h_jacobian() {return MatrixXd H(m, n);};
+MatrixXd ExtendedKalmanFilter::calculate_h_jacobian() {return MatrixXd H(m, n);};
 
 // predict state and error covariance
 void ExtendedKalmanFilter::predict(MatrixXd A) {
