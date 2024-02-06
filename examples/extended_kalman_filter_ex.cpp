@@ -12,6 +12,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 static const double MU = 2.5;
+static const double MU_1 = 3.0;
 
 class VanDerPolOscillator : public OdeSolver {
     public: 
@@ -27,7 +28,7 @@ class VanDerPolOscillator : public OdeSolver {
         }
 
         std::string GetName() override {
-            return "van_der_pol";
+            return "van_der_pol_ekf";
         }
 
         std::vector<std::string> GetColumnNames() override {
@@ -47,7 +48,7 @@ class EKF : public ExtendedKalmanFilter {
         double dt = GetDt();
         VectorXd x = GetX();
         MatrixXd xdot(n, 1);
-        xdot << x[1], MU * (1 - std::pow(x[0], 2)) * x[1] - x[0];
+        xdot << x[1], MU_1 * (1 - std::pow(x[0], 2)) * x[1] - x[0];
         
         x = x + xdot*dt;
         return x;
@@ -74,7 +75,7 @@ class EKF : public ExtendedKalmanFilter {
 
         MatrixXd A(n, n);
         A << 0, 1, 
-            MU * 2 * x[0] * x[1] - 1, MU *  (1 - std::pow(x[0], 2));
+            MU_1 * 2 * x[0] * x[1] - 1, MU_1 *  (1 - std::pow(x[0], 2));
         A = MatrixXd::Identity(n, n) + A * dt;
         return A;
     };
@@ -96,29 +97,30 @@ int main() {
     int num_outputs = 2;
     // initialize state vector
     VectorXd x0(num_states);
-    x0 << 1.0, 1.0;
+    x0 << 10.0, 5.0;
     // initialize error covariance matrix
     MatrixXd P0(num_states, num_states);
-    P0 << 10, 0.0,
-          0.0, 10;
+    P0 << 1, 0.0,
+          0.0, 1;
 
     // define mass-spring-damper system variables
     double t0 = 0.0;
     double dh = 1e-4;
+
     VanDerPolOscillator* system = new VanDerPolOscillator(x0, t0, dh);
 
     // set integration duration
     double dt = 1e-2; 
-    double time_final = 10.0;
+    double time_final = 100.0;
 
     // define process noise matrix
     MatrixXd Q(num_states, num_states);
-    Q << 1e-2, 0.0,
-          0.0, 1e-2;
+    Q << 1e-1, 0.0,
+          0.0, 1e-1;
     // define measurement noise matrix
     MatrixXd R(num_states, num_outputs);
     R << 1e-1, 0.0,
-          0.0, 1e-2;
+          0.0, 1e-1;
 
     // initialize kalman filter object
     VectorXd x0_m(num_states);
