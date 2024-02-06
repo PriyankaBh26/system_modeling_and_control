@@ -34,7 +34,7 @@ class VanDerPolOscillator : public OdeSolver {
         }
 };
 
-// update state variables
+// update state variables, f(x) = [x1dot, x2dot .. xndot]T
 VectorXd ExtendedKalmanFilter::f(VectorXd x) override {
     MatrixXd xdot(n, 1);
     xdot << x[1] + u[0], mu * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
@@ -43,7 +43,7 @@ VectorXd ExtendedKalmanFilter::f(VectorXd x) override {
     return x;
 };
 
-// update outputs
+// update outputs, y = h(x)
 VectorXd ExtendedKalmanFilter::h(vectorXd x) override {
     VectorXd y(n);
     MatrixXd H(m, n);
@@ -53,18 +53,29 @@ VectorXd ExtendedKalmanFilter::h(vectorXd x) override {
     return y;
 };
 
-// calculate f jacobian A
-MatrixXd calculate_f_jacobian() override {return MatrixXd A(n, n);};
+// calculate f jacobian = [df/dx1 df/dx2 .. df/dxn]
+MatrixXd calculate_f_jacobian() override {
+    MatrixXd A(n, n);
+    A << 0, 1, 
+        mu * 2 * x[0] * x[1] - 1, mu *  (1 - std::pow(x[0], 2));
+    A = MatrixXd::Identity(n, n) + A * dt;
+    return A;
+};
 
 // calculate h jacobian H 
-MatrixXd calculate_h_jacobian() override {return MatrixXd H(m, n);};
+MatrixXd calculate_h_jacobian() override {
+    MatrixXd H(m, n);
+    H << 1, 0,
+         0, 1;
+    return H;
+};
 
 int main() {
     int num_states = 2;
     int num_outputs = 2;
     // initialize state vector
     VectorXd x0(num_states);
-    x0 << 0.0, 5;
+    x0 << 1.0, 1.0;
     // initialize error covariance matrix
     MatrixXd P0(num_states, num_states);
     P0 << 10, 0.0,
@@ -73,7 +84,7 @@ int main() {
     // define mass-spring-damper system variables
     double t0 = 0.0;
     double dh = 1e-4;
-    VanDerPolOscillator* system = new VanDerPolOscillator(x0, t0, dh, num_states);
+    VanDerPolOscillator* system = new VanDerPolOscillator(x0, t0, dh);
 
     // set integration duration
     double dt = 1e-2; 
@@ -124,6 +135,7 @@ int main() {
     // save simulation data for plotting
     SaveKFSimulationData(system, x_history, t_history, x_est_history, z_history);
 
-    delete kf;
+    delete ekf;
+    delete system;
     return 0;
 }
