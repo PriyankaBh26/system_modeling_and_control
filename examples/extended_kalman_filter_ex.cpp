@@ -11,16 +11,17 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
+static const double MU = 2.5;
+
 class VanDerPolOscillator : public OdeSolver {
     public: 
 
         VanDerPolOscillator(VectorXd x0, double t0, double dt0) : OdeSolver(x0, t0, dt0) {};
 
         VectorXd f(double t, VectorXd x, VectorXd u) override {
-            double mu = 2.5;
             
             VectorXd xd(2);
-            xd << x[1] + u[0], mu * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
+            xd << x[1] + u[0], MU * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
 
             return xd;
         }
@@ -39,11 +40,11 @@ class EKF: public ExtendedKalmanFilter {
     public:
     EKF(VectorXd x0, MatrixXd P0, MatrixXd Q_in, 
         MatrixXd R_in, double dt, int n_in, int m_in) : ExtendedKalmanFilter(x0, P0, Q_in, R_in, dt, n_in, m_in) {};
-        
+
     // update state variables, f(x) = [x1dot, x2dot .. xndot]T
     VectorXd f(VectorXd x) override {
         MatrixXd xdot(n, 1);
-        xdot << x[1] + u[0], mu * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
+        xdot << x[1] + u[0], MU * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
         
         x = x + xdot*dt;
         return x;
@@ -63,7 +64,7 @@ class EKF: public ExtendedKalmanFilter {
     MatrixXd calculate_f_jacobian() override {
         MatrixXd A(n, n);
         A << 0, 1, 
-            mu * 2 * x[0] * x[1] - 1, mu *  (1 - std::pow(x[0], 2));
+            MU * 2 * x[0] * x[1] - 1, MU *  (1 - std::pow(x[0], 2));
         A = MatrixXd::Identity(n, n) + A * dt;
         return A;
     };
