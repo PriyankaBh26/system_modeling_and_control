@@ -14,7 +14,7 @@ class ExtendedKalmanFilter {
         virtual VectorXd f(VectorXd x);
 
         // update outputs
-        virtual VectorXd h(vectorXd x);
+        virtual VectorXd h(VectorXd x);
 
         // calculate f jacobian A
         virtual MatrixXd calculate_f_jacobian();

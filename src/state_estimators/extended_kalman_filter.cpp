@@ -11,16 +11,16 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q_
                                                                             R(R_in), dt(dt), n(n_in), m(m_in) {};
 
 // update state variables
-virtual VectorXd ExtendedKalmanFilter::f(VectorXd x) {return VectorXd x(n);};
+VectorXd ExtendedKalmanFilter::f(VectorXd x) {return VectorXd x(n);};
 
 // update outputs
-virtual VectorXd ExtendedKalmanFilter::h(vectorXd x) {return VectorXd y(n);};
+VectorXd ExtendedKalmanFilter::h(VectorXd x) {return VectorXd y(n);};
 
 // calculate f jacobian A
-virtual MatrixXd calculate_f_jacobian() {return MatrixXd A(n, n);};
+MatrixXd calculate_f_jacobian() {return MatrixXd A(n, n);};
 
 // calculate h jacobian H 
-virtual MatrixXd calculate_h_jacobian() {return MatrixXd H(m, n);};
+MatrixXd calculate_h_jacobian() {return MatrixXd H(m, n);};
 
 // predict state and error covariance
 void ExtendedKalmanFilter::predict(MatrixXd A) {
