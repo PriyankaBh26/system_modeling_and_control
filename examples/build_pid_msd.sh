@@ -23,7 +23,8 @@ SRCS="examples/pid_msd.cpp
       src/controllers/pid_controller.cpp 
       src/numerical_solvers/rk_ode_solver.cpp 
       src/numerical_solvers/solver_helper_funs.cpp 
-      src/data_logging/savecsv.cpp"
+      src/data_logging/savecsv.cpp
+      src/data_logging/data_logging_helper_funs.cpp"
 
 # Output executable name
 TARGET="build/myprogram"
