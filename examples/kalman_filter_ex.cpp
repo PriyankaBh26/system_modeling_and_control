@@ -124,5 +124,6 @@ int main() {
     SaveKFSimulationData(system, x_history, t_history, x_est_history, z_history);
 
     delete kf;
+    delete system;
     return 0;
 }
