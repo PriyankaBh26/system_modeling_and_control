@@ -35,7 +35,7 @@ class VanDerPolOscillator : public OdeSolver {
         }
 };
 
-class EKF: public ExtendedKalmanFilter {
+class EKF : public ExtendedKalmanFilter {
 
     public:
     EKF(VectorXd x0, MatrixXd P0, MatrixXd Q_in, 
@@ -44,7 +44,7 @@ class EKF: public ExtendedKalmanFilter {
     // update state variables, f(x) = [x1dot, x2dot .. xndot]T
     VectorXd f(VectorXd x) override {
         MatrixXd xdot(n, 1);
-        xdot << x[1] + u[0], MU * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
+        xdot << x[1], MU * (1 - std::pow(x[0], 2)) * x[1] - x[0];
         
         x = x + xdot*dt;
         return x;
