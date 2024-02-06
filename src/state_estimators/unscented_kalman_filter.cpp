@@ -9,8 +9,11 @@ using Eigen::VectorXd;
 using Eigen::LLT;
 
 UnscentedKalmanFilter::UnscentedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q, 
-                        MatrixXd R, double dt, int n, int m, double kappa) : x(x0), P(P0), Q(Q), R(R), dt(dt), n(n), 
-                                                                  m(m), kappa(kappa), W(2*n+1) {};
+                                             MatrixXd R, double dt, int n, 
+                                             int m, double kappa) : x(x0), P(P0), Q(Q), 
+                                                                    R(R), dt(dt), n(n), 
+                                                                    m(m), kappa(kappa), W(2*n+1) {
+                                                                          UnscentedKalmanFilter::compute_weights();};
 
 // update state variables
 VectorXd UnscentedKalmanFilter::f(VectorXd Y) {
@@ -42,7 +45,6 @@ MatrixXd UnscentedKalmanFilter::sigma_points_Xi() {
 
 // compute W
 void UnscentedKalmanFilter::compute_weights() {
-    VectorXd W(2*n+1);
     W(0) = kappa / (n + kappa);
 
     for (int i{1}; i<=n; i++) {
@@ -86,7 +88,6 @@ MatrixXd UnscentedKalmanFilter::compute_kalman_gain(MatrixXd Pz, MatrixXd f_xi,
 
 // compute the estimate
 VectorXd UnscentedKalmanFilter::compute_estimate(VectorXd z) {
-    UnscentedKalmanFilter::compute_weights();
     MatrixXd Xi = UnscentedKalmanFilter::sigma_points_Xi();
 
     // predict state
