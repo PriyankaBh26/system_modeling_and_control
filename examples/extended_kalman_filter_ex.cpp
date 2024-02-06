@@ -42,7 +42,10 @@ class EKF : public ExtendedKalmanFilter {
         MatrixXd R_in, double dt, int n_in, int m_in) : ExtendedKalmanFilter(x0, P0, Q_in, R_in, dt, n_in, m_in) {};
 
     // update state variables, f(x) = [x1dot, x2dot .. xndot]T
-    VectorXd f(VectorXd x) override {
+    VectorXd f() override {
+        int n = GetN();
+        double dt = GetDt();
+        VectorXd x = GetX();
         MatrixXd xdot(n, 1);
         xdot << x[1], MU * (1 - std::pow(x[0], 2)) * x[1] - x[0];
         
@@ -51,7 +54,10 @@ class EKF : public ExtendedKalmanFilter {
     };
 
     // update outputs, y = h(x)
-    VectorXd h(VectorXd x) override {
+    VectorXd h() override {
+        int n = GetN();
+        int m = GetM();
+        VectorXd x = GetX();
         VectorXd y(n);
         MatrixXd H(m, n);
         H << 1, 0,
@@ -62,6 +68,10 @@ class EKF : public ExtendedKalmanFilter {
 
     // calculate f jacobian = [df/dx1 df/dx2 .. df/dxn]
     MatrixXd calculate_f_jacobian() override {
+        int n = GetN();
+        double dt = GetDt();
+        VectorXd x = GetX();
+
         MatrixXd A(n, n);
         A << 0, 1, 
             MU * 2 * x[0] * x[1] - 1, MU *  (1 - std::pow(x[0], 2));
@@ -71,6 +81,8 @@ class EKF : public ExtendedKalmanFilter {
 
     // calculate h jacobian H 
     MatrixXd calculate_h_jacobian() override {
+        int n = GetN();
+        int m = GetM();
         MatrixXd H(m, n);
         H << 1, 0,
             0, 1;
