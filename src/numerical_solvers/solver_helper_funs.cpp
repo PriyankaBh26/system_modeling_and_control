@@ -70,3 +70,62 @@ void SaveSimulationData(OdeSolver* ode, std::vector<VectorXd>& x_history, std::v
     columnNames = {"time"};
     WriteVecToFile(filename, columnNames, t_history);
 }
+
+void SaveKFSimulationData(OdeSolver* ode, 
+                          std::vector<VectorXd>& x_history, 
+                          std::vector<double> t_history, 
+                          std::vector<VectorXd>& x_est_history, 
+                          std::vector<VectorXd>& z_history) {
+
+    // save final output x to csv file
+    std::string filename = "examples/" + ode->GetName() + "_solution.csv";
+    std::vector<std::string> column_names = ode->GetColumnNames();
+    WriteMatToFile(filename, column_names, x_history);
+    std::cout << x_history.size() << " " << x_history[0].size();
+
+    // save estimated state history to csv file
+    filename = "examples/" + ode->GetName() + "_meas_history.csv";
+    WriteMatToFile(filename, column_names, z_history);
+
+    // save estimated state history to csv file
+    filename = "examples/" + ode->GetName() + "_est_history.csv";
+    WriteMatToFile(filename, column_names, x_est_history);
+
+    // save time to csv file
+    filename = "examples/" + ode->GetName() + "_time.csv";
+    column_names = {"time"};
+    WriteVecToFile(filename, column_names, t_history);
+}
+
+
+void SaveKFPIDSimulationData(OdeSolver* ode, 
+                        std::vector<VectorXd>& x_history, 
+                        std::vector<double> t_history, 
+                        std::vector<VectorXd>& x_est_history, 
+                        std::vector<VectorXd>& z_history,
+                        std::vector<VectorXd>& u_history) {
+
+    // save final output x to csv file
+    std::string filename = "examples/" + ode->GetName() + "_solution.csv";
+    std::vector<std::string> column_names = ode->GetColumnNames();
+    WriteMatToFile(filename, column_names, x_history);
+    std::cout << x_history.size() << " " << x_history[0].size();
+
+    // save control history to csv file
+    filename = "examples/" + ode->GetName() + "_control_history.csv";
+    std::vector<std::string> u_column_names = {"U1", "U2"};
+    WriteMatToFile(filename, u_column_names, u_history);
+
+    // save measured state history to csv file
+    filename = "examples/" + ode->GetName() + "_meas_history.csv";
+    WriteMatToFile(filename, column_names, z_history);
+
+    // save estimated state history to csv file
+    filename = "examples/" + ode->GetName() + "_est_history.csv";
+    WriteMatToFile(filename, column_names, x_est_history);
+
+    // save time to csv file
+    filename = "examples/" + ode->GetName() + "_time.csv";
+    column_names = {"time"};
+    WriteVecToFile(filename, column_names, t_history);
+}
