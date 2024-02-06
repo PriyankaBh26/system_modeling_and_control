@@ -3,6 +3,7 @@
 # include <Eigen/Dense>
 
 # include "numerical_solvers/rk_ode_solver.h"
+# include "numerical_solvers/solver_helper_funs.h"
 # include "controllers/pidcontroller.h"
 # include "data_logging/savecsv.h"
 # include "state_estimators/kalman_filter.h"
@@ -48,29 +49,6 @@ class solve_mass_spring_damper : public OdeSolver {
             MatrixXd A;
 
 };
-
-
-void SaveSimulationData(OdeSolver* ode, std::vector<VectorXd>& x_history, std::vector<double> t_history, std::vector<VectorXd>& x_est_history, std::vector<VectorXd>& z_history) {
-
-    // save final output x to csv file
-    std::string filename = "examples/" + ode->GetName() + "_solution.csv";
-    std::vector<std::string> column_names = ode->GetColumnNames();
-    WriteMatToFile(filename, column_names, x_history);
-    std::cout << x_history.size() << " " << x_history[0].size();
-
-    // save estimated state history to csv file
-    filename = "examples/" + ode->GetName() + "_meas_history.csv";
-    WriteMatToFile(filename, column_names, z_history);
-
-    // save estimated state history to csv file
-    filename = "examples/" + ode->GetName() + "_est_history.csv";
-    WriteMatToFile(filename, column_names, x_est_history);
-
-    // save time to csv file
-    filename = "examples/" + ode->GetName() + "_time.csv";
-    column_names = {"time"};
-    WriteVecToFile(filename, column_names, t_history);
-}
 
 int main() {
     int num_states = 2;
@@ -142,7 +120,7 @@ int main() {
         t_history.push_back(t);
     }
     // save simulation data for plotting
-    SaveSimulationData(system, x_history, t_history, x_est_history, z_history);
+    SaveKFSimulationData(system, x_history, t_history, x_est_history, z_history);
 
     delete kf;
     return 0;
