@@ -11,7 +11,7 @@ class ExtendedKalmanFilter {
         ExtendedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q_in, MatrixXd R_in, double dt, int n_in, int m_in);
 
         virtual ~ExtendedKalmanFilter();
-        
+
         // update state variables
         virtual VectorXd f();
 
@@ -34,7 +34,7 @@ class ExtendedKalmanFilter {
         VectorXd compute_estimate(VectorXd z);
 
         // update the error covariance
-        void update(MatrixXd K, MatrixXd H);
+        void update(MatrixXd K, MatrixXd H, VectorXd z);
 
         // getter functions
         int GetN();

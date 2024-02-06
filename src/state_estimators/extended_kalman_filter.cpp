@@ -41,7 +41,8 @@ void ExtendedKalmanFilter::predict(MatrixXd A) {
 }
 // compute Kalman gain
 MatrixXd ExtendedKalmanFilter::compute_kalman_gain(MatrixXd H) {
-    MatrixXd K = P * H.transpose * (H * P * H.transpose + R).inverse();
+    MatrixXd K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
+    return K;
 }
 // compute the estimate
 VectorXd ExtendedKalmanFilter::compute_estimate(VectorXd z) {
@@ -49,12 +50,12 @@ VectorXd ExtendedKalmanFilter::compute_estimate(VectorXd z) {
     MatrixXd H = calculate_h_jacobian();
     predict(A);
     MatrixXd K = compute_kalman_gain(H);
-    update(K, H);
+    update(K, H, z);
     return x;
 }
 // update the error covariance
 void ExtendedKalmanFilter::update(MatrixXd K, MatrixXd H, VectorXd z) {
-    x = x + K * (z - h(x));
+    x = x + K * (z - h());
     P = P - K * H * P;
 }
 
