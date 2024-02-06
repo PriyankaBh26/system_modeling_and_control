@@ -45,3 +45,14 @@ void ExtendedKalmanFilter::update(MatrixXd K, MatrixXd H, VectorXd z) {
     x = x + K * (z - h(x));
     P = P - K * H * P;
 }
+
+// getter functions
+int ExtendedKalmanFilter::GetN() {return n;}
+
+int ExtendedKalmanFilter::GetM() {return m;}
+
+double ExtendedKalmanFilter::GetDt() {return dt;}
+
+VectorXd ExtendedKalmanFilter::GetX() {return x;}
+
+ExtendedKalmanFilter::~ExtendedKalmanFilter() {}
