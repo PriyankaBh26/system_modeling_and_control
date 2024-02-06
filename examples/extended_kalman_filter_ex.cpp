@@ -11,7 +11,7 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-static const double MU = 3.5;
+static const double MU = 2.5;
 static const double MU_1 = 3.0;
 
 class VanDerPolOscillator : public OdeSolver {
