@@ -12,7 +12,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 static const double MU = 2.5;
-static const double MU_1 = 5.0;
+static const double MU_1 = 5.5;
 
 class VanDerPolOscillator : public OdeSolver {
     public: 
@@ -72,7 +72,7 @@ int main() {
     int num_outputs = 2;
     // initialize state vector
     VectorXd x0(num_states);
-    x0 << 10.0, 5.0;
+    x0 << 0.0, 5.0;
     // initialize error covariance matrix
     MatrixXd P0(num_states, num_states);
     P0 << 1, 0.0,
@@ -86,7 +86,7 @@ int main() {
 
     // set integration duration
     double dt = 1e-2; 
-    double time_final = 50.0;
+    double time_final = 10.0;
 
     // define process noise matrix
     MatrixXd Q(num_states, num_states);
@@ -94,12 +94,12 @@ int main() {
           0.0, 1e-1;
     // define measurement noise matrix
     MatrixXd R(num_states, num_outputs);
-    R << 1e-2, 0.0,
-          0.0, 1e-2;
+    R << 1e-1, 0.0,
+          0.0, 1e-1;
 
     // initialize kalman filter object
     VectorXd x0_m(num_states);
-    x0_m << 10.0, 5.0;
+    x0_m << 1.0, 0.0;
 
     // set kappa to compute weights
     double kappa = abs(3 - num_states);
