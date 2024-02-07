@@ -1,5 +1,6 @@
 # include <vector>
 # include <cmath>
+# include <iostream>
 # include <Eigen/Dense>
 
 # include "system_models/dc_motor_velocity.h"
@@ -30,10 +31,10 @@ MatrixXd DCMotorVelocity::GetA() {return A;};
 
 VectorXd DCMotorVelocity::GetB() {return B;};
 
-std::ostream operator<<(std::ostream& out, const DCMotorVelocity& system) {
+std::ostream& operator << (std::ostream& out, const DCMotorVelocity& system) {
   out << "DC motor velocity model parameters:\n";
   out << "(J) moment of inertia of the rotor   " << system.J << " kg.m^2\n";
-  out << "(b) motor viscous friction constant  " << system.b << "  N.m.s\n";
+  out << "(b) motor viscous friction constant  " << system.b << " N.m.s\n";
   out << "(Ke) electromotive force constant    " << system.K << " V/rad/sec\n";
   out << "(Kt) motor torque constant           " << system.K << " N.m/Amp\n";
   out << "(R) electric resistance              " << system.R << " Ohm\n";
