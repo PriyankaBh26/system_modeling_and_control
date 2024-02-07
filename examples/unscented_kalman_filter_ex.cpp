@@ -16,8 +16,6 @@ static const double MU_1 = 5.5;
 
 // update state variables, f(x) = [x1dot, x2dot .. xndot]T
 VectorXd UnscentedKalmanFilter::f(VectorXd Y) {
-    int n = GetN();
-    double dt = GetDt();
     MatrixXd ydot(n, 1);
     ydot << Y[1], MU_1 * (1 - std::pow(Y[0], 2)) * Y[1] - Y[0];
     
@@ -27,8 +25,6 @@ VectorXd UnscentedKalmanFilter::f(VectorXd Y) {
 
 // update outputs, y = h(x)
 VectorXd UnscentedKalmanFilter::h(VectorXd Y) {
-    int n = GetN();
-    int m = GetM();
     VectorXd Z(n);
     MatrixXd H(m, n);
     H << 1, 0,
