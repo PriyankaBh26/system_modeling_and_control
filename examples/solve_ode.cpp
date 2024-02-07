@@ -3,7 +3,6 @@
 # include <cmath>
 # include <Eigen/Dense>
 
-# include "numerical_solvers/rk_ode_solver.h"
 # include "system_models/mass_spring_damper.h"
 # include "data_logging/savecsv.h"
 
