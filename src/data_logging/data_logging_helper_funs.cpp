@@ -53,7 +53,7 @@ void SaveSimulationData(OdeSolver* ode,
 
     // save control input history to csv file
     filename = "examples/" + ode->GetName() + "control_ip_history.csv";
-    columnNames = ode->GetControlInputColumnNames();
+    columnNames = ode->GetControlInputColumnNames(u_history[0]);
     WriteMatToFile(filename, columnNames, u_history);
 
     // save time to csv file
