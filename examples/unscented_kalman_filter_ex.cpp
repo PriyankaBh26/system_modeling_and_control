@@ -126,7 +126,7 @@ int main() {
         
         z_history.push_back(x + R * VectorXd::Random(num_states));
 
-        VectorXd x_est = ukf->compute_estimate(z_history.back());
+        VectorXd x_est = ukf->ComputeEstimate(z_history.back());
 
         system->IntegrateODE(ode_timesteps, u);
 
