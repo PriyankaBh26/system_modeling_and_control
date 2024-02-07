@@ -41,12 +41,12 @@ int main () {
 
     std::cout << x_history.size() << " " << x_history[0].size();
 
-    std::string filename = "test/" + system->GetName() + "_solution.csv";
+    std::string filename = "test/system_models/" + system->GetName() + "_solution.csv";
     std::vector<std::string> columnNames = system->GetColumnNames();
 
     WriteMatToFile(filename, columnNames, x_history);
     
-    filename = "test/" + system->GetName() + "_time.csv";
+    filename = "test/system_models/" + system->GetName() + "_time.csv";
     columnNames = {"time"};
     WriteVecToFile(filename, columnNames, t_history);
 
