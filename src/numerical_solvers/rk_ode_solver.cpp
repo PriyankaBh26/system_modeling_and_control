@@ -16,11 +16,18 @@ VectorXd OdeSolver::f(double time, VectorXd X, VectorXd u) {return x;}
 
 std::string OdeSolver::GetName() {return "generic_ode";}
 
-std::vector<std::string> OdeSolver::GetColumnNames() {return {"x1", "x2"};}
-
-std::vector<std::string> OdeSolver::GetControlInputColumnNames() {
+std::vector<std::string> OdeSolver::GetColumnNames() {
     std::vector<std::string> column_names;
     int ip_size = x.size();
+    for (int i{0}; i<ip_size; i++) {
+        column_names.push_back("x" + std::to_string(i));
+    }    
+    return column_names;
+}
+
+std::vector<std::string> OdeSolver::GetControlInputColumnNames(VectorXd u) {
+    std::vector<std::string> column_names;
+    int ip_size = u.size();
     for (int i{0}; i<ip_size; i++) {
         column_names.push_back("U" + std::to_string(i));
     }    
