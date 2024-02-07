@@ -19,22 +19,22 @@ class ExtendedKalmanFilter {
         virtual VectorXd h();
 
         // calculate f jacobian A
-        virtual MatrixXd calculate_f_jacobian();
+        virtual MatrixXd CalculateFxJacobian();
 
         // calculate h jacobian H 
-        virtual MatrixXd calculate_h_jacobian();
+        virtual MatrixXd CalculateHxJacobian();
 
         // predict state and error covariance
-        void predict(MatrixXd A);
+        void Predict(MatrixXd A);
 
         // compute Kalman gain
-        MatrixXd compute_kalman_gain(MatrixXd H);
+        MatrixXd ComputeKalmanGain(MatrixXd H);
 
         // compute the estimate
-        VectorXd compute_estimate(VectorXd z);
+        VectorXd ComputeEstimate(VectorXd z);
 
         // update the error covariance
-        void update(MatrixXd K, MatrixXd H, VectorXd z);
+        void Update(MatrixXd K, MatrixXd H, VectorXd z);
 
         // getter functions
         int GetN();

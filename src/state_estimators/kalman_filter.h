@@ -11,16 +11,16 @@ class KalmanFilter {
         KalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd A_in, MatrixXd Q_in, MatrixXd H_in, MatrixXd R_in);
 
         // predict state and error covariance
-        void predict();
+        void Predict();
 
         // compute Kalman gain
-        MatrixXd compute_kalman_gain();
+        MatrixXd ComputeKalmanGain();
 
         // compute the estimate
-        VectorXd compute_estimate(VectorXd z);
+        VectorXd ComputeEstimate(VectorXd z);
 
         // update the error covariance
-        void update(MatrixXd K, VectorXd z);
+        void Update(MatrixXd K, VectorXd z);
 
     private:
         VectorXd x;

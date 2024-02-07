@@ -68,7 +68,7 @@ class EKF : public ExtendedKalmanFilter {
     };
 
     // calculate f jacobian = [df/dx1 df/dx2 .. df/dxn]
-    MatrixXd calculate_f_jacobian() override {
+    MatrixXd CalculateFxJacobian() override {
         int n = GetN();
         double dt = GetDt();
         VectorXd x = GetX();
@@ -81,7 +81,7 @@ class EKF : public ExtendedKalmanFilter {
     };
 
     // calculate h jacobian H 
-    MatrixXd calculate_h_jacobian() override {
+    MatrixXd CalculateHxJacobian() override {
         int n = GetN();
         int m = GetM();
         MatrixXd H(m, n);
@@ -148,7 +148,7 @@ int main() {
         
         z_history.push_back(x + R * VectorXd::Random(num_states));
 
-        VectorXd x_est = ekf->compute_estimate(z_history.back());
+        VectorXd x_est = ekf->ComputeEstimate(z_history.back());
 
         t += dt;
         x_history.push_back(x);
