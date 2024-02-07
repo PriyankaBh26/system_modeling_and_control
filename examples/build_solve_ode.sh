@@ -22,6 +22,7 @@ LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 # SRCS="rk_ode_solver.cpp savecsv.cpp"
 SRCS="examples/solve_ode.cpp 
      src/numerical_solvers/rk_ode_solver.cpp 
+     src/system_models/mass_spring_damper.cpp
      src/data_logging/savecsv.cpp"
 
 # Output executable name
