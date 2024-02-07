@@ -57,13 +57,10 @@ int main() {
     double k = 1.0;
     double c = 1.0;
     double m = 1.0;
-    MassSpringDamperSys* system = new MassSpringDamperSys(x0, t0, dh, num_states, num_inputs, "msd_kf_pid", k, c, m);
-
     MatrixXd B_in(num_states, num_inputs);
     B_in << 0, 0,
             1, 1;
-
-    system->SetB(B_in);
+    MassSpringDamperSys* system = new MassSpringDamperSys(x0, t0, dh, num_states, B_in, "msd_kf_pid", k, c, m);
 
     // set integration duration
     double dt = 1e-2; 
@@ -128,7 +125,7 @@ int main() {
         system->IntegrateODE(ode_timesteps, u);
 
         VectorXd x = system->GetX();
-        
+
         z_history.push_back(x + R * VectorXd::Random(num_states));
         
         x_ref = CalculateXref(reference_trajectory_type, num_states, t);

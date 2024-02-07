@@ -14,23 +14,21 @@ class MassSpringDamperSys : public OdeSolver {
                         double k0, double c0, double m0);
 
     MassSpringDamperSys(VectorXd y0, double t0, double dt0, 
-                        int num_states, int num_inputs, std::string name, 
+                        int num_states, MatrixXd B_in, std::string name, 
                         double k0, double c0, double m0);
 
     VectorXd f(double t, VectorXd y, VectorXd u) override;
-
-    void SetB(MatrixXd B_in);
 
     std::string GetName() override;
 
     std::vector<std::string> GetColumnNames() override;
 
     MatrixXd GetA();
-    VectorXd GetB();
+    MatrixXd GetB();
 
     private:
         MatrixXd A;
-        VectorXd B;
+        MatrixXd B;
         std::string sys_name;
         double k;
         double c;

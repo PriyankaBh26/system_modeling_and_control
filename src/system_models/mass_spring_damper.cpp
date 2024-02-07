@@ -11,7 +11,7 @@ MassSpringDamperSys::MassSpringDamperSys(VectorXd y0, double t0,
                                         double dt0, int num_states, std::string name,
                                         double k0, double c0, double m0) : OdeSolver(y0, t0, dt0), 
                                                                         A(num_states, num_states), 
-                                                                        B(num_states), 
+                                                                        B(num_states, 1), 
                                                                         sys_name(name),
                                                                         k(k0), c(c0), m(m0) {
                                                                         A << 0, 1,
@@ -20,10 +20,10 @@ MassSpringDamperSys::MassSpringDamperSys(VectorXd y0, double t0,
                                                                         };
 
 MassSpringDamperSys::MassSpringDamperSys(VectorXd y0, double t0, 
-                                        double dt0, int num_states, int num_inputs, std::string name,
+                                        double dt0, int num_states, MatrixXd B_in, std::string name,
                                         double k0, double c0, double m0) : OdeSolver(y0, t0, dt0), 
                                                                         A(num_states, num_states), 
-                                                                        B(num_states, num_inputs), 
+                                                                        B(B_in), 
                                                                         sys_name(name),
                                                                         k(k0), c(c0), m(m0) {
                                                                         A << 0, 1,
@@ -36,11 +36,6 @@ VectorXd MassSpringDamperSys::f(double t, VectorXd y, VectorXd u) {
     return yd;
 };                                                  
 
-void MassSpringDamperSys::SetB(MatrixXd B_in) {
-    B = B_in;
-};
-
-
 std::string MassSpringDamperSys::GetName() {
     return sys_name;
 }
@@ -51,4 +46,4 @@ std::vector<std::string> MassSpringDamperSys::GetColumnNames() {
 
 MatrixXd MassSpringDamperSys::GetA() {return A;};
 
-VectorXd MassSpringDamperSys::GetB() {return B;};
+MatrixXd MassSpringDamperSys::GetB() {return B;};
