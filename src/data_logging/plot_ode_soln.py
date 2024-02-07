@@ -2,13 +2,12 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# problem = "mass_spring_damper"
-problem = "van_der_pol"
+problem = "msd"
 
-y = pd.read_csv(f"{problem}_solution.csv", sep="\s+")
+y = pd.read_csv(f"examples/{problem}_solution.csv", sep="\s+")
 # print(y.head())
 
-t = pd.read_csv(f"{problem}_time.csv", sep=" ")
+t = pd.read_csv(f"examples/{problem}_time.csv", sep=" ")
 # print(t.head())
 
 pos = y["Pos"].to_numpy()
