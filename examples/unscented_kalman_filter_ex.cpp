@@ -12,16 +12,17 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 static const double MU = 2.5;
+static const double MU_1 = 5.0;
 
 class VanDerPolOscillator : public OdeSolver {
     public: 
 
         VanDerPolOscillator(VectorXd x0, double t0, double dt0) : OdeSolver(x0, t0, dt0) {};
 
-        VectorXd f(double t, VectorXd x, VectorXd u) override {
+        VectorXd f(double time, VectorXd X, VectorXd u) override {
             
             VectorXd xd(2);
-            xd << x[1] + u[0], MU * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
+            xd << X[1] + u[0], MU * (1 - std::pow(X[0], 2)) * X[1] - X[0] + u[1];
 
             return xd;
         }
@@ -85,7 +86,7 @@ int main() {
 
     // set integration duration
     double dt = 1e-2; 
-    double time_final = 100.0;
+    double time_final = 50.0;
 
     // define process noise matrix
     MatrixXd Q(num_states, num_states);
@@ -93,12 +94,12 @@ int main() {
           0.0, 1e-1;
     // define measurement noise matrix
     MatrixXd R(num_states, num_outputs);
-    R << 1e-1, 0.0,
-          0.0, 1e-1;
+    R << 1e-2, 0.0,
+          0.0, 1e-2;
 
     // initialize kalman filter object
     VectorXd x0_m(num_states);
-    x0_m << 0.0, 0.0;
+    x0_m << 10.0, 5.0;
 
     // set kappa to compute weights
     double kappa = abs(3 - num_states);
@@ -120,13 +121,14 @@ int main() {
     double t = 0;
     while (t < time_final) {
         int ode_timesteps = dt/dh;
-        system->IntegrateODE(ode_timesteps, u);
 
         VectorXd x = system->GetX();
         
         z_history.push_back(x + R * VectorXd::Random(num_states));
 
         VectorXd x_est = ukf->compute_estimate(z_history.back());
+
+        system->IntegrateODE(ode_timesteps, u);
 
         t += dt;
         x_history.push_back(x);

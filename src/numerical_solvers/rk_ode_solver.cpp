@@ -12,7 +12,7 @@ OdeSolver::OdeSolver(VectorXd x0, double t0, double dt0) : x(x0), t(t0), dt(dt0)
     t_history.push_back(t0);
 };
 
-VectorXd OdeSolver::f(double t, VectorXd x, VectorXd u) {return x;}
+VectorXd OdeSolver::f(double time, VectorXd X, VectorXd u) {return x;}
 
 std::string OdeSolver::GetName() {return "generic_ode";}
 
