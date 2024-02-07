@@ -155,5 +155,6 @@ int main () {
     }
 
     delete ode;
+    delete pid_controller;
     return 0;
 }

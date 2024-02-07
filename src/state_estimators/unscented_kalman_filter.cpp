@@ -2,21 +2,30 @@
 # include <vector>
 # include <Eigen/Dense>
 
-# include "unscented_kalman_filter.h"
+# include "state_estimators/unscented_kalman_filter.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::LLT;
 
 UnscentedKalmanFilter::UnscentedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q, 
-                        MatrixXd R, int n, int m, double kappa) : x(x0), P(P0), Q(Q), R(R), n(n), 
-                                                                  m(m), kappa(kappa), W(2*n+1);
+                                             MatrixXd R, double dt, int n, 
+                                             int m, double kappa) : x(x0), P(P0), Q(Q), 
+                                                                    R(R), dt(dt), n(n), 
+                                                                    m(m), kappa(kappa), W(2*n+1) {
+                                                                          UnscentedKalmanFilter::compute_weights();};
 
 // update state variables
-virtual VectorXd UnscentedKalmanFilter::f(VectorXd x) {VectorXd x(n)};
+VectorXd UnscentedKalmanFilter::f(VectorXd Y) {
+    VectorXd YY(n);
+    return YY;
+};
 
 // update outputs
-virtual VectorXd UnscentedKalmanFilter::h(vectorXd x) {VectorXd z(m)};
+VectorXd UnscentedKalmanFilter::h(VectorXd Y) {
+    VectorXd YY(m);
+    return YY;
+};
 
 // compute Xi
 MatrixXd UnscentedKalmanFilter::sigma_points_Xi() {
@@ -36,7 +45,6 @@ MatrixXd UnscentedKalmanFilter::sigma_points_Xi() {
 
 // compute W
 void UnscentedKalmanFilter::compute_weights() {
-    VectorXd W(2*n+1);
     W(0) = kappa / (n + kappa);
 
     for (int i{1}; i<=n; i++) {
@@ -46,9 +54,9 @@ void UnscentedKalmanFilter::compute_weights() {
 };
 
 // perform unscented transform to predict state mean 
-VectorXd UnscentedKalmanFilter::predict_mean(VectorXd Xi) {
+VectorXd UnscentedKalmanFilter::predict_mean(MatrixXd Xi) {
     // compute mean x
-    VectorXd xm(n);
+    VectorXd xm(Xi.rows());
     for (int i{0}; i<Xi.cols(); i++) {
         xm = xm + W(i) * Xi.col(i);
     }
@@ -56,43 +64,49 @@ VectorXd UnscentedKalmanFilter::predict_mean(VectorXd Xi) {
 };
 
 // perform unscented transform to predict state covariance 
-MatrixXd UnscentedKalmanFilter::predict_covariance(VectorXd Xi, MatrixXd err_cov) {
+MatrixXd UnscentedKalmanFilter::predict_covariance(VectorXd xm, MatrixXd Xi, MatrixXd err_cov) {
     // compute covariance
-    MatrixXd xcov(n,n);
+    MatrixXd xcov(err_cov.rows(), err_cov.cols());
     for (int i{0}; i<Xi.cols(); i++) {
         xcov = xcov + W(i) * (Xi.col(i) - xm) * (Xi.col(i) - xm).transpose();
     }
-    xcov + err_cov;
+    xcov += err_cov;
     return xcov;
 };
 
 
 // compute Kalman gain
-MatrixXd UnscentedKalmanFilter::compute_kalman_gain(MatrixXd Pz, VectorXd f_xi, vectorxd h_xi, vectorXd z_cap) {
+MatrixXd UnscentedKalmanFilter::compute_kalman_gain(MatrixXd Pz, MatrixXd f_xi, 
+                                                    MatrixXd h_xi, VectorXd z_cap) {
     MatrixXd Pxz(n,m);
     for (int i{0}; i<2*n+1; i++) {
-        Pxz = Pxz + W(i) * (f_xi - x) * (h_xi - z_cap).transpose();
+        Pxz = Pxz + W(i) * (f_xi.col(i) - x) * (h_xi.col(i) - z_cap).transpose();
     }
-    K = Pxz * Pz.inverse();
+    MatrixXd K = Pxz * Pz.inverse();
     return K;
 };
 
 // compute the estimate
 VectorXd UnscentedKalmanFilter::compute_estimate(VectorXd z) {
-    UnscentedKalmanFilter::compute_weights();
     MatrixXd Xi = UnscentedKalmanFilter::sigma_points_Xi();
 
     // predict state
-    VectorXd f_xi = f(Xi);
+    MatrixXd f_xi(n, 2*n+1);
+    for (int i{0}; i<Xi.cols(); i++) {
+        f_xi.col(i) = f(Xi.col(i));
+    }
     x = UnscentedKalmanFilter::predict_mean(f_xi);
     // predict state covariance
-    P = UnscentedKalmanFilter::predict_covariance(f_xi, Q);
+    P = UnscentedKalmanFilter::predict_covariance(x, f_xi, Q);
 
     // predict measurement
-    VectorXd h_xi = h(Xi);
+    MatrixXd h_xi(m, 2*n+1);
+    for (int i{0}; i<Xi.cols(); i++) {
+        h_xi.col(i) = h(Xi.col(i));
+    }
     VectorXd z_cap = UnscentedKalmanFilter::predict_mean(h_xi);
     // predict measurement covariance
-    MatrixXd Pz = UnscentedKalmanFilter::predict_covariance(h_xi, R);
+    MatrixXd Pz = UnscentedKalmanFilter::predict_covariance(z_cap, h_xi, R);
 
     // compute kalman gain
     MatrixXd K = UnscentedKalmanFilter::compute_kalman_gain(Pz, f_xi, h_xi, z_cap);
@@ -105,3 +119,12 @@ VectorXd UnscentedKalmanFilter::compute_estimate(VectorXd z) {
 
     return x;
 };
+
+// getter functions
+int UnscentedKalmanFilter::GetN() {return n;}
+
+int UnscentedKalmanFilter::GetM() {return m;}
+
+double UnscentedKalmanFilter::GetDt() {return dt;}
+
+UnscentedKalmanFilter::~UnscentedKalmanFilter() {}
