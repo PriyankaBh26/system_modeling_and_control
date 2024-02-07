@@ -43,16 +43,22 @@ int main() {
     // initialize state vector
     VectorXd x0(num_states);
     x0 << 0.0, 5.0;
+
+    // initialize control input
+    VectorXd u(1);
+
     // initialize error covariance matrix
     MatrixXd P0(num_states, num_states);
     P0 << 1, 0.0,
           0.0, 1;
 
-    // define mass-spring-damper system variables
+    // define Van der Pol oscillator system variables
     double t0 = 0.0;
     double dh = 1e-4;
 
-    VanDerPolOscillator* system = new VanDerPolOscillator(x0, t0, dh);
+    double mu = 2.5;
+    VanDerPolOscillator* system = new VanDerPolOscillator(x0, t0, dh,
+                                                          num_states, "van_der_pol", mu);
 
     // set integration duration
     double dt = 1e-2; 
@@ -80,9 +86,6 @@ int main() {
 
     // initialize measurement z
     std::vector<VectorXd> z_history;
-
-    // initialize control input
-    VectorXd u(num_states);
 
     // save x and t history
     std::vector<VectorXd> x_history;
