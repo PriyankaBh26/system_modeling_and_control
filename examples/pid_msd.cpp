@@ -11,7 +11,6 @@
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-using Eigen::Vector2d;
 
 class solve_mass_spring_damper : public OdeSolver {
     public: 
