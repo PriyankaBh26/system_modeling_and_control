@@ -12,10 +12,10 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-class solve_mass_spring_damper : public OdeSolver {
+class MassSpringDamperSys : public OdeSolver {
     public: 
 
-        solve_mass_spring_damper(VectorXd y0, double t0, 
+        MassSpringDamperSys(VectorXd y0, double t0, 
                                  double dt0, int num_states) : OdeSolver(y0, t0, dt0), 
                                  A(num_states, num_states) {};
 
@@ -64,7 +64,7 @@ int main() {
     // define mass-spring-damper system variables
     double t0 = 0.0;
     double dh = 1e-4;
-    solve_mass_spring_damper* system = new solve_mass_spring_damper(x0, t0, dh, num_states);
+    MassSpringDamperSys* system = new MassSpringDamperSys(x0, t0, dh, num_states);
 
     // set integration duration
     double dt = 1e-2; 
@@ -113,7 +113,7 @@ int main() {
         
         z_history.push_back(x + R * VectorXd::Random(num_states));
 
-        VectorXd x_est = kf->compute_estimate(z_history.back());
+        VectorXd x_est = kf->ComputeEstimate(z_history.back());
 
         t += dt;
         x_history.push_back(x);
