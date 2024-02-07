@@ -33,3 +33,9 @@ std::vector<std::string> VanDerPolOscillator::GetColumnNames() {
 };
 
 VectorXd VanDerPolOscillator::GetB() {return B;};
+
+std::ostream& operator << (std::ostream& out, const VanDerPolOscillator& system) {
+    out << "Printing Van der Pol oscillator model parameter:\n";
+    out << "mu " << system.mu << "\n";
+    return out;
+};

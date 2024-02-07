@@ -22,6 +22,8 @@ class VanDerPolOscillator : public OdeSolver {
         
         VectorXd GetB();
 
+        friend std::ostream& operator << (std::ostream& out, const VanDerPolOscillator& system);
+
     private:
         int num_states;
         MatrixXd A;

@@ -23,6 +23,8 @@ class DCMotorVelocity : public OdeSolver {
 
         VectorXd GetB();
 
+        friend std::ostream operator<<(std::ostream& out, const DCMotorVelocity& system);
+
     private:
         int num_states;
         MatrixXd A;

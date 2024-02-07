@@ -26,6 +26,8 @@ class MassSpringDamperSys : public OdeSolver {
     MatrixXd GetA();
     MatrixXd GetB();
 
+    friend std::ostream& operator << (std::ostream& out, const MassSpringDamperSys& system);
+
     private:
         MatrixXd A;
         MatrixXd B;

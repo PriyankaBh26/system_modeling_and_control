@@ -47,3 +47,12 @@ std::vector<std::string> MassSpringDamperSys::GetColumnNames() {
 MatrixXd MassSpringDamperSys::GetA() {return A;};
 
 MatrixXd MassSpringDamperSys::GetB() {return B;};
+
+std::ostream& operator << (std::ostream& out, const MassSpringDamperSys& system) {
+    out << "Printing mass-spring-damper model parameters:\n";
+    out << "(k) Spring constant  " << system.k << "N/m\n";
+    out << "(c) Damping constant " << system.c << "N/m.s\n";
+    out << "(m) Mass             " << system.m << "Kg\n";
+    return out;
+
+};
