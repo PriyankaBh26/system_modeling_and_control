@@ -25,7 +25,7 @@ VectorXd DCMotorVelocity::f(double t, VectorXd y, VectorXd u) {
 
 std::string DCMotorVelocity::GetName() {return sys_name;};
 
-std::vector<std::string> DCMotorVelocity::GetColumnNames() {return {"Vel", "Acc"};};
+std::vector<std::string> DCMotorVelocity::GetColumnNames() {return {"Vel", "Current"};};
 
 MatrixXd DCMotorVelocity::GetA() {return A;};
 
