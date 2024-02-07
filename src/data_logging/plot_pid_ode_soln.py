@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 # problem = "van_der_pol"
 problem = "dc_motor"
 
-y = pd.read_csv(f"{problem}_solution.csv", sep="\s+")
-t = pd.read_csv(f"{problem}_time.csv", sep=" ")
+y = pd.read_csv(f"examples/{problem}_solution.csv", sep="\s+")
+t = pd.read_csv(f"examples/{problem}_time.csv", sep=" ")
 
 pos = y["Pos"].to_numpy()
 vel = y["Vel"].to_numpy()
 time = t["time"].to_numpy()
 
-error = pd.read_csv(f"err_history.csv", sep="\s+")
+error = pd.read_csv(f"examples/err_history.csv", sep="\s+")
 # control_ip = pd.read_csv(f"control_ip_history.csv", sep="\s")
 
 pos_err = error["Pos_err"].to_numpy()
