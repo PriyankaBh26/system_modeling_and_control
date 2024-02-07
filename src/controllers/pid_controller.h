@@ -1,5 +1,5 @@
-#ifndef PIDCONTROLLER_H
-#define PIDCONTROLLER_H
+#ifndef PID_CONTROLLER_H
+#define PID_CONTROLLER_H
 
 # include <Eigen/Dense>
 

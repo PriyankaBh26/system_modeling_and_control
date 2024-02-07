@@ -3,7 +3,7 @@
 
 # include <Eigen/Dense>
 # include "numerical_solvers/rk_ode_solver.h"
-# include "controllers/pidcontroller.h"
+# include "controllers/pid_controller.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

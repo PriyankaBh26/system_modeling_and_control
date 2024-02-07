@@ -3,53 +3,13 @@
 # include <Eigen/Dense>
 
 # include "numerical_solvers/rk_ode_solver.h"
-# include "numerical_solvers/solver_helper_funs.h"
-# include "controllers/pidcontroller.h"
+# include "system_models/mass_spring_damper.h"
 # include "data_logging/savecsv.h"
 # include "data_logging/data_logging_helper_funs.h"
 # include "state_estimators/kalman_filter.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-
-class MassSpringDamperSys : public OdeSolver {
-    public: 
-
-        MassSpringDamperSys(VectorXd y0, double t0, 
-                                 double dt0, int num_states) : OdeSolver(y0, t0, dt0), 
-                                 A(num_states, num_states) {};
-
-        VectorXd f(double t, VectorXd y, VectorXd u) override {
-            double k = 1.0;
-            double c = 0.5;
-            double m = 1.0;
-
-            A(0,0) = 0;
-            A(0,1) = 1;
-            A(1,0) = -k/m;
-            A(1,1) = -c/m;
-
-            MatrixXd B(2,2);
-            B(0,0) = 0;
-            B(0,1) = 0;
-            B(1,0) = 0;
-            B(1,1) = 0;
-            VectorXd yd = A * y + B * u;
-            return yd;
-        }
-
-        std::string GetName() override {
-            return "msd_w_kalman_filter";
-        }
-
-        std::vector<std::string> GetColumnNames() override {
-            return {"Pos", "Vel"};
-        }
-
-        private:
-            MatrixXd A;
-
-};
 
 int main() {
     int num_states = 2;
@@ -64,7 +24,12 @@ int main() {
     // define mass-spring-damper system variables
     double t0 = 0.0;
     double dh = 1e-4;
-    MassSpringDamperSys* system = new MassSpringDamperSys(x0, t0, dh, num_states);
+
+    // initialize mass-spring-damper system
+    double k = 1.0;
+    double c = 1.0;
+    double m = 1.0;
+    MassSpringDamperSys* system = new MassSpringDamperSys(x0, t0, dh, num_states, "msd", k, c, m);
 
     // set integration duration
     double dt = 1e-2; 
@@ -72,8 +37,8 @@ int main() {
 
     // define state matrix A for discrete system
     MatrixXd A_state(num_states, num_states);
-    A_state << 1, dt,
-               0, 1;
+    A_state = MatrixXd::Identity(num_states, num_states) + system->GetA() * dt;
+
     // define process noise matrix
     MatrixXd Q(num_states, num_states);
     Q << 1e-2, 0.0,
@@ -96,7 +61,7 @@ int main() {
     std::vector<VectorXd> z_history;
 
     // initialize control input
-    VectorXd u(num_states);
+    VectorXd u(1);
 
     // save x and t history
     std::vector<VectorXd> x_history;
