@@ -3,6 +3,7 @@
 # include <Eigen/Dense>
 
 # include "numerical_solvers/rk_ode_solver.h"
+# include "system_models/mass_spring_damper.h"
 # include "controllers/pid_controller.h"
 # include "data_logging/savecsv.h"
 # include "data_logging/data_logging_helper_funs.h"
@@ -10,45 +11,6 @@
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-
-class solve_mass_spring_damper : public OdeSolver {
-    public: 
-
-        solve_mass_spring_damper(VectorXd y0, double t0, 
-                                 double dt0, int num_states) : OdeSolver(y0, t0, dt0), 
-                                 A(num_states, num_states) {};
-
-        VectorXd f(double t, VectorXd y, VectorXd u) override {
-            double k = 1.0;
-            double c = 0.5;
-            double m = 1.0;
-
-            A(0,0) = 0;
-            A(0,1) = 1;
-            A(1,0) = -k/m;
-            A(1,1) = -c/m;
-
-            MatrixXd B(2,2);
-            B(0,0) = 0;
-            B(0,1) = 0;
-            B(1,0) = 1/m;
-            B(1,1) = 1/m;
-            VectorXd yd = A * y + B * u;
-            return yd;
-        }
-
-        std::string GetName() override {
-            return "msd_w_kalman_pid";
-        }
-
-        std::vector<std::string> GetColumnNames() override {
-            return {"Pos", "Vel"};
-        }
-
-        private:
-            MatrixXd A;
-
-};
 
 VectorXd CalculateXref(std::string reference_trajectory_type, int num_states, double t) {
     VectorXd x_ref(num_states);
@@ -83,10 +45,25 @@ int main() {
     P0 << 10, 0.0,
           0.0, 10;
 
+    // initialize control input
+    int num_inputs = 2;
+    VectorXd u(num_inputs);
+
     // define mass-spring-damper system variables
     double t0 = 0.0;
     double dh = 1e-4;
-    solve_mass_spring_damper* system = new solve_mass_spring_damper(x0, t0, dh, num_states);
+
+    // initialize mass-spring-damper system
+    double k = 1.0;
+    double c = 1.0;
+    double m = 1.0;
+    MassSpringDamperSys* system = new MassSpringDamperSys(x0, t0, dh, num_states, num_inputs, "msd_kf_pid", k, c, m);
+
+    MatrixXd B_in(num_states, num_inputs);
+    B_in << 0, 0,
+            1, 1;
+
+    system->SetB(B_in);
 
     // set integration duration
     double dt = 1e-2; 
@@ -94,8 +71,8 @@ int main() {
 
     // define state matrix A for discrete system
     MatrixXd A_state(num_states, num_states);
-    A_state << 1, dt,
-               0, 1;
+    A_state = MatrixXd::Identity(num_states, num_states) + system->GetA() * dt;
+
     // define process noise matrix
     MatrixXd Q(num_states, num_states);
     Q << 1e-2, 0.0,
@@ -138,9 +115,6 @@ int main() {
 
     std::cout << *pid_controller << "\n";
 
-    // initialize control input
-    VectorXd u(num_states);
-
     // save x and t history
     std::vector<VectorXd> x_history;
     std::vector<VectorXd> u_history;
@@ -159,7 +133,7 @@ int main() {
         
         x_ref = CalculateXref(reference_trajectory_type, num_states, t);
 
-        VectorXd x_est = kf->compute_estimate(z_history.back());
+        VectorXd x_est = kf->ComputeEstimate(z_history.back());
 
         pid_controller->CalculateError(x_ref, x_est);
         u = pid_controller->GenerateControlInput();
@@ -176,5 +150,6 @@ int main() {
 
     delete kf;
     delete system;
+    delete pid_controller;
     return 0;
 }
