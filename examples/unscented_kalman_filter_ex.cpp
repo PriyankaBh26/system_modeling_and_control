@@ -3,6 +3,7 @@
 # include <Eigen/Dense>
 
 # include "numerical_solvers/rk_ode_solver.h"
+# include "system_models/van_der_pol_oscillator.h"
 # include "controllers/pid_controller.h"
 # include "data_logging/savecsv.h"
 # include "data_logging/data_logging_helper_funs.h"
@@ -11,30 +12,7 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-static const double MU = 2.5;
 static const double MU_1 = 5.5;
-
-class VanDerPolOscillator : public OdeSolver {
-    public: 
-
-        VanDerPolOscillator(VectorXd x0, double t0, double dt0) : OdeSolver(x0, t0, dt0) {};
-
-        VectorXd f(double time, VectorXd X, VectorXd u) override {
-            
-            VectorXd xd(2);
-            xd << X[1] + u[0], MU * (1 - std::pow(X[0], 2)) * X[1] - X[0] + u[1];
-
-            return xd;
-        }
-
-        std::string GetName() override {
-            return "van_der_pol_ukf";
-        }
-
-        std::vector<std::string> GetColumnNames() override {
-            return {"Pos", "Vel"};
-        }
-};
 
 class UKF : public UnscentedKalmanFilter {
 
