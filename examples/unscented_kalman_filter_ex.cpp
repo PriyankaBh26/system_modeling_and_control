@@ -14,35 +14,27 @@ using Eigen::VectorXd;
 
 static const double MU_1 = 5.5;
 
-class UKF : public UnscentedKalmanFilter {
+// update state variables, f(x) = [x1dot, x2dot .. xndot]T
+VectorXd UnscentedKalmanFilter::f(VectorXd Y) {
+    int n = GetN();
+    double dt = GetDt();
+    MatrixXd ydot(n, 1);
+    ydot << Y[1], MU_1 * (1 - std::pow(Y[0], 2)) * Y[1] - Y[0];
+    
+    Y = Y + ydot*dt;
+    return Y;
+};
 
-    public:
-    UKF(VectorXd x0, MatrixXd P0, MatrixXd Q_in, 
-        MatrixXd R_in, double dt, int n_in, int m_in, double kappa) : UnscentedKalmanFilter(x0, P0, Q_in, R_in, dt, n_in, m_in, kappa) {};
-
-    // update state variables, f(x) = [x1dot, x2dot .. xndot]T
-    VectorXd f(VectorXd Y) override {
-        int n = GetN();
-        double dt = GetDt();
-        MatrixXd ydot(n, 1);
-        ydot << Y[1], MU_1 * (1 - std::pow(Y[0], 2)) * Y[1] - Y[0];
-        
-        Y = Y + ydot*dt;
-        return Y;
-    };
-
-    // update outputs, y = h(x)
-    VectorXd h(VectorXd Y) override {
-        int n = GetN();
-        int m = GetM();
-        VectorXd Z(n);
-        MatrixXd H(m, n);
-        H << 1, 0,
-            0, 1;
-        Z = H * Y;
-        return Z;
-    };
-
+// update outputs, y = h(x)
+VectorXd UnscentedKalmanFilter::h(VectorXd Y) {
+    int n = GetN();
+    int m = GetM();
+    VectorXd Z(n);
+    MatrixXd H(m, n);
+    H << 1, 0,
+        0, 1;
+    Z = H * Y;
+    return Z;
 };
 
 int main() {
@@ -82,7 +74,9 @@ int main() {
     // set kappa to compute weights
     double kappa = abs(3 - num_states);
 
-    UKF* ukf = new UKF(x0_m, P0, Q, R, dt, num_states, num_outputs, kappa);
+    UnscentedKalmanFilter* ukf = new UnscentedKalmanFilter(x0_m, P0, Q, 
+                                                          R, dt, num_states, 
+                                                          num_outputs, kappa);
 
     // initialize measurement z
     std::vector<VectorXd> z_history;
