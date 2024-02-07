@@ -9,10 +9,17 @@ using Eigen::VectorXd;
 
 class MassSpringDamperSys : public OdeSolver {
     public: 
-    MassSpringDamperSys(VectorXd y0, double t0, double dt0, int num_states,
-                        std::string name, double k0, double c0, double m0);
+    MassSpringDamperSys(VectorXd y0, double t0, double dt0, 
+                        int num_states, std::string name, 
+                        double k0, double c0, double m0);
+
+    MassSpringDamperSys(VectorXd y0, double t0, double dt0, 
+                        int num_states, int num_inputs, std::string name, 
+                        double k0, double c0, double m0);
 
     VectorXd f(double t, VectorXd y, VectorXd u) override;
+
+    void SetB(MatrixXd B_in);
 
     std::string GetName() override;
 
