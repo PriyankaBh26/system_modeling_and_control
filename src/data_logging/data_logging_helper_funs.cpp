@@ -29,7 +29,7 @@ void SaveSimulationData(OdeSolver* ode,
 
     // save control input history to csv file
     std::vector<VectorXd> control_input_history = pid_controller->GetControlInputHistory();
-    filename = "examples/" + ode->GetName() + "_control_ip_history.csv";
+    filename = "examples/" + ode->GetName() + "_control_history.csv";
     columnNames = pid_controller->GetColumnNames();
     WriteMatToFile(filename, columnNames, control_input_history);
 
@@ -52,7 +52,7 @@ void SaveSimulationData(OdeSolver* ode,
     std::cout << x_history.size() << " " << x_history[0].size();
 
     // save control input history to csv file
-    filename = "examples/" + ode->GetName() + "_control_ip_history.csv";
+    filename = "examples/" + ode->GetName() + "_control_history.csv";
     columnNames = ode->GetControlInputColumnNames(u_history[0]);
     WriteMatToFile(filename, columnNames, u_history);
 
