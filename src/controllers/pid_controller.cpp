@@ -2,7 +2,7 @@
 # include <cmath>
 # include <iostream>
 # include <Eigen/Dense>
-# include "pidcontroller.h"
+# include "controllers/pid_controller.h"
 
 PID::PID(int n) : kp(n,n), ki(n,n), kd(n,n), error(n), d_error(n), sum(n), previous_error(n) {
     error_history.push_back(previous_error);
@@ -48,7 +48,7 @@ std::vector<std::string> PID::GetColumnNames() {
     return column_names;}
 
 std::ostream& operator << (std::ostream& out, const PID& PID) {
-    out << "Printing controller gains: " << "\n";
+    out << "Printing PID controller gains:\n";
     out << "KP = \n" << PID.kp << "\n";
     out << "KI = \n" << PID.ki << "\n";
     out << "KD = \n" << PID.kd << "\n";

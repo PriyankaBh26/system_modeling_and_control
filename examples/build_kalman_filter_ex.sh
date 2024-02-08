@@ -20,11 +20,11 @@ LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
 # Source files
 SRCS="examples/kalman_filter_ex.cpp 
-        src/controllers/pid_controller.cpp 
         src/numerical_solvers/rk_ode_solver.cpp 
-        src/numerical_solvers/solver_helper_funs.cpp 
+        src/system_models/mass_spring_damper.cpp
         src/state_estimators/kalman_filter.cpp
         src/data_logging/savecsv.cpp
+        src/controllers/pid_controller.cpp
         src/data_logging/data_logging_helper_funs.cpp"
 
 # Output executable name

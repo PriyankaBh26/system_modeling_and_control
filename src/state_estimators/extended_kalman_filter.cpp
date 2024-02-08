@@ -6,33 +6,11 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-ExtendedKalmanFilter::ExtendedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q_in, 
-                             MatrixXd R_in, double dt, int n_in, int m_in) : x(x0), P(P0), Q(Q_in), 
-                                                                            R(R_in), dt(dt), n(n_in), m(m_in) {};
-
-// update state variables
-VectorXd ExtendedKalmanFilter::f() {
-    VectorXd x(n); 
-    return x;
-};
-
-// update outputs
-VectorXd ExtendedKalmanFilter::h() {
-    VectorXd y(n);
-    return y;
-};
-
-// calculate f jacobian A
-MatrixXd ExtendedKalmanFilter::CalculateFxJacobian() {
-    MatrixXd A(n, n);
-    return A;
-};
-
-// calculate h jacobian H 
-MatrixXd ExtendedKalmanFilter::CalculateHxJacobian() {
-    MatrixXd H(m, n);
-    return H;
-};
+ExtendedKalmanFilter::ExtendedKalmanFilter(VectorXd x0, MatrixXd P0, 
+                            MatrixXd Q_in, MatrixXd R_in, 
+                            double dt, int n_in, int m_in) : x(x0), P(P0), 
+                                                             Q(Q_in), R(R_in), 
+                                                             dt(dt), n(n_in), m(m_in) {};
 
 // predict state and error covariance
 void ExtendedKalmanFilter::Predict(MatrixXd A) {

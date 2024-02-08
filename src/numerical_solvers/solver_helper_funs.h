@@ -4,7 +4,7 @@
 # include <Eigen/Dense>
 
 # include "numerical_solvers/solver_helper_funs.h"
-# include "controllers/pidcontroller.h"
+# include "controllers/pid_controller.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

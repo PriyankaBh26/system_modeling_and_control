@@ -3,7 +3,7 @@
 # include <iostream>
 # include <Eigen/Dense>
 
-# include "controllers/pidcontroller.h"
+# include "controllers/pid_controller.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

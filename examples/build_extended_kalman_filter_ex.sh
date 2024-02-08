@@ -22,6 +22,7 @@ LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 SRCS="examples/extended_kalman_filter_ex.cpp 
         src/controllers/pid_controller.cpp 
         src/numerical_solvers/rk_ode_solver.cpp 
+        src/system_models/van_der_pol_oscillator.cpp
         src/state_estimators/extended_kalman_filter.cpp
         src/data_logging/savecsv.cpp
         src/data_logging/data_logging_helper_funs.cpp"

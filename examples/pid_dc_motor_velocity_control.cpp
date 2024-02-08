@@ -4,69 +4,31 @@
 # include <Eigen/Dense>
 
 # include "numerical_solvers/rk_ode_solver.h"
-# include "numerical_solvers/solver_helper_funs.h"
-# include "controllers/pidcontroller.h"
+# include "system_models/dc_motor_velocity.h"
+# include "controllers/pid_controller.h"
 # include "data_logging/savecsv.h"
 # include "data_logging/data_logging_helper_funs.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-class MotorControl : public OdeSolver {
-    public: 
-
-        MotorControl(VectorXd y0, double t0, double dt0) : OdeSolver(y0, t0, dt0) {};
-
-        VectorXd f(double t, VectorXd y, VectorXd u) override {
-            double J = 0.01;
-            double b = 0.1;
-            double K = 0.01;
-            double R = 1;
-            double L = 0.5;
-
-            MatrixXd A(2,2);
-            A(0,0) = -b/J;
-            A(0,1) = K/J;
-            A(1,0) = -K/L;
-            A(1,1) = -R/L;
-
-            MatrixXd B(2,2);
-            B(0,0) = 0;
-            B(0,1) = 0;
-            B(1,0) = 1/L;
-            B(1,1) = 1/L;
-
-            VectorXd yd = A * y + B * u;
-            return yd;
-        }
-
-        std::string GetName() override {
-            return "dc_motor";
-        }
-
-        std::vector<std::string> GetColumnNames() override {
-            return {"Pos", "Vel"};
-        }
-
-};
-
 VectorXd CalculateXref(std::string reference_trajectory_type, int num_states, double t) {
     VectorXd x_ref(num_states);
     if (reference_trajectory_type == "step") {
         double A = 1.0;
-        x_ref << A, 0.0;
+        x_ref << A;
     } else if (reference_trajectory_type == "sine") {
         double A = 1.0;
         double f = 1;
-        x_ref << A*sin(2*M_PI*f*t), A*2*M_PI*f*cos(2*M_PI*f*t);
+        x_ref << A*sin(2*M_PI*f*t);
     } else if (reference_trajectory_type == "ramp") {
         double A = 1.0;
         double ramp_slope = 1.0;
         double max_ramp_time = 10;
         if (t < max_ramp_time) {
-            x_ref << A*ramp_slope*t, A*ramp_slope;
+            x_ref << A*ramp_slope*t;
         } else {
-            x_ref << ramp_slope*max_ramp_time, 0;
+            x_ref << ramp_slope*max_ramp_time;
 
         }
     }
@@ -82,7 +44,17 @@ int main () {
     double t0 = 0.0;
     double dh = 0.0001;
     
-    OdeSolver* ode = new MotorControl(y0, t0, dh);
+    // initialize dc motor velocity model
+    // reference: https://ctms.engin.umich.edu/CTMS/index.php?example=MotorSpeed&section=SystemModeling
+    double J = 0.01; // kg.m^2
+    double b = 0.1; // N.m.s
+    double K = 0.01; // V/rad/s
+    double R = 1; // ohm
+    double L = 0.5; // H
+
+    DCMotorVelocity* ode = new DCMotorVelocity(y0, t0, dh,
+                                            num_states, "dc_motor_vel", 
+                                            J, b, K, R, L);
 
     // choose reference trajectory 
     std::string reference_trajectory_type = "step";
@@ -91,23 +63,23 @@ int main () {
     // choose control action: open_loop or closed_loop
     std::string control_type = "open_loop";
     // initialize control input
-    VectorXd u(num_states);
+    VectorXd u(1);
     std::vector<VectorXd> u_history;
     
     // set integration duration
     double dt = 0.01; 
     double time_final = 1;
 
-    PID* pid_controller = new PID(num_states);
+    PID* pid_controller = new PID(1);
     if (control_type == "closed_loop") {
         // initialize PID controller
-        MatrixXd KP = MatrixXd::Constant(2,2,0.0);
+        MatrixXd KP = MatrixXd::Constant(1,1,0.0);
         KP(0,0) = 11.0;
         
-        MatrixXd KI = MatrixXd::Constant(2,2,0.0);
+        MatrixXd KI = MatrixXd::Constant(1,1,0.0);
         KI(0,0) = 0.6; // ki < (1+kp) // ki < b/m(k+kp)
 
-        MatrixXd KD = MatrixXd::Constant(2,2,0.0);
+        MatrixXd KD = MatrixXd::Constant(1,1,0.0);
         KD(0,0) = 0.05;
 
         // set PID gains
@@ -133,12 +105,16 @@ int main () {
         VectorXd x = ode->GetX();
         z.push_back(x + measurement_noise * VectorXd::Random(2));
 
-        x_ref = CalculateXref(reference_trajectory_type, num_states, t);
+        x_ref = CalculateXref(reference_trajectory_type, 1, t);
 
         if (control_type == "closed_loop") {
-            u = CalculateControlInput(x_ref, x, pid_controller, num_states);
+            VectorXd x_in(1);
+            x_in << x(0);
+            pid_controller->CalculateError(x_ref, x_in);
+            u = pid_controller->GenerateControlInput();
         } else if (control_type == "open_loop") {
-            u = CalculateControlInput(x_ref, num_states);
+            double A = 10;
+            u = A * x_ref;
             u_history.push_back(u);
         }
 

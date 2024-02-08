@@ -3,7 +3,8 @@
 # include <Eigen/Dense>
 
 # include "numerical_solvers/rk_ode_solver.h"
-# include "controllers/pidcontroller.h"
+# include "system_models/van_der_pol_oscillator.h"
+# include "controllers/pid_controller.h"
 # include "data_logging/savecsv.h"
 # include "data_logging/data_logging_helper_funs.h"
 # include "state_estimators/unscented_kalman_filter.h"
@@ -11,60 +12,25 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-static const double MU = 2.5;
 static const double MU_1 = 5.5;
 
-class VanDerPolOscillator : public OdeSolver {
-    public: 
-
-        VanDerPolOscillator(VectorXd x0, double t0, double dt0) : OdeSolver(x0, t0, dt0) {};
-
-        VectorXd f(double time, VectorXd X, VectorXd u) override {
-            
-            VectorXd xd(2);
-            xd << X[1] + u[0], MU * (1 - std::pow(X[0], 2)) * X[1] - X[0] + u[1];
-
-            return xd;
-        }
-
-        std::string GetName() override {
-            return "van_der_pol_ukf";
-        }
-
-        std::vector<std::string> GetColumnNames() override {
-            return {"Pos", "Vel"};
-        }
+// update state variables, f(x) = [x1dot, x2dot .. xndot]T
+VectorXd UnscentedKalmanFilter::f(VectorXd Y) {
+    MatrixXd ydot(n, 1);
+    ydot << Y[1], MU_1 * (1 - std::pow(Y[0], 2)) * Y[1] - Y[0];
+    
+    Y = Y + ydot*dt;
+    return Y;
 };
 
-class UKF : public UnscentedKalmanFilter {
-
-    public:
-    UKF(VectorXd x0, MatrixXd P0, MatrixXd Q_in, 
-        MatrixXd R_in, double dt, int n_in, int m_in, double kappa) : UnscentedKalmanFilter(x0, P0, Q_in, R_in, dt, n_in, m_in, kappa) {};
-
-    // update state variables, f(x) = [x1dot, x2dot .. xndot]T
-    VectorXd f(VectorXd Y) override {
-        int n = GetN();
-        double dt = GetDt();
-        MatrixXd ydot(n, 1);
-        ydot << Y[1], MU_1 * (1 - std::pow(Y[0], 2)) * Y[1] - Y[0];
-        
-        Y = Y + ydot*dt;
-        return Y;
-    };
-
-    // update outputs, y = h(x)
-    VectorXd h(VectorXd Y) override {
-        int n = GetN();
-        int m = GetM();
-        VectorXd Z(n);
-        MatrixXd H(m, n);
-        H << 1, 0,
-            0, 1;
-        Z = H * Y;
-        return Z;
-    };
-
+// update outputs, y = h(x)
+VectorXd UnscentedKalmanFilter::h(VectorXd Y) {
+    VectorXd Z(n);
+    MatrixXd H(m, n);
+    H << 1, 0,
+        0, 1;
+    Z = H * Y;
+    return Z;
 };
 
 int main() {
@@ -73,16 +39,22 @@ int main() {
     // initialize state vector
     VectorXd x0(num_states);
     x0 << 0.0, 5.0;
+
+    // initialize control input
+    VectorXd u(1);
+
     // initialize error covariance matrix
     MatrixXd P0(num_states, num_states);
     P0 << 1, 0.0,
           0.0, 1;
 
-    // define mass-spring-damper system variables
+    // define Van der Pol oscillator system variables
     double t0 = 0.0;
     double dh = 1e-4;
 
-    VanDerPolOscillator* system = new VanDerPolOscillator(x0, t0, dh);
+    double mu = 2.5;
+    VanDerPolOscillator* system = new VanDerPolOscillator(x0, t0, dh,
+                                                          num_states, "van_der_pol", mu);
 
     // set integration duration
     double dt = 1e-2; 
@@ -104,13 +76,12 @@ int main() {
     // set kappa to compute weights
     double kappa = abs(3 - num_states);
 
-    UKF* ukf = new UKF(x0_m, P0, Q, R, dt, num_states, num_outputs, kappa);
+    UnscentedKalmanFilter* ukf = new UnscentedKalmanFilter(x0_m, P0, Q, 
+                                                          R, dt, num_states, 
+                                                          num_outputs, kappa);
 
     // initialize measurement z
     std::vector<VectorXd> z_history;
-
-    // initialize control input
-    VectorXd u(num_states);
 
     // save x and t history
     std::vector<VectorXd> x_history;
