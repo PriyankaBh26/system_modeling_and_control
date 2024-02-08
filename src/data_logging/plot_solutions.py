@@ -26,10 +26,10 @@ def main():
     problem = args.problem
     print("problem:", problem)
 
-    y = pd.read_csv(f"examples/{problem}_solution.csv", sep="\s+")
+    y = pd.read_csv(f"{directory}/{problem}_solution.csv", sep="\s+")
     states = y.columns
     y = y.to_numpy()
-    t = pd.read_csv(f"examples/{problem}_time.csv", sep=" ")
+    t = pd.read_csv(f"{directory}/{problem}_time.csv", sep=" ")
     t = t.to_numpy()
     num_states = y.shape[1] # number of columns of df
 
@@ -49,12 +49,12 @@ def main():
 
     if control_history:
         print("Control history and error history is present")
-        u = pd.read_csv(f"examples/{problem}_control_history.csv", sep="\s+")
+        u = pd.read_csv(f"{directory}/{problem}_control_history.csv", sep="\s+")
         control_ips = u.columns
         num_control_ips = control_ips.size
         u = u.to_numpy()
 
-        error = pd.read_csv(f"examples/{problem}_err_history.csv", sep="\s+")
+        error = pd.read_csv(f"{directory}/{problem}_err_history.csv", sep="\s+")
         err_ips = error.columns
         num_err_ips = err_ips.size
         error = error.to_numpy()
@@ -74,7 +74,7 @@ def main():
 
     if measurement_history:
         print("Measurement history is present")
-        y_meas = pd.read_csv(f"examples/{problem}_meas_history.csv", sep="\s+")
+        y_meas = pd.read_csv(f"{directory}/{problem}_meas_history.csv", sep="\s+")
         y_meas = y_meas.to_numpy()
         for j in range(num_states):
             ax1[j].plot(t, y_meas[:,j], label = "meas_" + states[j])
@@ -83,7 +83,7 @@ def main():
 
     if estimated_state_history:
         print("Estimated state history is present")
-        y_est = pd.read_csv(f"examples/{problem}_est_history.csv", sep="\s+")
+        y_est = pd.read_csv(f"{directory}/{problem}_est_history.csv", sep="\s+")
         y_est = y_est.to_numpy()
         for j in range(num_states):
             ax1[j].plot(t, y_est[:,j], label = "est_" + states[j])
