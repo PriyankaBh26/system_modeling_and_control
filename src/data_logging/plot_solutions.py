@@ -48,18 +48,29 @@ def main():
     estimated_state_history = args.estimated_state_history
 
     if control_history:
-        print("Control history is present")
+        print("Control history and error history is present")
         u = pd.read_csv(f"examples/{problem}_control_history.csv", sep="\s+")
         control_ips = u.columns
         num_control_ips = control_ips.size
         u = u.to_numpy()
+        print(u[:,0].shape)
+        error = pd.read_csv(f"examples/{problem}_err_history.csv", sep="\s+")
+        err_ips = error.columns
+        num_err_ips = err_ips.size
+        error = error.to_numpy()
+
         # Create a figure and axis
-        fig2, ax2 = plt.subplots(num_control_ips)
-        fig2.suptitle(f"{problem} Control Inputs")
+        fig2, ax2 = plt.subplots(2, num_control_ips)
+        fig2.suptitle(f"{problem} Control Inputs and error")
         for k in range(num_control_ips):
-            ax2[k].plot(t, u[:,k], label = states[k])
-            ax2[k].grid(True)
-            ax2[k].legend()
+            ax2[0,k].plot(t, u[:,k], label = control_ips[k])
+            ax2[0,k].grid(True)
+            ax2[0,k].legend()
+
+        for k in range(num_err_ips):
+            ax2[1,k].plot(t, error[:,k], label = "err_" + err_ips[k])
+            ax2[1,k].grid(True)
+            ax2[1,k].legend()
 
     if measurement_history:
         print("Measurement history is present")
