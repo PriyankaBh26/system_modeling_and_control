@@ -5,7 +5,7 @@
 
 # include "data_logging/data_logging_helper_funs.h"
 # include "numerical_solvers/rk_ode_solver.h"
-# include "controllers/pidcontroller.h"
+# include "controllers/pid_controller.h"
 # include "data_logging/savecsv.h"
 
 using Eigen::MatrixXd;
@@ -24,12 +24,12 @@ void SaveSimulationData(OdeSolver* ode,
 
     // save final error history to csv file
     std::vector<VectorXd> error_history = pid_controller->GetErrorHistory();
-    filename = "examples/" + ode->GetName() + "err_history.csv";
+    filename = "examples/" + ode->GetName() + "_err_history.csv";
     WriteMatToFile(filename, columnNames, error_history);
 
     // save control input history to csv file
     std::vector<VectorXd> control_input_history = pid_controller->GetControlInputHistory();
-    filename = "examples/" + ode->GetName() + "control_ip_history.csv";
+    filename = "examples/" + ode->GetName() + "_control_history.csv";
     columnNames = pid_controller->GetColumnNames();
     WriteMatToFile(filename, columnNames, control_input_history);
 
@@ -52,8 +52,8 @@ void SaveSimulationData(OdeSolver* ode,
     std::cout << x_history.size() << " " << x_history[0].size();
 
     // save control input history to csv file
-    filename = "examples/" + ode->GetName() + "control_ip_history.csv";
-    columnNames = ode->GetControlInputColumnNames();
+    filename = "examples/" + ode->GetName() + "_control_history.csv";
+    columnNames = ode->GetControlInputColumnNames(u_history[0]);
     WriteMatToFile(filename, columnNames, u_history);
 
     // save time to csv file

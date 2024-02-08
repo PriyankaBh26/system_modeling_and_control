@@ -15,18 +15,6 @@ UnscentedKalmanFilter::UnscentedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd 
                                                                     m(m), kappa(kappa), W(2*n+1) {
                                                                           UnscentedKalmanFilter::ComputeWeights();};
 
-// update state variables
-VectorXd UnscentedKalmanFilter::f(VectorXd Y) {
-    VectorXd YY(n);
-    return YY;
-};
-
-// update outputs
-VectorXd UnscentedKalmanFilter::h(VectorXd Y) {
-    VectorXd YY(m);
-    return YY;
-};
-
 // compute Xi
 MatrixXd UnscentedKalmanFilter::ComputeSigmaPointsXi() {
     MatrixXd Xi(n, 2*n+1);

@@ -12,7 +12,7 @@ class OdeSolver {
         virtual std::string GetName();
         virtual std::vector<std::string> GetColumnNames();
         
-        std::vector<std::string> GetControlInputColumnNames();
+        std::vector<std::string> GetControlInputColumnNames(Eigen::VectorXd u);
 
         void RK4Update(Eigen::VectorXd u);
         void IntegrateODE(int timesteps, Eigen::VectorXd u);

@@ -4,50 +4,14 @@
 # include <Eigen/Dense>
 
 # include "numerical_solvers/rk_ode_solver.h"
+# include "system_models/mass_spring_damper.h"
 # include "numerical_solvers/solver_helper_funs.h"
-# include "controllers/pidcontroller.h"
+# include "controllers/pid_controller.h"
 # include "data_logging/savecsv.h"
 # include "data_logging/data_logging_helper_funs.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-using Eigen::Vector2d;
-
-class solve_mass_spring_damper : public OdeSolver {
-    public: 
-
-        solve_mass_spring_damper(VectorXd y0, double t0, double dt0) : OdeSolver(y0, t0, dt0) {};
-
-        VectorXd f(double t, VectorXd y, VectorXd u) override {
-            double k = 1.0;
-            double c = 1.0;
-            double m = 1.0;
-
-            MatrixXd A(2,2);
-            A(0,0) = 0;
-            A(0,1) = 1;
-            A(1,0) = -k/m;
-            A(1,1) = -c/m;
-
-            MatrixXd B(2,2);
-            B(0,0) = 0;
-            B(0,1) = 0;
-            B(1,0) = 1/m;
-            B(1,1) = 1/m;
-
-            VectorXd yd = A * y + B * u;
-            return yd;
-        }
-
-        std::string GetName() override {
-            return "mass_spring_damper";
-        }
-
-        std::vector<std::string> GetColumnNames() override {
-            return {"Pos", "Vel"};
-        }
-
-};
 
 VectorXd CalculateXref(std::string reference_trajectory_type, int num_states, double t) {
     VectorXd x_ref(num_states);
@@ -74,24 +38,34 @@ VectorXd CalculateXref(std::string reference_trajectory_type, int num_states, do
 
 int main () {
 
-    // initialize mass-spring-damper system
+    // initialize state
     int num_states = 2; 
-    VectorXd y0(num_states);
-    y0 << 0.1, 0.0;
+    int num_inputs = 2;
+    VectorXd x0(num_states);
+    x0 << 0.1, 0.0;
     double t0 = 0.0;
     double dh = 0.0001;
 
-    OdeSolver* ode = new solve_mass_spring_damper(y0, t0, dh);
+    // initialize control input
+    VectorXd u(num_inputs);
+    std::vector<VectorXd> u_history;
+
+    // initialize mass-spring-damper system
+    double k = 1.0;
+    double c = 1.0;
+    double m = 1.0;
+    MatrixXd B_in(num_states, num_inputs);
+    B_in << 0, 0,
+            1, 1;
+    MassSpringDamperSys* ode = new MassSpringDamperSys(x0, t0, dh, num_states, B_in, "msd", k, c, m);
+    std::cout << *ode;
 
     // choose reference trajectory 
     std::string reference_trajectory_type = "step";
     VectorXd x_ref(num_states);
 
     // choose control action: open_loop or closed_loop
-    std::string control_type = "open_loop";
-    // initialize control input
-    VectorXd u(num_states);
-    std::vector<VectorXd> u_history;
+    std::string control_type = "closed_loop";
     
     // set integration duration
     double dt = 0.01; 
@@ -122,9 +96,10 @@ int main () {
     // save x and t history
     std::vector<VectorXd> x_history;
     std::vector<double> t_history;
-
     // system dynamics and controller action
     double t = 0;
+    x_history.push_back(x0);
+    t_history.push_back(t);
     while (t < time_final) {
         int ode_timesteps = dt/dh;
         ode->IntegrateODE(ode_timesteps, u);
@@ -155,6 +130,5 @@ int main () {
     }
 
     delete ode;
-    delete pid_controller;
     return 0;
 }

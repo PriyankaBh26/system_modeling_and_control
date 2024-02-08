@@ -19,11 +19,10 @@ LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_c
 LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
 # Source files
-SRCS="examples/pid_msd.cpp 
+SRCS="examples/pid_dc_motor_velocity_control.cpp 
       src/controllers/pid_controller.cpp 
       src/numerical_solvers/rk_ode_solver.cpp 
-      src/system_models/mass_spring_damper.cpp
-      src/numerical_solvers/solver_helper_funs.cpp 
+      src/system_models/dc_motor_velocity.cpp
       src/data_logging/savecsv.cpp
       src/data_logging/data_logging_helper_funs.cpp"
 

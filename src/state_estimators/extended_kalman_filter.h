@@ -8,7 +8,9 @@ using Eigen::VectorXd;
 
 class ExtendedKalmanFilter {
     public:
-        ExtendedKalmanFilter(VectorXd x0, MatrixXd P0, MatrixXd Q_in, MatrixXd R_in, double dt, int n_in, int m_in);
+        ExtendedKalmanFilter(VectorXd x0, MatrixXd P0, 
+                             MatrixXd Q_in, MatrixXd R_in, 
+                             double dt, int n_in, int m_in);
 
         virtual ~ExtendedKalmanFilter();
 

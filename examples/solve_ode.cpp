@@ -3,59 +3,13 @@
 # include <cmath>
 # include <Eigen/Dense>
 
+# include "system_models/van_der_pol_oscillator.h"
 # include "numerical_solvers/rk_ode_solver.h"
+# include "system_models/mass_spring_damper.h"
 # include "data_logging/savecsv.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-
-class MassSpringDamper : public OdeSolver {
-    public: 
-
-        MassSpringDamper(VectorXd x0, double t0, double dt0) : OdeSolver(x0, t0, dt0) {};
-
-        VectorXd f(double t, VectorXd x, VectorXd u) override {
-            double k = 1.0;
-            double c = 0.01;
-            double m = 1.0;
-
-            VectorXd xd(2);
-            xd << x[1] + u[0], - k/m * x[0] - c/m * x[1] + u[1];
-            return xd;
-        }
-
-        std::string GetName() override {
-            return "mass_spring_damper";
-        }
-
-        std::vector<std::string> GetColumnNames() override {
-            return {"Pos", "Vel"};
-        }
-};
-
-class VanDerPolOscillator : public OdeSolver {
-    public: 
-
-        VanDerPolOscillator(VectorXd x0, double t0, double dt0) : OdeSolver(x0, t0, dt0) {};
-
-        VectorXd f(double t, VectorXd x, VectorXd u) override {
-            double mu = 2.5;
-            
-            VectorXd xd(2);
-            xd << x[1] + u[0], mu * (1 - std::pow(x[0], 2)) * x[1] - x[0] + u[1];
-
-            return xd;
-        }
-
-        std::string GetName() override {
-            return "van_der_pol";
-        }
-
-        std::vector<std::string> GetColumnNames() override {
-            return {"Pos", "Vel"};
-        }
-};
-
 
 int main () {
     
@@ -65,14 +19,23 @@ int main () {
     double t0 = 0.0;
     double dh = 0.0001;
 
-    std::unique_ptr<OdeSolver> ode (new VanDerPolOscillator(x0, t0, dh));
+    // initialize mass-spring-damper system
+    // double k = 1.0;
+    // double c = 1.0;
+    // double m = 1.0;
+    // MassSpringDamperSys* ode = new MassSpringDamperSys(x0, t0, dh, num_states, "msd", k, c, m);
+
+    // initialize van der pol oscillator system
+    double mu = 2.5;
+    VanDerPolOscillator* ode = new VanDerPolOscillator(x0, t0, dh, num_states, "van_der_pol", mu);
 
     // set integration duration
     double time_final = 1;
     int ode_timesteps = time_final/dh;
 
     // initialize control input
-    VectorXd u(num_states);
+    VectorXd u(1);
+    u << 0;
 
     ode->IntegrateODE(ode_timesteps, u);
 
@@ -90,5 +53,6 @@ int main () {
     columnNames = {"time"};
     WriteVecToFile(filename, columnNames, t_history);
 
+    delete ode;
     return 0;
 }
