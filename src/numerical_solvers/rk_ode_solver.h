@@ -8,7 +8,12 @@ class OdeSolver {
         OdeSolver(Eigen::VectorXd x0, double t0, double dt0);
         virtual ~OdeSolver();
 
-        virtual Eigen::VectorXd f(double t, Eigen::VectorXd x, Eigen::VectorXd u);
+        virtual Eigen::VectorXd f(double t, Eigen::VectorXd X, Eigen::VectorXd u);
+        virtual MatrixXd CalculateFxJacobian(VectorXd X);
+
+        virtual Eigen::VectorXd h(double t, Eigen::VectorXd X, Eigen::VectorXd u);
+        virtual MatrixXd CalculateHxJacobian(VectorXd X);
+
         virtual std::string GetName();
         virtual std::vector<std::string> GetColumnNames();
         
