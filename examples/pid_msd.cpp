@@ -96,9 +96,10 @@ int main () {
     // save x and t history
     std::vector<VectorXd> x_history;
     std::vector<double> t_history;
-
     // system dynamics and controller action
     double t = 0;
+    x_history.push_back(x0);
+    t_history.push_back(t);
     while (t < time_final) {
         int ode_timesteps = dt/dh;
         ode->IntegrateODE(ode_timesteps, u);
