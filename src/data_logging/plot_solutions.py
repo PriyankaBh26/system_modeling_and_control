@@ -53,7 +53,7 @@ def main():
         control_ips = u.columns
         num_control_ips = control_ips.size
         u = u.to_numpy()
-        print(u[:,0].shape)
+
         error = pd.read_csv(f"examples/{problem}_err_history.csv", sep="\s+")
         err_ips = error.columns
         num_err_ips = err_ips.size
