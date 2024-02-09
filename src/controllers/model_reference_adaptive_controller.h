@@ -19,7 +19,7 @@ class DirectMRAC {
                     double learning_rate_v,
                     double learning_rate_kx,
                     double learning_rate_kr,
-                    MatrixXd A_ref,
+                    MatrixXd P,
                     MatrixXd B);
 
         VectorXd phi(VectorXd x);
@@ -35,8 +35,6 @@ class DirectMRAC {
         void UpdateKr(VectorXd r);
 
         void CalculateError(VectorXd x_ref, VectorXd x);
-
-        void CalculateMatrixP();
 
         VectorXd UpdateAdaptiveControlInput(VectorXd x);
 
@@ -60,7 +58,6 @@ class DirectMRAC {
         double learning_rate_kx;
         double learning_rate_kr;
         MatrixXd P;
-        MatrixXd A_ref;
         MatrixXd B;
         VectorXd error;
 };

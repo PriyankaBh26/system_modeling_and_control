@@ -21,7 +21,7 @@ DirectMRAC::DirectMRAC(
     double gamma_v,
     double gamma_kx,
     double gamma_kr,
-    MatrixXd A_ref_in,
+    MatrixXd P_in,
     MatrixXd B_in) :   disturbance_model_feature_type(str),
                         num_features(features),
                         disturbance_mean_std_bw(d0),
@@ -35,8 +35,7 @@ DirectMRAC::DirectMRAC(
                         learning_rate_v(gamma_v),
                         learning_rate_kx(gamma_kx),
                         learning_rate_kr(gamma_kr),
-                        P(n,n),
-                        A_ref(A_ref_in),
+                        P(P_in),
                         B(B_in),
                         error(n) {
     DirectMRAC::CalculateMatrixP();
@@ -101,21 +100,6 @@ void DirectMRAC::UpdateKx(VectorXd x) {
 void DirectMRAC::UpdateKr(VectorXd r) {
     VectorXd Krdot = learning_rate_kr * r * error.transpose() * P * B;
     Kr = Kr + Krdot * dt;
-};
-
-void DirectMRAC::CalculateMatrixP() {
-    // Solve the Lyapunov equation AmP + PAm^T = -Q
-    MatrixXd Q = MatrixXd::Identity(num_states, num_states);
-    LLT<MatrixXd> lltOfA(A_ref.transpose());
-    if (lltOfA.info() == Eigen::Success) {
-        // A is positive definite
-        P = lltOfA.solve(-Q);
-        P = (P + P.transpose()) / 2; // Ensure symmetric solution
-    } else {
-        // A is not positive definite
-        std::cout << "Matrix A is not positive definite. Cannot solve Lyapunov equation." << std::endl;
-    }
-
 };
 
 void DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x) {
