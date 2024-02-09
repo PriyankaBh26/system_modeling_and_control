@@ -84,10 +84,10 @@ VectorXd DirectMRAC::dsigmoid(VectorXd Y) {
 };
 
 DirectMRAC::UpdateWeights(VectorXd x) {
-    if (disturbance_model_feature_type = "radial_basis_fun") {
+    if (disturbance_model_feature_type == "radial_basis_fun") {
         wdot = learning_rate_w * phi(x) * error.transpose() * P * B;
         w = w + wdot * dt;
-    } else if (disturbance_model_feature_type = "single_hidden_layer_nn") {
+    } else if (disturbance_model_feature_type == "single_hidden_layer_nn") {
         wdot = -(sigmoid(V.transpose() * x) - dsigmoid(V.transpose() * x) * V.transpose() * x) * error.transpose() * P * B * learning_rate_w;
         Vdot = -learning_rate_v * x * error.transpose() * P * B * w.transpose() * sigmoid(V.transpose() * x);
         w = w + wdot * dt;
@@ -128,9 +128,9 @@ DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x) {
 VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
     UpdateWeights(VectorXd x);
     VectorXd u_ad(1);
-    if (disturbance_model_feature_type = "radial_basis_fun") {
+    if (disturbance_model_feature_type == "radial_basis_fun") {
         u_ad = w.transpose() * phi(x);
-    } else if (disturbance_model_feature_type = "single_hidden_layer_nn") {
+    } else if (disturbance_model_feature_type == "single_hidden_layer_nn") {
         u_ad = w.transpose() * sigmoid(V.transpose() * x)
     return u_ad;
 };
