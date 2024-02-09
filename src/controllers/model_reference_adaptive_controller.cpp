@@ -110,7 +110,7 @@ void DirectMRAC::CalculateMatrixP() {
     // Solve the Lyapunov equation AmP + PAm^T = -Q
     MatrixXd Q = MatrixXd::Identity(num_states, num_states);
     LLT<MatrixXd> lltOfA(A_ref.transpose());
-    if (lltOfA.info() == Success) {
+    if (lltOfA.info() == Eigen::Success) {
         // A is positive definite
         P = lltOfA.solve(-Q);
         P = (P + P.transpose()) / 2; // Ensure symmetric solution
@@ -133,6 +133,7 @@ VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
     } else if (disturbance_model_feature_type == "single_hidden_layer_nn") {
         u_ad = w.transpose() * sigmoid(V.transpose() * x);
     return u_ad;
+    }
 };
 
 VectorXd DirectMRAC::UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x) {
