@@ -12,7 +12,7 @@ class DirectMRAC {
     public:
         DirectMRAC(std::string disturbance_model_feature_type,
                     int num_features,
-                    VectorXd disturbance_mean_std,
+                    VectorXd disturbance_mean_std_bw,
                     int num_states,
                     double dt,
                     VectorXd w0,
