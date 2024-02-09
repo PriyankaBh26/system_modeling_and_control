@@ -15,11 +15,10 @@ class DirectMRAC {
                     VectorXd disturbance_mean_std_bw,
                     int num_states,
                     double dt,
-                    VectorXd w0,
                     double learning_rate_w,
                     double learning_rate_v,
                     double learning_rate_kx,
-                    double learning_rate_kr
+                    double learning_rate_kr,
                     MatrixXd A_ref,
                     MatrixXd B);
 
@@ -49,10 +48,10 @@ class DirectMRAC {
         std::string disturbance_model_feature_type;
         int num_features;
         VectorXd disturbance_mean_std_bw;
-        VectorXd centers;
         int num_states;
         double dt;
         VectorXd w;
+        VectorXd centers;
         VectorXd V;
         VectorXd Kx;
         VectorXd Kr;
