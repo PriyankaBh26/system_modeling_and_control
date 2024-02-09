@@ -12,26 +12,7 @@ OdeSolver::OdeSolver(VectorXd x0, double t0, double dt0) : x(x0), t(t0), dt(dt0)
     t_history.push_back(t0);
 };
 
-std::string OdeSolver::GetName() {return "generic_ode";}
-
-std::vector<std::string> OdeSolver::GetColumnNames() {
-    std::vector<std::string> column_names;
-    int ip_size = x.size();
-    for (int i{0}; i<ip_size; i++) {
-        column_names.push_back("x" + std::to_string(i));
-    }    
-    return column_names;
-}
-
-std::vector<std::string> OdeSolver::GetControlInputColumnNames(VectorXd u) {
-    std::vector<std::string> column_names;
-    int ip_size = u.size();
-    for (int i{0}; i<ip_size; i++) {
-        column_names.push_back("U" + std::to_string(i));
-    }    
-    return column_names;
-}
-
+VectorXd OdeSolver::f(double t, VectorXd X, VectorXd u) {return X;};
 
 void OdeSolver::RK4Update(VectorXd u) {
     // k1 = f(t, x)
@@ -55,15 +36,7 @@ void OdeSolver::RK4Update(VectorXd u) {
     // update t
     t = t + dt;
 
-}
-
-VectorXd OdeSolver::GetX() {
-    return x;
-}
-
-double OdeSolver::GetT() {
-    return t;
-}
+};
 
 void OdeSolver::IntegrateODE(int timesteps, VectorXd u) {
     for (int i{1}; i<=timesteps; i++) {
@@ -73,11 +46,39 @@ void OdeSolver::IntegrateODE(int timesteps, VectorXd u) {
         t_history.push_back(t);
     }
     return;
-}
+};
 
-std::vector<VectorXd> OdeSolver::GetXHistory() {return x_history;}
+std::string OdeSolver::GetName() {return "generic_ode";};
 
-std::vector<double> OdeSolver::GetTHistory() {return t_history;}
+std::vector<std::string> OdeSolver::GetColumnNames() {
+    std::vector<std::string> column_names;
+    int ip_size = x.size();
+    for (int i{0}; i<ip_size; i++) {
+        column_names.push_back("x" + std::to_string(i));
+    }    
+    return column_names;
+};
 
-OdeSolver::~OdeSolver() {}
+std::vector<std::string> OdeSolver::GetControlInputColumnNames(VectorXd u) {
+    std::vector<std::string> column_names;
+    int ip_size = u.size();
+    for (int i{0}; i<ip_size; i++) {
+        column_names.push_back("U" + std::to_string(i));
+    }    
+    return column_names;
+};
+
+VectorXd OdeSolver::GetX() {
+    return x;
+};
+
+double OdeSolver::GetT() {
+    return t;
+};
+
+std::vector<VectorXd> OdeSolver::GetXHistory() {return x_history;};
+
+std::vector<double> OdeSolver::GetTHistory() {return t_history;};
+
+OdeSolver::~OdeSolver() {};
 

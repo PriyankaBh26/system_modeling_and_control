@@ -12,11 +12,7 @@ class OdeSolver {
         virtual ~OdeSolver();
 
         virtual VectorXd f(double t, VectorXd X, VectorXd u);
-        virtual MatrixXd CalculateFxJacobian(VectorXd X);
-
-        virtual VectorXd h(double t, VectorXd X, VectorXd u);
-        virtual MatrixXd CalculateHxJacobian(VectorXd X);
-
+        
         virtual std::string GetName();
         virtual std::vector<std::string> GetColumnNames();
         
