@@ -28,7 +28,7 @@ DirectMRAC::DirectMRAC(
                         num_states(n),
                         dt(dt0),
                         w(VectorXd::Random(n)),
-                        centers(features)
+                        centers(features),
                         V(features),
                         Kx(n), Kr(n),
                         learning_rate_w(gamma_w),
