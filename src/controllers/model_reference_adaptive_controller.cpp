@@ -9,6 +9,7 @@
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using Eigen::LLT;
 
 
 DirectMRAC::DirectMRAC(
