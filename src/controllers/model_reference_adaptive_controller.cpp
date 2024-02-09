@@ -36,7 +36,7 @@ DirectMRAC::DirectMRAC(
                         learning_rate_kr(gamma_kr)
                         A_ref(A_nom),
                         B(B_in) {
-    CalculateMatrixP();
+    DirectMRAC::CalculateMatrixP();
     // Define a random number generator
     std::default_random_engine generator;
 
@@ -126,7 +126,7 @@ void DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x) {
 };
 
 VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
-    UpdateWeights(VectorXd x);
+    DirectMRAC::UpdateWeights(x);
     VectorXd u_ad(1);
     if (disturbance_model_feature_type == "radial_basis_fun") {
         u_ad = w.transpose() * phi(x);
@@ -136,13 +136,14 @@ VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
 };
 
 VectorXd DirectMRAC::UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x) {
-    DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x);
+    DirectMRAC::CalculateError(x_ref, x);
 
-    UpdateKx(VectorXd x);
-    UpdateKr(VectorXd r);
+    DirectMRAC::UpdateKx(x);
+    DirectMRAC::UpdateKr(r);
 
-    VectorXd u_ad = DirectMRAC::UpdateAdaptiveControlInput(VectorXd x);
+    VectorXd u_ad = DirectMRAC::UpdateAdaptiveControlInput(x);
     VectorXd u = - Kx * x + Kr * r - u_ad;
+    return u;
 };
 
 friend std::ostream& operator << (std::ostream& out, DirectMRAC& system);
