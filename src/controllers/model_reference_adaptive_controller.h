@@ -29,15 +29,15 @@ class DirectMRAC {
         
         VectorXd dsigmoid(VectorXd Y);
 
-        UpdateWeights(VectorXd x);
+        void UpdateWeights(VectorXd x);
 
-        UpdateKx(VectorXd x);
+        void UpdateKx(VectorXd x);
 
-        UpdateKr(VectorXd r);
+        void UpdateKr(VectorXd r);
 
-        CalculateError(VectorXd x_ref, VectorXd x);
+        void CalculateError(VectorXd x_ref, VectorXd x);
 
-        CalculateMatrixP();
+        void CalculateMatrixP();
 
         VectorXd UpdateAdaptiveControlInput(VectorXd x);
 

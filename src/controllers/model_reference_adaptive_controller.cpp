@@ -83,7 +83,7 @@ VectorXd DirectMRAC::dsigmoid(VectorXd Y) {
     return ds_x;
 };
 
-DirectMRAC::UpdateWeights(VectorXd x) {
+void DirectMRAC::UpdateWeights(VectorXd x) {
     if (disturbance_model_feature_type == "radial_basis_fun") {
         wdot = learning_rate_w * phi(x) * error.transpose() * P * B;
         w = w + wdot * dt;
@@ -95,17 +95,17 @@ DirectMRAC::UpdateWeights(VectorXd x) {
     }
 };
 
-DirectMRAC::UpdateKx(VectorXd x) {
+void DirectMRAC::UpdateKx(VectorXd x) {
     Kxdot = learning_rate_Kx * x * error.transpose() * P * B;
     Kx = Kx + Kxdot * dt;
 };
 
-DirectMRAC::UpdateKr(VectorXd r) {
+void DirectMRAC::UpdateKr(VectorXd r) {
     Krdot = learning_rate_Kr * r * error.transpose() * P * B;
     Kr = Kr + Krdot * dt;
 };
 
-DirectMRAC::CalculateMatrixP() {
+void DirectMRAC::CalculateMatrixP() {
     // Solve the Lyapunov equation AmP + PAm^T = -Q
     MatrixXd Q = MatrixXd::Identity(num_states, num_states);
     MatrixXd P = MatrixXd::Zero(num_states, num_states);
@@ -121,7 +121,7 @@ DirectMRAC::CalculateMatrixP() {
 
 };
 
-DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x) {
+void DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x) {
     error = x - x_ref;
 };
 
