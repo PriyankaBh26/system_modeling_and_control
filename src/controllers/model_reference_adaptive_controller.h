@@ -50,10 +50,12 @@ class DirectMRAC {
         int num_features;
         VectorXd disturbance_mean_std_bw;
         VectorXd centers;
-        VectorXd V;
         int num_states;
         double dt;
         VectorXd w;
+        VectorXd V;
+        VectorXd Kx;
+        VectorXd Kr;
         double learning_rate_w;
         double learning_rate_v;
         double learning_rate_kx;
