@@ -38,7 +38,6 @@ DirectMRAC::DirectMRAC(
                         P(P_in),
                         B(B_in),
                         error(n) {
-    DirectMRAC::CalculateMatrixP();
     // Define a random number generator
     std::default_random_engine generator;
 
