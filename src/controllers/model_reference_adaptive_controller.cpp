@@ -55,11 +55,8 @@ DirectMRAC::DirectMRAC(
 VectorXd DirectMRAC::phi(VectorXd x) {
     // radial basis function
     VectorXd phi_x(num_states);
-    int i = 0;
     for (int i{0}; i<num_states; i++) {    
-        VectorXd phi_x_f = (centers - x(i)) / V;
-        phi_x_f = - phi_x_f.square();
-        phi_x_f = phi_x_f.exp();
+        VectorXd phi_x_f = (-((centers.array() - x(i)) * V.array().inverse()).square()).exp();
         phi_x(i) = phi_x_f.sum();
     }
 return phi_x;
@@ -132,8 +129,8 @@ VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
         u_ad = w.transpose() * phi(x);
     } else if (disturbance_model_feature_type == "single_hidden_layer_nn") {
         u_ad = w.transpose() * sigmoid(V.transpose() * x);
-    return u_ad;
     }
+    return u_ad;
 };
 
 VectorXd DirectMRAC::UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x) {
