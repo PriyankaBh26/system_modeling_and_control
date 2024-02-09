@@ -34,6 +34,7 @@ DirectMRAC::DirectMRAC(
                         learning_rate_v(gamma_v),
                         learning_rate_kx(gamma_kx),
                         learning_rate_kr(gamma_kr)
+                        P(n,n),
                         A_ref(A_nom),
                         B(B_in) {
     DirectMRAC::CalculateMatrixP();

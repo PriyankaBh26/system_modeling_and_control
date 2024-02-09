@@ -60,6 +60,7 @@ class DirectMRAC {
         double learning_rate_v;
         double learning_rate_kx;
         double learning_rate_kr;
+        MatrixXd P;
         MatrixXd A_ref;
         MatrixXd B;
         VectorXd error;
