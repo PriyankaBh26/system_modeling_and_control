@@ -23,9 +23,17 @@ int main() {
     MatrixXd A_ref(num_states, num_states);
     A_ref << 0 , 1,
             -4, -2;
-                
+    // Compute the eigenvalues of A_ref
+    Eigen::EigenSolver<MatrixXd> solver(A_ref);
+    Eigen::VectorXcd eigenvalues = solver.eigenvalues();
+    std::cout << "A_ref eigenvalues:\n"  << eigenvalues;
+
     MatrixXd B(1, num_states);
     B << 0, 1;
+
+    MatrixXd P(num_states, num_states);
+    P << 1.5, 0.125,
+         0.125, 0.3125;
     DirectMRAC* mrac = new DirectMRAC(disturbance_model_feature_type,
                                       num_features,
                                       disturbance_mean_std_bw,
@@ -35,7 +43,7 @@ int main() {
                                       learning_rate_v,
                                       learning_rate_kx,
                                       learning_rate_kr,
-                                      A_ref,
+                                      P,
                                       B);
 
     std::cout << *mrac;
