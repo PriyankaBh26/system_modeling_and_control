@@ -17,7 +17,6 @@ DirectMRAC::DirectMRAC(
     VectorXd d0,
     int n,
     double dt0,
-    VectorXd w0,
     double gamma_w,
     double gamma_v,
     double gamma_kx,
@@ -28,14 +27,14 @@ DirectMRAC::DirectMRAC(
                         disturbance_mean_std_bw(d0),
                         num_states(n),
                         dt(dt0),
-                        w(w0), error(n), 
+                        w(VectorXd::Random(n)), error(n), 
                         V(features),
                         Kx(n), Kr(n),
                         learning_rate_w(gamma_w),
                         learning_rate_v(gamma_v),
                         learning_rate_kx(gamma_kx),
                         learning_rate_kr(gamma_kr)
-                        A_nominal(A_nom),
+                        A_ref(A_nom),
                         B(B_in) {
     CalculateMatrixP();
     // Define a random number generator
@@ -110,7 +109,7 @@ DirectMRAC::CalculateMatrixP() {
     // Solve the Lyapunov equation AmP + PAm^T = -Q
     MatrixXd Q = MatrixXd::Identity(num_states, num_states);
     MatrixXd P = MatrixXd::Zero(num_states, num_states);
-    LLT<MatrixXd> lltOfA(A_nominal.transpose());
+    LLT<MatrixXd> lltOfA(A_ref.transpose());
     if (lltOfA.info() == Success) {
         // A is positive definite
         P = lltOfA.solve(-Q);
