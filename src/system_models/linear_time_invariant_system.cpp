@@ -30,8 +30,8 @@ MatrixXd LinearTimeInvariantSys::GetB() {return B;};
 
 std::ostream& operator << (std::ostream& out, const LinearTimeInvariantSys& system) {
     out << "Printing LTI model parameters:\n";
-    out << "(A) State transition matrix:"\n"  " << system.A << "\n";
-    out << "(B) Input Matrix:"\n" " << system.B << "\n";
+    out << "(A) State transition matrix:\n" << system.A << "\n";
+    out << "(B) Input Matrix:\n" << system.B << "\n";
     return out;
 
 };
