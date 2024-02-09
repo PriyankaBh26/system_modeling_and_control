@@ -85,23 +85,23 @@ VectorXd DirectMRAC::dsigmoid(VectorXd Y) {
 
 void DirectMRAC::UpdateWeights(VectorXd x) {
     if (disturbance_model_feature_type == "radial_basis_fun") {
-        wdot = learning_rate_w * phi(x) * error.transpose() * P * B;
+        VectorXd wdot = learning_rate_w * phi(x) * error.transpose() * P * B;
         w = w + wdot * dt;
     } else if (disturbance_model_feature_type == "single_hidden_layer_nn") {
-        wdot = -(sigmoid(V.transpose() * x) - dsigmoid(V.transpose() * x) * V.transpose() * x) * error.transpose() * P * B * learning_rate_w;
-        Vdot = -learning_rate_v * x * error.transpose() * P * B * w.transpose() * sigmoid(V.transpose() * x);
+        VectorXd wdot = -(sigmoid(V.transpose() * x) - dsigmoid(V.transpose() * x) * V.transpose() * x) * error.transpose() * P * B * learning_rate_w;
+        VectorXd Vdot = -learning_rate_v * x * error.transpose() * P * B * w.transpose() * sigmoid(V.transpose() * x);
         w = w + wdot * dt;
         V = V + Vdot * dt;
     }
 };
 
 void DirectMRAC::UpdateKx(VectorXd x) {
-    Kxdot = learning_rate_Kx * x * error.transpose() * P * B;
+    VectorXd Kxdot = learning_rate_Kx * x * error.transpose() * P * B;
     Kx = Kx + Kxdot * dt;
 };
 
 void DirectMRAC::UpdateKr(VectorXd r) {
-    Krdot = learning_rate_Kr * r * error.transpose() * P * B;
+    VectorXd Krdot = learning_rate_Kr * r * error.transpose() * P * B;
     Kr = Kr + Krdot * dt;
 };
 
