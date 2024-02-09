@@ -11,7 +11,6 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::LLT;
 
-
 DirectMRAC::DirectMRAC(
     std::string str,
     int features,
@@ -21,23 +20,25 @@ DirectMRAC::DirectMRAC(
     double gamma_w,
     double gamma_v,
     double gamma_kx,
-    double gamma_kr
-    MatrixXd A_nom,
+    double gamma_kr,
+    MatrixXd A_ref_in,
     MatrixXd B_in) :   disturbance_model_feature_type(str),
                         num_features(features),
                         disturbance_mean_std_bw(d0),
                         num_states(n),
                         dt(dt0),
-                        w(VectorXd::Random(n)), error(n), 
+                        w(VectorXd::Random(n)),
+                        centers(features)
                         V(features),
                         Kx(n), Kr(n),
                         learning_rate_w(gamma_w),
                         learning_rate_v(gamma_v),
                         learning_rate_kx(gamma_kx),
-                        learning_rate_kr(gamma_kr)
+                        learning_rate_kr(gamma_kr),
                         P(n,n),
-                        A_ref(A_nom),
-                        B(B_in) {
+                        A_ref(A_ref_in),
+                        B(B_in),
+                        error(n) {
     DirectMRAC::CalculateMatrixP();
     // Define a random number generator
     std::default_random_engine generator;
@@ -45,8 +46,6 @@ DirectMRAC::DirectMRAC(
     std::normal_distribution<double> centers_distribution(disturbance_mean_std_bw(0), disturbance_mean_std_bw(1));
     std::normal_distribution<double> V_distribution(0, disturbance_mean_std_bw(2));
 
-    VectorXd centers(num_features);
-    VectorXd V(num_features);
     for (int i{0}; i<num_features; i++) {
         centers(i) = centers_distribution(generator);
         V(i) = abs(V_distribution(generator));
@@ -110,7 +109,6 @@ void DirectMRAC::UpdateKr(VectorXd r) {
 void DirectMRAC::CalculateMatrixP() {
     // Solve the Lyapunov equation AmP + PAm^T = -Q
     MatrixXd Q = MatrixXd::Identity(num_states, num_states);
-    MatrixXd P = MatrixXd::Zero(num_states, num_states);
     LLT<MatrixXd> lltOfA(A_ref.transpose());
     if (lltOfA.info() == Success) {
         // A is positive definite
