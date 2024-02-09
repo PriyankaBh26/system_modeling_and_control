@@ -60,7 +60,7 @@ VectorXd DirectMRAC::phi(VectorXd x) {
         VectorXd phi_x_f = (centers - x(i)) / V;
         phi_x_f = - phi_x_f.square();
         phi_x_f = phi_x_f.exp();
-        phi_x(i) = sum(phi_x_f);
+        phi_x(i) = phi_x_f.sum();
     }
 return phi_x;
 };
@@ -97,12 +97,12 @@ void DirectMRAC::UpdateWeights(VectorXd x) {
 };
 
 void DirectMRAC::UpdateKx(VectorXd x) {
-    VectorXd Kxdot = learning_rate_Kx * x * error.transpose() * P * B;
+    VectorXd Kxdot = learning_rate_kx * x * error.transpose() * P * B;
     Kx = Kx + Kxdot * dt;
 };
 
 void DirectMRAC::UpdateKr(VectorXd r) {
-    VectorXd Krdot = learning_rate_Kr * r * error.transpose() * P * B;
+    VectorXd Krdot = learning_rate_kr * r * error.transpose() * P * B;
     Kr = Kr + Krdot * dt;
 };
 
@@ -131,7 +131,7 @@ VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
     if (disturbance_model_feature_type == "radial_basis_fun") {
         u_ad = w.transpose() * phi(x);
     } else if (disturbance_model_feature_type == "single_hidden_layer_nn") {
-        u_ad = w.transpose() * sigmoid(V.transpose() * x)
+        u_ad = w.transpose() * sigmoid(V.transpose() * x);
     return u_ad;
 };
 
@@ -146,4 +146,7 @@ VectorXd DirectMRAC::UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x) 
     return u;
 };
 
-friend std::ostream& operator << (std::ostream& out, DirectMRAC& system);
+std::ostream& operator << (std::ostream& out, DirectMRAC& system) {
+    out << "MRAC parameters:\n";
+    return out;
+};
