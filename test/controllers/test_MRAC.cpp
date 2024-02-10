@@ -44,6 +44,52 @@ class NonlinearPlant : public OdeSolver {
 
 };
 
+void test_direct_mrac_functions(DirectMRAC* mrac, VectorXd x0, VectorXd r) {
+    VectorXd x_hat = mrac->CalculateXhat(x0);
+
+    VectorXd phi_x = mrac->phi(x_hat);
+    std::cout << "\nphi(x) = \n" << phi_x.size();
+
+    VectorXd sigmoid_x = mrac->sigmoid(x_hat);
+    std::cout << "\nsigmoid(x) = \n" << sigmoid_x.size();
+
+    MatrixXd dsigmoid_x = mrac->dsigmoid(x_hat);
+    std::cout << "\ndsigmoid(x) = \n" << dsigmoid_x.size();
+
+    mrac->UpdateWeights(x_hat); 
+
+    MatrixXd w = mrac->GetW();
+    std::cout << "\nw = \n" << w;
+
+    MatrixXd V = mrac->GetV();
+    std::cout << "\nV = \n" << V;
+
+    mrac->UpdateKx(x0);
+    VectorXd Kx = mrac->GetKx();
+    std::cout << "\nKx = \n" << Kx;
+
+    mrac->UpdateKr(r);
+    VectorXd Kr = mrac->GetKr();
+    std::cout << "\nKr = \n" << Kr;
+
+    mrac->CalculateError(x0, x0);
+    VectorXd error = mrac->GetError();
+    std::cout << "\nerror = \n" << error;
+
+    VectorXd u_ad = mrac->UpdateAdaptiveControlInput(x0);
+    std::cout << "\nu_ad = \n" << u_ad;
+
+    VectorXd u = mrac->UpdateControlInput(r, x0, x0);
+    std::cout << "\nu = \n" << u;
+
+    std::vector<VectorXd> err_history = mrac->GetErrorHistory();
+    std::cout << "\nerr_history = \n" << err_history[0];
+
+    std::vector<VectorXd> u_history = mrac->GetControlInputHistory();
+    std::cout << "\nu_history = \n" << u_history[0];
+
+    std::cout << "\ntesting of MRAC functions Complete!\n";
+};
 
 int main() {
     int num_states = 2;
@@ -57,7 +103,7 @@ int main() {
     Eigen::VectorXcd eigenvalues = solver.eigenvalues();
     std::cout << "A_ref eigenvalues:\n"  << eigenvalues;
 
-    MatrixXd B_ref(1, num_states);
+    MatrixXd B_ref(num_states,1);
     B_ref << 0, 4;
 
     // initialize reference model ode solver
@@ -82,6 +128,7 @@ int main() {
          0.125, 0.3125;
 
     int num_outputs = 1;
+    VectorXd u(num_outputs);
 
     // initialize MRAC model
     std::string disturbance_model_feature_type = "single_hidden_layer_nn";
@@ -109,55 +156,50 @@ int main() {
 
     std::cout << *mrac;
 
-    VectorXd x_hat = mrac->CalculateXhat(x0);
-
-    VectorXd phi_x = mrac->phi(x_hat);
-    std::cout << "\nphi(x) = \n" << phi_x.size();
-
-    VectorXd sigmoid_x = mrac->sigmoid(x_hat);
-    std::cout << "\nsigmoid(x) = \n" << sigmoid_x.size();
-
-    MatrixXd dsigmoid_x = mrac->dsigmoid(x_hat);
-    std::cout << "\ndsigmoid(x) = \n" << dsigmoid_x.size();
-
-    mrac->UpdateWeights(x_hat); 
-
-    MatrixXd w = mrac->GetW();
-    std::cout << "\nw = \n" << w;
-
-    MatrixXd V = mrac->GetV();
-    std::cout << "\nV = \n" << V;
-
-    mrac->UpdateKx(x0);
-    VectorXd Kx = mrac->GetKx();
-    std::cout << "\nKx = \n" << Kx;
-
+    // initialize reference input
     VectorXd r(num_outputs);
+    r << 1.0;
 
-    mrac->UpdateKr(r);
-    VectorXd Kr = mrac->GetKr();
-    std::cout << "\nKr = \n" << Kr;
+    // test mrac functions
+    // test_direct_mrac_functions(mrac, x0, r);
 
-    mrac->CalculateError(x0, x0);
-    VectorXd error = mrac->GetError();
-    std::cout << "\nerror = \n" << error;
+     // initialize measured output z
+    std::vector<VectorXd> z;
+    double measurement_noise = 0.001;
+    // initialize and set time parameters
+    double t = 0;
+    double time_final = 1;
 
-    VectorXd u_ad = mrac->UpdateAdaptiveControlInput(x0);
-    std::cout << "\nu_ad = \n" << u_ad;
-
-    VectorXd u = mrac->UpdateControlInput(r, x0, x0);
-    std::cout << "\nu = \n" << u;
-
-    std::vector<VectorXd> err_history = mrac->GetErrorHistory();
-    std::cout << "\nerr_history = \n" << err_history[0];
-
-    std::vector<VectorXd> u_history = mrac->GetControlInputHistory();
-    std::cout << "\nu_history = \n" << u_history[0];
+    // save x and t history
+    std::vector<VectorXd> x_history;
+    std::vector<double> t_history;
+    x_history.push_back(x0);
+    t_history.push_back(t);
 
     // solve mrac with ode integration
+    while (t < time_final) {
+        int ode_timesteps = dt/dh;
+        sys->IntegrateODE(ode_timesteps, u);
+        ref_sys->IntegrateODE(ode_timesteps, r);
 
+        VectorXd x = sys->GetX();
 
+        // std::cout << "\nx =\n " << x;
 
+        VectorXd x_ref = ref_sys->GetX();
+
+        // std::cout << "\nx_ref =\n " << x_ref;
+
+        z.push_back(x + measurement_noise * VectorXd::Random(num_states));
+
+        u = mrac->UpdateControlInput(r, x_ref, x);
+
+        t += dt;
+        x_history.push_back(x);
+        t_history.push_back(t);
+    }
+
+    // save simulation data
 
     delete ref_sys;
     delete sys;
