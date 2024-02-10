@@ -135,11 +135,14 @@ int main() {
     std::cout << "\nKx = \n" << Kx;
 
     VectorXd r(num_outputs);
-    
+
     mrac->UpdateKr(r);
     VectorXd Kr = mrac->GetKr();
     std::cout << "\nKr = \n" << Kr;
 
+    mrac->CalculateError(x0, x0);
+    VectorXd error = mrac->GetError();
+    std::cout << "\nerror = \n" << error;
 
 
 

@@ -35,7 +35,7 @@ class DirectMRAC {
 
         void UpdateKr(VectorXd r);
 
-        // void CalculateError(VectorXd x_ref, VectorXd x);
+        void CalculateError(VectorXd x_ref, VectorXd x);
 
         // VectorXd UpdateAdaptiveControlInput(VectorXd x);
 
@@ -48,6 +48,8 @@ class DirectMRAC {
         VectorXd GetKx();
 
         VectorXd GetKr();
+
+        VectorXd GetError();
 
 
         friend std::ostream& operator << (std::ostream& out, DirectMRAC& system);

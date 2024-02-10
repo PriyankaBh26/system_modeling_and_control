@@ -118,9 +118,9 @@ void DirectMRAC::UpdateKr(VectorXd r) {
     Kr = Kr + Krdot * dt;
 };
 
-// void DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x) {
-//     error = x - x_ref;
-// };
+void DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x) {
+    error = x - x_ref;
+};
 
 // VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
 //     DirectMRAC::UpdateWeights(x);
@@ -152,6 +152,7 @@ VectorXd DirectMRAC::GetKx() {return Kx;};
 
 VectorXd DirectMRAC::GetKr() {return Kr;};
 
+VectorXd DirectMRAC::GetError() {return error;};
 
 std::ostream& operator << (std::ostream& out, DirectMRAC& system) {
     out << "\nMRAC parameters:\n";
