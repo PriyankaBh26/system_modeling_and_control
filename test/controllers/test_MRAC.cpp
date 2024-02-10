@@ -70,7 +70,7 @@ int main() {
     MatrixXd A(num_states, num_states);
     A << 0, 1,
          0, 0;
-    MatrixXd B(1, num_states);
+    MatrixXd B(num_states, 1);
     B << 0, 1;
 
     // // initialize plant model ode solver
@@ -81,9 +81,11 @@ int main() {
     P << 1.5, 0.125,
          0.125, 0.3125;
 
+    int num_outputs = 1;
+
     // initialize MRAC model
-    std::string disturbance_model_feature_type = "radial_basis_fun";
-    int num_features = 10;
+    std::string disturbance_model_feature_type = "single_hidden_layer_nn";
+    int num_features = 4;
     VectorXd disturbance_mean_std_bw(3);
     disturbance_mean_std_bw << 2,5,5;
     double dt = 0.01;
@@ -93,9 +95,10 @@ int main() {
     double learning_rate_kr = 10;
 
     DirectMRAC* mrac = new DirectMRAC(disturbance_model_feature_type,
-                                      num_features,
-                                      disturbance_mean_std_bw,
                                       num_states,
+                                      num_features,
+                                      num_outputs,
+                                      disturbance_mean_std_bw,
                                       dt,
                                       learning_rate_w,
                                       learning_rate_v,
@@ -104,9 +107,42 @@ int main() {
                                       P,
                                       B);
 
-
-
     std::cout << *mrac;
+
+    VectorXd x_hat(num_states+1);
+    x_hat(0) = 1;
+    x_hat.segment(1,num_states) = x0;
+
+    VectorXd phi_x = mrac->phi(x_hat);
+    std::cout << "\nphi(x) = \n" << phi_x.size();
+
+    VectorXd sigmoid_x = mrac->sigmoid(x_hat);
+    std::cout << "\nsigmoid(x) = \n" << sigmoid_x.size();
+
+    MatrixXd dsigmoid_x = mrac->dsigmoid(x_hat);
+    std::cout << "\ndsigmoid(x) = \n" << dsigmoid_x.size();
+
+    mrac->UpdateWeights(x0); 
+
+    MatrixXd w = mrac->GetW();
+    std::cout << "\nw = \n" << w;
+
+    MatrixXd V = mrac->GetV();
+    std::cout << "\nV = \n" << V;
+
+    mrac->UpdateKx(x0);
+    VectorXd Kx = mrac->GetKx();
+    std::cout << "\nKx = \n" << Kx;
+
+    VectorXd r(num_outputs);
+    
+    mrac->UpdateKr(r);
+    VectorXd Kr = mrac->GetKr();
+    std::cout << "\nKr = \n" << Kr;
+
+
+
+
 
     delete ref_sys;
     delete sys;
