@@ -148,6 +148,17 @@ int main() {
     VectorXd u = mrac->UpdateControlInput(r, x0, x0);
     std::cout << "\nu = \n" << u;
 
+    std::vector<VectorXd> err_history = mrac->GetErrorHistory();
+    std::cout << "\nerr_history = \n" << err_history[0];
+
+    std::vector<VectorXd> u_history = mrac->GetControlInputHistory();
+    std::cout << "\nu_history = \n" << u_history[0];
+
+    // solve mrac with ode integration
+
+
+
+
     delete ref_sys;
     delete sys;
     delete mrac;
