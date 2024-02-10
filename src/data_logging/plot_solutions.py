@@ -15,6 +15,7 @@ def main():
     parser.add_argument("-ctrl", "--control_history", help="If control history csv is present type 1")
     parser.add_argument("-meas", "--measurement_history", help="If measurement history csv is present type 1")
     parser.add_argument("-est", "--estimated_state_history", help="If estimated state history csv is present type 1")
+    parser.add_argument("-ref", "--reference_state_history", help="If reference state history csv is present type 1")
 
     # Parse arguments
     args = parser.parse_args()
@@ -46,6 +47,7 @@ def main():
     control_history = args.control_history
     measurement_history = args.measurement_history
     estimated_state_history = args.estimated_state_history
+    reference_state_history = args.reference_state_history
 
     if control_history:
         print("Control history and error history is present")
@@ -76,7 +78,8 @@ def main():
         print("Measurement history is present")
         y_meas = pd.read_csv(f"{directory}/{problem}_meas_history.csv", sep="\s+")
         y_meas = y_meas.to_numpy()
-        for j in range(num_states):
+        num_meas_states = y_meas.shape[1]
+        for j in range(num_meas_states):
             ax1[j].plot(t, y_meas[:,j], label = "meas_" + states[j])
             ax1[j].grid(True)
             ax1[j].legend()
@@ -85,8 +88,19 @@ def main():
         print("Estimated state history is present")
         y_est = pd.read_csv(f"{directory}/{problem}_est_history.csv", sep="\s+")
         y_est = y_est.to_numpy()
-        for j in range(num_states):
+        num_est_states = y_est.shape[1]
+        for j in range(num_est_states):
             ax1[j].plot(t, y_est[:,j], label = "est_" + states[j])
+            ax1[j].grid(True)
+            ax1[j].legend()
+
+    if reference_state_history:
+        print("Reference state history is present")
+        y_ref = pd.read_csv(f"{directory}/{problem}_ref_history.csv", sep="\s+")
+        y_ref = y_ref.to_numpy()
+        num_ref_states = y_ref.shape[1]
+        for j in range(num_ref_states):
+            ax1[j].plot(t, y_ref[:,j], label = "ref_" + states[j])
             ax1[j].grid(True)
             ax1[j].legend()
     
