@@ -53,6 +53,9 @@ class DirectMRAC {
 
         VectorXd GetError();
 
+        std::vector<VectorXd> GetErrorHistory();
+
+        std::vector<VectorXd> GetControlInputHistory();
 
         friend std::ostream& operator << (std::ostream& out, DirectMRAC& system);
 

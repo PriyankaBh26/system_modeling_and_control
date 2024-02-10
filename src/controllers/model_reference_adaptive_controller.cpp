@@ -52,7 +52,8 @@ DirectMRAC::DirectMRAC(
             V(i,j) = abs(V_distribution(generator));
         }
     }
-    // std::cout << "\n centers: \n" << centers;
+    error_history.push_back(previous_error);
+    control_input_history.push_back(previous_error);
 };
 
 VectorXd DirectMRAC::phi(VectorXd x_hat) {
@@ -123,6 +124,8 @@ void DirectMRAC::UpdateKr(VectorXd r) {
 
 void DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x) {
     error = x - x_ref;
+    // save error history
+    error_history.push_back(error);
 };
 
 VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
@@ -146,6 +149,8 @@ VectorXd DirectMRAC::UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x) 
     VectorXd u_ad = DirectMRAC::UpdateAdaptiveControlInput(x);
 
     VectorXd u = - Kx.transpose() * x + Kr.transpose() * r - u_ad;
+    // save control input history
+    control_input_history.push_back(u);
     return u;
 };
 
@@ -158,6 +163,10 @@ VectorXd DirectMRAC::GetKx() {return Kx;};
 VectorXd DirectMRAC::GetKr() {return Kr;};
 
 VectorXd DirectMRAC::GetError() {return error;};
+
+std::vector<VectorXd> DirectMRAC::GetErrorHistory() {return error_history;};
+
+std::vector<VectorXd> DirectMRAC::GetControlInputHistory() {return control_input_history;};
 
 std::ostream& operator << (std::ostream& out, DirectMRAC& system) {
     out << "\nMRAC parameters:\n";
