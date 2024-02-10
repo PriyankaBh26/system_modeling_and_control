@@ -164,7 +164,7 @@ int main() {
     // test_direct_mrac_functions(mrac, x0, r);
 
      // initialize measured output z
-    std::vector<VectorXd> z;
+    std::vector<VectorXd> meas_history;
     double measurement_noise = 0.001;
     // initialize and set time parameters
     double t = 0;
@@ -172,8 +172,10 @@ int main() {
 
     // save x and t history
     std::vector<VectorXd> x_history;
+    std::vector<VectorXd> x_ref_history;
     std::vector<double> t_history;
     x_history.push_back(x0);
+    x_ref_history.push_back(r);
     t_history.push_back(t);
 
     // solve mrac with ode integration
@@ -190,11 +192,12 @@ int main() {
 
         // std::cout << "\nx_ref =\n " << x_ref;
 
-        z.push_back(x + measurement_noise * VectorXd::Random(num_states));
+        meas_history.push_back(x + measurement_noise * VectorXd::Random(num_states));
 
         u = mrac->UpdateControlInput(r, x_ref, x);
 
         t += dt;
+        x_ref_history.push_back(r);
         x_history.push_back(x);
         t_history.push_back(t);
     }
