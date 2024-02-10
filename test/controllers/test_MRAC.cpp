@@ -109,9 +109,7 @@ int main() {
 
     std::cout << *mrac;
 
-    VectorXd x_hat(num_states+1);
-    x_hat(0) = 1;
-    x_hat.segment(1,num_states) = x0;
+    VectorXd x_hat = mrac->CalculateXhat(x0);
 
     VectorXd phi_x = mrac->phi(x_hat);
     std::cout << "\nphi(x) = \n" << phi_x.size();
@@ -122,7 +120,7 @@ int main() {
     MatrixXd dsigmoid_x = mrac->dsigmoid(x_hat);
     std::cout << "\ndsigmoid(x) = \n" << dsigmoid_x.size();
 
-    mrac->UpdateWeights(x0); 
+    mrac->UpdateWeights(x_hat); 
 
     MatrixXd w = mrac->GetW();
     std::cout << "\nw = \n" << w;
@@ -144,8 +142,11 @@ int main() {
     VectorXd error = mrac->GetError();
     std::cout << "\nerror = \n" << error;
 
+    VectorXd u_ad = mrac->UpdateAdaptiveControlInput(x0);
+    std::cout << "\nu_ad = \n" << u_ad;
 
-
+    VectorXd u = mrac->UpdateControlInput(r, x0, x0);
+    std::cout << "\nu = \n" << u;
 
     delete ref_sys;
     delete sys;

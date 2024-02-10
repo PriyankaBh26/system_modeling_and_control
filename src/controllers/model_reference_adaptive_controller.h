@@ -29,6 +29,8 @@ class DirectMRAC {
         
         MatrixXd dsigmoid(VectorXd x);
 
+        VectorXd CalculateXhat(VectorXd x);
+
         void UpdateWeights(VectorXd x);
 
         void UpdateKx(VectorXd x);
@@ -37,9 +39,9 @@ class DirectMRAC {
 
         void CalculateError(VectorXd x_ref, VectorXd x);
 
-        // VectorXd UpdateAdaptiveControlInput(VectorXd x);
+        VectorXd UpdateAdaptiveControlInput(VectorXd x);
 
-        // VectorXd UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x);
+        VectorXd UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x);
 
         MatrixXd GetW();
 

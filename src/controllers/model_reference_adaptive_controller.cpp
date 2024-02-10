@@ -89,20 +89,23 @@ MatrixXd DirectMRAC::dsigmoid(VectorXd x_hat) {
     return jac_s_x;
 };
 
-void DirectMRAC::UpdateWeights(VectorXd x) {
+VectorXd DirectMRAC::CalculateXhat(VectorXd x) {    
     VectorXd x_hat(num_states+1);
     x_hat(0) = 1;
     x_hat.segment(1,num_states) = x;
+    return x_hat;
+};
 
+void DirectMRAC::UpdateWeights(VectorXd x) {
     if (disturbance_model_feature_type == "radial_basis_fun") {
         // wdot size = (n2+1,1) * (1,n1) * (n1,n1) * (n1,1) = (n2+1,1)
-        VectorXd wdot = learning_rate_w * phi(x_hat) * error.transpose() * P * B;
+        VectorXd wdot = learning_rate_w * phi(x) * error.transpose() * P * B;
         w = w + wdot * dt;
     } else if (disturbance_model_feature_type == "single_hidden_layer_nn") {
         // wdot size = (n2+1,1 - (n2+1,n2+1) * (n2+1,n1+1) * (n1+1,1)) * (1,n1) * (n1,n1) * (n1,1) = (n2+1,1)
-        MatrixXd wdot = -learning_rate_w * (sigmoid(x_hat) - dsigmoid(x_hat) * V.transpose() * x_hat) * error.transpose() * P * B;
+        MatrixXd wdot = -learning_rate_w * (sigmoid(x) - dsigmoid(x) * V.transpose() * x) * error.transpose() * P * B;
         // Vdot size = (n1+1,1) * (1,n1) * (n1,n1) * (n1,1) * (1,n2+1) * (n2+1,n2+1) = (n1+1,n2+1)
-        MatrixXd Vdot = -learning_rate_v * x_hat * error.transpose() * P * B * w.transpose() * dsigmoid(x_hat);
+        MatrixXd Vdot = -learning_rate_v * x * error.transpose() * P * B * w.transpose() * dsigmoid(x);
         w = w + wdot * dt;
         V = V + Vdot * dt;
     }
@@ -122,27 +125,29 @@ void DirectMRAC::CalculateError(VectorXd x_ref, VectorXd x) {
     error = x - x_ref;
 };
 
-// VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
-//     DirectMRAC::UpdateWeights(x);
-//     VectorXd u_ad(1);
-//     if (disturbance_model_feature_type == "radial_basis_fun") {
-//         u_ad = w.transpose() * phi(x);
-//     } else if (disturbance_model_feature_type == "single_hidden_layer_nn") {
-//         u_ad = w.transpose() * sigmoid(V.transpose() * x);
-//     }
-//     return u_ad;
-// };
+VectorXd DirectMRAC::UpdateAdaptiveControlInput(VectorXd x) {
+    VectorXd x_hat = CalculateXhat(x);
+    DirectMRAC::UpdateWeights(x_hat);
+    VectorXd u_ad(num_outputs);
+    if (disturbance_model_feature_type == "radial_basis_fun") {
+        u_ad = w.transpose() * phi(x_hat);
+    } else if (disturbance_model_feature_type == "single_hidden_layer_nn") {
+        u_ad = w.transpose() * sigmoid(x_hat);
+    }
+    return u_ad;
+};
 
-// VectorXd DirectMRAC::UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x) {
-//     DirectMRAC::CalculateError(x_ref, x);
+VectorXd DirectMRAC::UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x) {
+    DirectMRAC::CalculateError(x_ref, x);
 
-//     DirectMRAC::UpdateKx(x);
-//     DirectMRAC::UpdateKr(r);
+    DirectMRAC::UpdateKx(x);
+    DirectMRAC::UpdateKr(r);
 
-//     VectorXd u_ad = DirectMRAC::UpdateAdaptiveControlInput(x);
-//     VectorXd u = - Kx * x + Kr * r - u_ad;
-//     return u;
-// };
+    VectorXd u_ad = DirectMRAC::UpdateAdaptiveControlInput(x);
+
+    VectorXd u = - Kx.transpose() * x + Kr.transpose() * r - u_ad;
+    return u;
+};
 
 MatrixXd DirectMRAC::GetW() {return w;};
 
