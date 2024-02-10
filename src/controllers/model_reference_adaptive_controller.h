@@ -12,8 +12,9 @@ class DirectMRAC {
     public:
         DirectMRAC(std::string disturbance_model_feature_type,
                     int num_features,
-                    VectorXd disturbance_mean_std_bw,
                     int num_states,
+                    int num_outputs,
+                    VectorXd disturbance_mean_std_bw,
                     double dt,
                     double learning_rate_w,
                     double learning_rate_v,
@@ -24,9 +25,9 @@ class DirectMRAC {
 
         VectorXd phi(VectorXd x);
 
-        VectorXd sigmoid(VectorXd Y);
+        VectorXd sigmoid(VectorXd x);
         
-        VectorXd dsigmoid(VectorXd Y);
+        MatrixXd dsigmoid(VectorXd x);
 
         void UpdateWeights(VectorXd x);
 
@@ -34,23 +35,33 @@ class DirectMRAC {
 
         void UpdateKr(VectorXd r);
 
-        void CalculateError(VectorXd x_ref, VectorXd x);
+        // void CalculateError(VectorXd x_ref, VectorXd x);
 
-        VectorXd UpdateAdaptiveControlInput(VectorXd x);
+        // VectorXd UpdateAdaptiveControlInput(VectorXd x);
 
-        VectorXd UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x);
+        // VectorXd UpdateControlInput(VectorXd r, VectorXd x_ref, VectorXd x);
+
+        MatrixXd GetW();
+
+        MatrixXd GetV();
+
+        VectorXd GetKx();
+
+        VectorXd GetKr();
+
 
         friend std::ostream& operator << (std::ostream& out, DirectMRAC& system);
 
     private:
         std::string disturbance_model_feature_type;
-        int num_features;
-        VectorXd disturbance_mean_std_bw;
         int num_states;
+        int num_features;
+        int num_outputs;
+        VectorXd disturbance_mean_std_bw;
         double dt;
-        VectorXd w;
-        VectorXd centers;
-        VectorXd V;
+        MatrixXd w;
+        MatrixXd centers;
+        MatrixXd V;
         VectorXd Kx;
         VectorXd Kr;
         double learning_rate_w;
