@@ -78,6 +78,9 @@ class DirectMRAC {
         MatrixXd P;
         MatrixXd B;
         VectorXd error;
+        VectorXd u;
+        std::vector<VectorXd> error_history;
+        std::vector<VectorXd> control_input_history;
 };
 
 #endif

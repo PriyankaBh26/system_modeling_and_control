@@ -39,7 +39,8 @@ DirectMRAC::DirectMRAC(
                         learning_rate_kr(gamma_kr),
                         P(P_in),
                         B(B_in),
-                        error(n1) {
+                        error(n1),
+                        u(n3) {
     // Define a random number generator
     std::default_random_engine generator;
 
@@ -52,8 +53,8 @@ DirectMRAC::DirectMRAC(
             V(i,j) = abs(V_distribution(generator));
         }
     }
-    error_history.push_back(previous_error);
-    control_input_history.push_back(previous_error);
+    error_history.push_back(error);
+    control_input_history.push_back(u);
 };
 
 VectorXd DirectMRAC::phi(VectorXd x_hat) {
