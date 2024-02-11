@@ -6,27 +6,47 @@ double myfunc(const std::vector<double> &x, std::vector<double> &grad, void *my_
 void multi_constraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* f_data);
 
 int main()
-{
-	nlopt::opt opt(nlopt::LD_SLSQP, 2);
-	std::vector<double> lb(2);
+{   
+    int num_x = 2;
+    int num_constraints = 2;
+
+    // initialize optimization object
+	nlopt::opt opt(nlopt::LD_SLSQP, num_x);
+
+    // set lower bounds
+	std::vector<double> lb(num_x);
 	lb[0] = -HUGE_VAL;   //HUGE_VAL is a C++ constant
 	lb[1] = 0;
 	opt.set_lower_bounds(lb);
 
 	opt.set_min_objective(myfunc, NULL);
 
-	double data[4] = {2,0,-1,1};   //use one dimensional array
-	std::vector<double> tol_constraint(2);
+    // set fun arguments
+	double constraint_args[4] = {2,0,-1,1};   //use one dimensional array
+
+    // set constraint tolerances
+	std::vector<double> tol_constraint(num_constraints);
 	tol_constraint[0] = 1e-8;
 	tol_constraint[1] = 1e-8;
-	opt.add_inequality_mconstraint(multi_constraint, data, tol_constraint);
+
+    // add inequality constraints
+	opt.add_inequality_mconstraint(multi_constraint, constraint_args, tol_constraint);
+
+    // set convergence tolerance
 	opt.set_xtol_rel(1e-4);
 
-	std::vector<double> x(2);
+    // initialize x
+	std::vector<double> x(num_x);
 	x[0] = 1.234;
 	x[1] = 5.678;
+
+    // initialize cost 
 	double minf;
+
+    // solve optimization problem and store the result
 	nlopt::result result = opt.optimize(x, minf);
+
+    // print the result
 	std::cout << "The result is" << std::endl;
 	std::cout << result << std::endl;
 	std::cout << "Minimal function value " << minf << std::endl;
