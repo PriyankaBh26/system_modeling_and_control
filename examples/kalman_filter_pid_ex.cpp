@@ -89,7 +89,7 @@ int main() {
     KalmanFilter* kf = new KalmanFilter(x0_m, P0, A_state, Q, H, R);
 
     // initialize measurement z
-    std::vector<VectorXd> z_history;
+    std::vector<VectorXd> meas_history;
 
     // choose reference trajectory 
     std::string reference_trajectory_type = "step";
@@ -114,23 +114,28 @@ int main() {
 
     // save x and t history
     std::vector<VectorXd> x_history;
-    std::vector<VectorXd> u_history;
     std::vector<VectorXd> x_est_history;
     std::vector<double> t_history;
 
     // system dynamics and controller action
     double t = 0;
+
+    meas_history.push_back(x0);
+    x_history.push_back(x0);
+    x_est_history.push_back(x0);
+    t_history.push_back(t);
+
     while (t < time_final) {
         int ode_timesteps = dt/dh;
         system->IntegrateODE(ode_timesteps, u);
 
         VectorXd x = system->GetX();
 
-        z_history.push_back(x + R * VectorXd::Random(num_states));
+        meas_history.push_back(x + R * VectorXd::Random(num_states));
         
         x_ref = CalculateXref(reference_trajectory_type, num_states, t);
 
-        VectorXd x_est = kf->ComputeEstimate(z_history.back());
+        VectorXd x_est = kf->ComputeEstimate(meas_history.back());
 
         pid_controller->CalculateError(x_ref, x_est);
         u = pid_controller->GenerateControlInput();
@@ -139,11 +144,18 @@ int main() {
 
         x_history.push_back(x);
         x_est_history.push_back(x_est);
-        u_history.push_back(u);
         t_history.push_back(t);
     }
     // save simulation data for plotting
-    SaveKFPIDSimulationData(system, x_history, t_history, x_est_history, z_history, u_history);
+    std::string directory = "examples";
+    std::string problem = "kf_pid";
+    SaveTimeHistory(directory, problem, t_history);
+    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history);
+    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history);
+    SaveSimDataHistory(directory, problem, "est_history", system->GetColumnNames(), x_est_history);
+    SaveSimDataHistory(directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory());
+    SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory());
+
 
     delete kf;
     delete system;
