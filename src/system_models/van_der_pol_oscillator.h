@@ -14,7 +14,7 @@ class VanDerPolOscillator : public OdeSolver {
 
         VectorXd f(double t, VectorXd X, VectorXd u) override;
 
-        MatrixXd CalculateFxJacobian(VectorXd X) override;
+        MatrixXd CalculateFxJacobian(VectorXd X);
 
         std::string GetName() override;
 
