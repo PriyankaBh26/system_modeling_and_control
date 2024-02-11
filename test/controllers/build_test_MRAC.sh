@@ -22,7 +22,8 @@ SRCS="test/controllers/test_MRAC.cpp
      src/controllers/model_reference_adaptive_controller.cpp
      src/numerical_solvers/rk_ode_solver.cpp
      src/system_models/linear_time_invariant_system.cpp
-     src/data_logging/data_logging_helper_funs.cpp"
+     src/data_logging/data_logging_helper_funs.cpp
+     src/data_logging/savecsv.cpp"
 
 # Output executable name
 TARGET="build/myprogram"
