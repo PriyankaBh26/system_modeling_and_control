@@ -4,6 +4,8 @@
 #include <iomanip>
 #include <nlopt.hpp>
 
+// the constraints are defined as C(x) <= 0
+
 typedef struct {
     int count;
 } counter;
