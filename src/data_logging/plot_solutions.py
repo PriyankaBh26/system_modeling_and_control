@@ -27,7 +27,7 @@ def main():
     problem = args.problem
     print("problem:", problem)
 
-    y = pd.read_csv(f"{directory}/{problem}_solution.csv", sep="\s+")
+    y = pd.read_csv(f"{directory}/{problem}_state_history.csv", sep="\s+")
     states = y.columns
     y = y.to_numpy()
     t = pd.read_csv(f"{directory}/{problem}_time.csv", sep=" ")

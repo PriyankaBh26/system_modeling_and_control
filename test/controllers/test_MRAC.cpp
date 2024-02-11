@@ -207,7 +207,7 @@ int main() {
     std::string directory = "test/controllers";
     std::string problem = "mrac";
     SaveTimeHistory(directory, problem, t_history);
-    SaveSimDataHistory(directory, problem, "solution", sys->GetColumnNames(), x_history);
+    SaveSimDataHistory(directory, problem, "state_history", sys->GetColumnNames(), x_history);
     SaveSimDataHistory(directory, problem, "meas_history", sys->GetColumnNames(), meas_history);
     SaveSimDataHistory(directory, problem, "control_history", {"U1"}, mrac->GetControlInputHistory());
     SaveSimDataHistory(directory, problem, "err_history", sys->GetColumnNames(), mrac->GetErrorHistory());
