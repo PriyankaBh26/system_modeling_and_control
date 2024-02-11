@@ -48,7 +48,7 @@ std::vector<std::string> PID::GetColumnNames() {
     return column_names;}
 
 std::ostream& operator << (std::ostream& out, const PID& PID) {
-    out << "Printing PID controller gains:\n";
+    out << "\nPrinting PID controller gains:\n";
     out << "KP = \n" << PID.kp << "\n";
     out << "KI = \n" << PID.ki << "\n";
     out << "KD = \n" << PID.kd << "\n";
