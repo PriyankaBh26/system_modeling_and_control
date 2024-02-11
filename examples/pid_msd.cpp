@@ -37,6 +37,8 @@ VectorXd CalculateXref(std::string reference_trajectory_type, int num_states, do
 }
 
 int main () {
+    std::string directory = "examples";
+    std::string problem = "msd";
 
     // initialize state
     int num_states = 2; 
@@ -57,7 +59,7 @@ int main () {
     MatrixXd B_in(num_states, num_inputs);
     B_in << 0, 0,
             1, 1;
-    MassSpringDamperSys* system = new MassSpringDamperSys(x0, t0, dh, num_states, B_in, "msd", k, c, m);
+    MassSpringDamperSys* system = new MassSpringDamperSys(x0, t0, dh, num_states, B_in, problem, k, c, m);
     std::cout << *system;
 
     // choose reference trajectory 
@@ -69,7 +71,7 @@ int main () {
     
     // set integration duration
     double dt = 0.01; 
-    double time_final = 1;
+    double time_final = 5;
 
     PID* pid_controller = new PID(num_states);
     if (control_type == "closed_loop") {
@@ -81,7 +83,7 @@ int main () {
         KI(0,0) = 0.01; // ki < (1+kp) // ki < b/m(k+kp)
 
         MatrixXd KD = MatrixXd::Constant(2,2,0.0);
-        KD(0,0) = 4.0;
+        KD(1,1) = 4.0;
 
         // set PID gains
         pid_controller->SetGains(KP, KI, KD);
@@ -125,8 +127,6 @@ int main () {
     }
 
     // save final outputs to csv files
-    std::string directory = "examples";
-    std::string problem = "pid_dc_motor";
     SaveTimeHistory(directory, problem, t_history);
     SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history);
     SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history);
