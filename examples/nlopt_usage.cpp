@@ -8,7 +8,7 @@ typedef struct {
     int count;
 } counter;
 
-double myfunc(const std::vector<double> &x, std::vector<double> &grad, void *data)
+double objective(const std::vector<double> &x, std::vector<double> &grad, void *data)
 {   
     counter *d = reinterpret_cast<counter*>(data);
     ++d->count;
@@ -42,7 +42,7 @@ int main() {
     opt.set_lower_bounds(lb);
 
     counter counter_data = {0};
-    opt.set_min_objective(myfunc, &counter_data);
+    opt.set_min_objective(objective, &counter_data);
 
     my_constraint_data data[2] = { {2,0}, {-1,1} };
     opt.add_inequality_constraint(myconstraint, &data[0], 1e-8);
