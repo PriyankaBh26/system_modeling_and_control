@@ -19,22 +19,25 @@ int main () {
 
     // initialize state
     int num_states = 2; 
-    int num_inputs = 1;
+    int num_inputs = 2;
     VectorXd x0(num_states);
-    x0 << 0.1, 0.0;
+    x0 << 0.0, 0.0;
     double t0 = 0.0;
     double dh = 1e-4;
 
-    // initialize control input
-    VectorXd u(num_inputs);
-    std::vector<VectorXd> u_history;
-
     // initialize LTI system
     MatrixXd A(num_states, num_states);
-    A << 0, 0,
-         1, 1;
+    A << 0, 1,
+         -1, -2;
+
+    // Compute the eigenvalues of A
+    Eigen::EigenSolver<MatrixXd> solver1(A);
+    Eigen::VectorXcd eigenvalues1 = solver1.eigenvalues();
+    std::cout << "A eigenvalues:\n"  << eigenvalues1;
+
     MatrixXd B(num_states, num_inputs);
-    B << 1, 0;
+    B << 0, 0,
+         1, 1;
     LinearTimeInvariantSys* system = new LinearTimeInvariantSys(x0, t0, dh, 
                                                                 num_states, problem, A, B);
     std::cout << *system;
@@ -43,28 +46,20 @@ int main () {
     VectorXd x_ref(num_states);
     x_ref << 1.0, 0.0;
 
-    // choose controller gains using Ackermans formula
-    VectorXd desired_roots(num_states);
-    desired_roots << -6, -5;
-
-    AckermansFormulaPolePlacement* pole_placement = new AckermansFormulaPolePlacement("roots", desired_roots, A, B);
-    VectorXd K = pole_placement->AckermansFormula();
-    std::cout << "\nController gains: \n" << K;
-
     // set integration duration
     double dt = 1e-2; 
-    double time_final = 5;
+    double time_final = 20;
 
     PID* pid_controller = new PID(num_states);
     // initialize PID controller
     MatrixXd KP = MatrixXd::Constant(2,2,0.0);
-    KP(0,0) = K(0);
+    KP(0,0) = 2.0;
     
     MatrixXd KI = MatrixXd::Constant(2,2,0.0);
-    KI(0,0) = 0.01; // ki < (1+kp) // ki < b/m(k+kp)
+    KI(0,0) = 0.00; // ki < (1+kp) // ki < b/m(k+kp)
 
     MatrixXd KD = MatrixXd::Constant(2,2,0.0);
-    KD(0,0) = K(1);
+    KD(1,1) = 2.0;
 
     // set PID gains
     pid_controller->SetGains(KP, KI, KD);
@@ -87,7 +82,15 @@ int main () {
 
     int ode_timesteps = dt/dh;
 
+    // initialize control input
+    VectorXd u(2);
+    std::vector<VectorXd> u_history;
+
     while (t < time_final) {
+        // std::cout << "\nBu0:\n" << B * u(0);
+        // std::cout << "\nBu1:\n" << B * u(1);
+
+        // VectorXd uk(1);
         system->IntegrateODE(ode_timesteps, u);
 
         VectorXd x = system->GetX();
@@ -95,10 +98,9 @@ int main () {
 
         pid_controller->CalculateError(x_ref, x);
 
-        VectorXd uk = pid_controller->GenerateControlInput();
-        VectorXd u(num_inputs);
-        u << uk(0);
+        u = pid_controller->GenerateControlInput();
 
+        // std::cout << "entered here";
         t += dt;
         x_history.push_back(x);
         t_history.push_back(t);
@@ -113,6 +115,6 @@ int main () {
 
     delete system;
     delete pid_controller;
-    delete pole_placement;
+
     return 0;
 }
