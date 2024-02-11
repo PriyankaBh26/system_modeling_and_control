@@ -166,6 +166,7 @@ int main() {
 
      // initialize measured output z
     std::vector<VectorXd> meas_history;
+    meas_history.push_back(x0);
     double measurement_noise = 0.001;
     // initialize and set time parameters
     double t = 0;
@@ -206,6 +207,7 @@ int main() {
     // save simulation data
     std::string directory = "test/controllers";
     std::string problem = "mrac";
+    SaveSimDataHistory(directory, problem, "ref_history", ref_sys->GetColumnNames(), x_ref_history);
     SaveTimeHistory(directory, problem, t_history);
     SaveSimDataHistory(directory, problem, "state_history", sys->GetColumnNames(), x_history);
     SaveSimDataHistory(directory, problem, "meas_history", sys->GetColumnNames(), meas_history);
