@@ -31,7 +31,6 @@ VectorXd WingRockModel::NonlinearDisturbance(Eigen::VectorXd X) {
     w << 0.8, 0.2314, 0.6918, -0.6245, 0.0095, 0.0214;
 
     disturbance << 0, (w.array() * phi.array()).sum();
-    // disturbance << 0, 0;
 
     disturbance_history.push_back(disturbance);
     return disturbance;
