@@ -81,7 +81,7 @@ int main() {
                                                           num_outputs, kappa);
 
     // initialize measurement z
-    std::vector<VectorXd> z_history;
+    std::vector<VectorXd> meas_history;
 
     // save x and t history
     std::vector<VectorXd> x_history;
@@ -95,9 +95,9 @@ int main() {
 
         VectorXd x = system->GetX();
         
-        z_history.push_back(x + R * VectorXd::Random(num_states));
+        meas_history.push_back(x + R * VectorXd::Random(num_states));
 
-        VectorXd x_est = ukf->ComputeEstimate(z_history.back());
+        VectorXd x_est = ukf->ComputeEstimate(meas_history.back());
 
         system->IntegrateODE(ode_timesteps, u);
 
@@ -107,7 +107,12 @@ int main() {
         t_history.push_back(t);
     }
     // save simulation data for plotting
-    SaveKFSimulationData(system, x_history, t_history, x_est_history, z_history);
+    std::string directory = "examples";
+    std::string problem = "ukf";
+    SaveTimeHistory(directory, problem, t_history);
+    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history);
+    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history);
+    SaveSimDataHistory(directory, problem, "est_history", system->GetColumnNames(), x_est_history);
 
     delete ukf;
     delete system;
