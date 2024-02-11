@@ -39,8 +39,8 @@ int main () {
 
     // initialize mass-spring-damper system
     int num_states = 2; 
-    VectorXd y0(num_states);
-    y0 << 0.0, 0.0;
+    VectorXd x0(num_states);
+    x0 << 0.0, 0.0;
     double t0 = 0.0;
     double dh = 0.0001;
     
@@ -52,7 +52,7 @@ int main () {
     double R = 1; // ohm
     double L = 0.5; // H
 
-    DCMotorVelocity* ode = new DCMotorVelocity(y0, t0, dh,
+    DCMotorVelocity* system = new DCMotorVelocity(x0, t0, dh,
                                             num_states, "dc_motor_vel", 
                                             J, b, K, R, L);
 
@@ -61,7 +61,7 @@ int main () {
     VectorXd x_ref(num_states);
 
     // choose control action: open_loop or closed_loop
-    std::string control_type = "open_loop";
+    std::string control_type = "closed_loop";
     // initialize control input
     VectorXd u(1);
     std::vector<VectorXd> u_history;
@@ -89,7 +89,7 @@ int main () {
     } 
 
     // initialize measured output z
-    std::vector<VectorXd> z;
+    std::vector<VectorXd> meas_history;
     double measurement_noise = 0.001;
     
     // save x and t history
@@ -98,12 +98,17 @@ int main () {
 
     // system dynamics and controller action
     double t = 0;
+
+    meas_history.push_back(x0);
+    x_history.push_back(x0);
+    t_history.push_back(t);
+
     while (t < time_final) {
         int ode_timesteps = dt/dh;
-        ode->IntegrateODE(ode_timesteps, u);
+        system->IntegrateODE(ode_timesteps, u);
 
-        VectorXd x = ode->GetX();
-        z.push_back(x + measurement_noise * VectorXd::Random(2));
+        VectorXd x = system->GetX();
+        meas_history.push_back(x + measurement_noise * VectorXd::Random(2));
 
         x_ref = CalculateXref(reference_trajectory_type, 1, t);
 
@@ -124,14 +129,23 @@ int main () {
     }
 
     // save final outputs to csv files
+    std::string directory = "examples";
+    std::string problem = "pid_dc_motor";
+    SaveTimeHistory(directory, problem, t_history);
+    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history);
+    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history);
+
     if (control_type == "closed_loop") {
-        SaveSimulationData(ode, pid_controller, x_history, t_history);
-        delete pid_controller;
+        SaveSimDataHistory(directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory());
+        SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory());
+
+
     } else if (control_type == "open_loop") {
-        SaveSimulationData(ode, x_history, t_history, u_history);
+        SaveSimDataHistory(directory, problem, "control_history", system->GetColumnNames(), u_history);
     }
 
-    delete ode;
+    delete system;
     delete pid_controller;
+
     return 0;
 }
