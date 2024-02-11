@@ -31,4 +31,13 @@ void SaveKFPIDSimulationData(OdeSolver* ode,
                         std::vector<VectorXd>& z_history,
                         std::vector<VectorXd>& u_history);
 
+void SaveSimDataHistory(std::string directory, 
+                        std::string problem, 
+                        std::string data_type, 
+                        std::vector<std::string> column_names, 
+                        std::vector<VectorXd> x_history);
+
+void SaveTimeHistory(std::string directory, 
+                     std::string problem, 
+                     std::vector<double> t_history);
 #endif

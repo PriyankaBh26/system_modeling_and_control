@@ -120,3 +120,26 @@ void SaveKFPIDSimulationData(OdeSolver* ode,
     column_names = {"time"};
     WriteVecToFile(filename, column_names, t_history);
 }
+
+void SaveSimDataHistory(std::string directory, 
+                        std::string problem, 
+                        std::string data_type, 
+                        std::vector<std::string> column_names, 
+                        std::vector<VectorXd> x_history) {
+
+    // save final output x to csv file
+    std::string filename = directory + "/" + problem + "_" + data_type + ".csv";
+    WriteMatToFile(filename, column_names, x_history);
+    std::cout << x_history.size() << " " << x_history.size();
+}
+
+
+void SaveTimeHistory(std::string directory, 
+                     std::string problem, 
+                     std::vector<double> t_history) {
+
+    // save final output x to csv file
+    std::string filename = directory + "/" + problem + "_time.csv";
+    WriteVecToFile(filename, {"time"}, t_history);
+    std::cout << "time history size: " << t_history.size();
+}
