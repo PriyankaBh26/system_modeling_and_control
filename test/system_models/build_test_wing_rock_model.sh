@@ -22,7 +22,8 @@ SRCS="test/system_models/test_wing_rock_model.cpp
      src/numerical_solvers/rk_ode_solver.cpp
      src/system_models/wing_rock_model.cpp
      src/data_logging/data_logging_helper_funs.cpp
-     src/data_logging/savecsv.cpp"
+     src/data_logging/savecsv.cpp
+     src/controllers/pid_controller.cpp"
 
 # Output executable name
 TARGET="build/myprogram"
