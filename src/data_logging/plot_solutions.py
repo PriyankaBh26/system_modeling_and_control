@@ -62,17 +62,19 @@ def main():
         error = error.to_numpy()
 
         # Create a figure and axis
-        fig2, ax2 = plt.subplots(2, num_control_ips)
+        fig2, ax2 = plt.subplots(num_control_ips+1)
         fig2.suptitle(f"{problem} Control Inputs and error")
         for k in range(num_control_ips):
-            ax2[0,k].plot(t, u[:,k], label = control_ips[k])
-            ax2[0,k].grid(True)
-            ax2[0,k].legend()
+            ax2[k].plot(t, u[:,k], label = control_ips[k])
+            ax2[k].grid(True)
+            ax2[k].legend()
 
+        fig3, ax3 = plt.subplots(num_err_ips)
+        fig3.suptitle(f"{problem} Control Inputs and error")
         for k in range(num_err_ips):
-            ax2[1,k].plot(t, error[:,k], label = "err_" + err_ips[k])
-            ax2[1,k].grid(True)
-            ax2[1,k].legend()
+            ax3[k].plot(t, error[:,k], label = "err_" + err_ips[k])
+            ax3[k].grid(True)
+            ax3[k].legend()
 
     if measurement_history:
         print("Measurement history is present")
