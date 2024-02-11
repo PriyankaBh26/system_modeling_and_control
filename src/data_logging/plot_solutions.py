@@ -63,14 +63,14 @@ def main():
 
         # Create a figure and axis
         fig2, ax2 = plt.subplots(num_control_ips+1)
-        fig2.suptitle(f"{problem} Control Inputs and error")
+        fig2.suptitle(f"{problem} Control Inputs")
         for k in range(num_control_ips):
             ax2[k].plot(t, u[:,k], label = control_ips[k])
             ax2[k].grid(True)
             ax2[k].legend()
 
         fig3, ax3 = plt.subplots(num_err_ips)
-        fig3.suptitle(f"{problem} Control Inputs and error")
+        fig3.suptitle(f"{problem} Error")
         for k in range(num_err_ips):
             ax3[k].plot(t, error[:,k], label = "err_" + err_ips[k])
             ax3[k].grid(True)
