@@ -25,7 +25,7 @@ class NonlinearPlant : public OdeSolver {
             VectorXd phi(6);
             phi << 1, X(0), X(1), X(0)*abs(X(0)), X(1)*abs(X(1)), std::pow(X(0),3);
             VectorXd w(6);
-            w << 1, -1, 0.1, 0.1, 0.2, 0.1;
+            w << 0.8, 0.2314, 0.6918, -0.6245, 0.0095, 0.0214;
 
             nonlinear_fun << 0, (w.array() * phi.array()).sum();
             VectorXd Xdot = A * X + B * u + nonlinear_fun;
@@ -109,6 +109,7 @@ int main() {
 
     // initialize reference model ode solver
     VectorXd x0(num_states);
+    x0 << 0.1, 1.0;
     double t0 = 0;
     double dh = 1e-4; 
     LinearTimeInvariantSys* ref_sys = new LinearTimeInvariantSys(x0, t0, dh, num_states, "ref_model", A_ref, B_ref);
@@ -116,9 +117,14 @@ int main() {
     // nominal plant model matrices A and B
     MatrixXd A(num_states, num_states);
     A << 0, 1,
-         0, 0;
+         -4, -3;
     MatrixXd B(num_states, 1);
     B << 0, 1;
+
+    // Compute the eigenvalues of A
+    Eigen::EigenSolver<MatrixXd> solver1(A);
+    Eigen::VectorXcd eigenvalues1 = solver1.eigenvalues();
+    std::cout << "A eigenvalues:\n"  << eigenvalues1;
 
     // // initialize plant model ode solver
     NonlinearPlant* sys = new NonlinearPlant(x0, t0, dh, num_states, "plant", A, B);
@@ -133,14 +139,14 @@ int main() {
 
     // initialize MRAC model
     std::string disturbance_model_feature_type = "single_hidden_layer_nn";
-    int num_features = 4;
+    int num_features = 10;
     VectorXd disturbance_mean_std_bw(3);
     disturbance_mean_std_bw << 2,5,5;
-    double dt = 0.01;
-    double learning_rate_w = 10;
-    double learning_rate_v = 10;
-    double learning_rate_kx = 10;
-    double learning_rate_kr = 10;
+    double dt = 1e-3;
+    double learning_rate_w = 0.001;
+    double learning_rate_v = 0.001;
+    double learning_rate_kx = 0.001;
+    double learning_rate_kr = 0.001;
 
     DirectMRAC* mrac = new DirectMRAC(disturbance_model_feature_type,
                                       num_states,
@@ -166,16 +172,17 @@ int main() {
 
      // initialize measured output z
     std::vector<VectorXd> meas_history;
-    meas_history.push_back(x0);
     double measurement_noise = 0.001;
     // initialize and set time parameters
     double t = 0;
-    double time_final = 1;
+    double time_final = 5;
 
     // save x and t history
     std::vector<VectorXd> x_history;
     std::vector<VectorXd> x_ref_history;
     std::vector<double> t_history;
+
+    meas_history.push_back(x0);
     x_history.push_back(x0);
     x_ref_history.push_back(r);
     t_history.push_back(t);
@@ -183,6 +190,7 @@ int main() {
     // solve mrac with ode integration
     while (t < time_final) {
         int ode_timesteps = dt/dh;
+        // u << 0;
         sys->IntegrateODE(ode_timesteps, u);
         ref_sys->IntegrateODE(ode_timesteps, r);
 
