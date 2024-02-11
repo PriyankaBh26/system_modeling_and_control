@@ -15,6 +15,7 @@ def main():
     parser.add_argument("-ctrl", "--control_history", help="If control history csv is present type 1")
     parser.add_argument("-meas", "--measurement_history", help="If measurement history csv is present type 1")
     parser.add_argument("-est", "--estimated_state_history", help="If estimated state history csv is present type 1")
+    parser.add_argument("-ref", "--reference_state_history", help="If reference state history csv is present type 1")
 
     # Parse arguments
     args = parser.parse_args()
@@ -26,10 +27,10 @@ def main():
     problem = args.problem
     print("problem:", problem)
 
-    y = pd.read_csv(f"examples/{problem}_solution.csv", sep="\s+")
+    y = pd.read_csv(f"{directory}/{problem}_state_history.csv", sep="\s+")
     states = y.columns
     y = y.to_numpy()
-    t = pd.read_csv(f"examples/{problem}_time.csv", sep=" ")
+    t = pd.read_csv(f"{directory}/{problem}_time.csv", sep=" ")
     t = t.to_numpy()
     num_states = y.shape[1] # number of columns of df
 
@@ -46,47 +47,62 @@ def main():
     control_history = args.control_history
     measurement_history = args.measurement_history
     estimated_state_history = args.estimated_state_history
+    reference_state_history = args.reference_state_history
 
     if control_history:
         print("Control history and error history is present")
-        u = pd.read_csv(f"examples/{problem}_control_history.csv", sep="\s+")
+        u = pd.read_csv(f"{directory}/{problem}_control_history.csv", sep="\s+")
         control_ips = u.columns
         num_control_ips = control_ips.size
         u = u.to_numpy()
 
-        error = pd.read_csv(f"examples/{problem}_err_history.csv", sep="\s+")
+        error = pd.read_csv(f"{directory}/{problem}_err_history.csv", sep="\s+")
         err_ips = error.columns
         num_err_ips = err_ips.size
         error = error.to_numpy()
 
         # Create a figure and axis
-        fig2, ax2 = plt.subplots(2, num_control_ips)
-        fig2.suptitle(f"{problem} Control Inputs and error")
+        fig2, ax2 = plt.subplots(num_control_ips+1)
+        fig2.suptitle(f"{problem} Control Inputs")
         for k in range(num_control_ips):
-            ax2[0,k].plot(t, u[:,k], label = control_ips[k])
-            ax2[0,k].grid(True)
-            ax2[0,k].legend()
+            ax2[k].plot(t, u[:,k], label = control_ips[k])
+            ax2[k].grid(True)
+            ax2[k].legend()
 
+        fig3, ax3 = plt.subplots(num_err_ips)
+        fig3.suptitle(f"{problem} Error")
         for k in range(num_err_ips):
-            ax2[1,k].plot(t, error[:,k], label = "err_" + err_ips[k])
-            ax2[1,k].grid(True)
-            ax2[1,k].legend()
+            ax3[k].plot(t, error[:,k], label = "err_" + err_ips[k])
+            ax3[k].grid(True)
+            ax3[k].legend()
 
     if measurement_history:
         print("Measurement history is present")
-        y_meas = pd.read_csv(f"examples/{problem}_meas_history.csv", sep="\s+")
+        y_meas = pd.read_csv(f"{directory}/{problem}_meas_history.csv", sep="\s+")
         y_meas = y_meas.to_numpy()
-        for j in range(num_states):
+        num_meas_states = y_meas.shape[1]
+        for j in range(num_meas_states):
             ax1[j].plot(t, y_meas[:,j], label = "meas_" + states[j])
             ax1[j].grid(True)
             ax1[j].legend()
 
     if estimated_state_history:
         print("Estimated state history is present")
-        y_est = pd.read_csv(f"examples/{problem}_est_history.csv", sep="\s+")
+        y_est = pd.read_csv(f"{directory}/{problem}_est_history.csv", sep="\s+")
         y_est = y_est.to_numpy()
-        for j in range(num_states):
+        num_est_states = y_est.shape[1]
+        for j in range(num_est_states):
             ax1[j].plot(t, y_est[:,j], label = "est_" + states[j])
+            ax1[j].grid(True)
+            ax1[j].legend()
+
+    if reference_state_history:
+        print("Reference state history is present")
+        y_ref = pd.read_csv(f"{directory}/{problem}_ref_history.csv", sep="\s+")
+        y_ref = y_ref.to_numpy()
+        num_ref_states = y_ref.shape[1]
+        for j in range(num_ref_states):
+            ax1[j].plot(t, y_ref[:,j], label = "ref_" + states[j])
             ax1[j].grid(True)
             ax1[j].legend()
     
