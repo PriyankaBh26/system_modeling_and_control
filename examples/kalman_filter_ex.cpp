@@ -58,7 +58,7 @@ int main() {
     KalmanFilter* kf = new KalmanFilter(x0_m, P0, A_state, Q, H, R);
 
     // initialize measurement z
-    std::vector<VectorXd> z_history;
+    std::vector<VectorXd> meas_history;
 
     // initialize control input
     VectorXd u(1);
@@ -76,9 +76,9 @@ int main() {
 
         VectorXd x = system->GetX();
         
-        z_history.push_back(x + R * VectorXd::Random(num_states));
+        meas_history.push_back(x + R * VectorXd::Random(num_states));
 
-        VectorXd x_est = kf->ComputeEstimate(z_history.back());
+        VectorXd x_est = kf->ComputeEstimate(meas_history.back());
 
         t += dt;
         x_history.push_back(x);
@@ -86,7 +86,13 @@ int main() {
         t_history.push_back(t);
     }
     // save simulation data for plotting
-    SaveKFSimulationData(system, x_history, t_history, x_est_history, z_history);
+    // save simulation data for plotting
+    std::string directory = "examples";
+    std::string problem = "kf";
+    SaveTimeHistory(directory, problem, t_history);
+    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history);
+    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history);
+    SaveSimDataHistory(directory, problem, "est_history", system->GetColumnNames(), x_est_history);
 
     delete kf;
     delete system;
