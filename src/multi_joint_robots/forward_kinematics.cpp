@@ -18,8 +18,6 @@ void ForwardKinematics::TfMatrixInBaseFrame(VectorXd q) {
     for (int i(0); i<num_joints; i++) {
         tf_se = tf_se * ForwardKinematics::ExponentialMatrix(screw_axes_s.col(i), 
                                                     q(i), joint_type[i]);
-            std::cout << "\ntf_se:\n" << tf_se;
-
     }
     tf_se = tf_se * tf_home;
 };
