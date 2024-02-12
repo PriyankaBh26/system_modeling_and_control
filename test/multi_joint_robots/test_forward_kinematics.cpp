@@ -193,6 +193,7 @@ void TestRPRFK() {
                                                         tf_home, 
                                                         screw_space, 
                                                         screw_body);
+    std::cout << *rpr_robot;
 
     MatrixXd tf_expected(4,4);
     tf_expected << 0, 1,  0,         -5,
