@@ -13,7 +13,7 @@ ForwardKinematics::ForwardKinematics(int n, VectorXd L, std::vector<std::string>
                                                                              screw_axes_s(m2), screw_axes_e(m3), 
                                                                              tf_se(MatrixXd::Identity(4,4)), tf_es(MatrixXd::Identity(4,4)) {};
 
-void ForwardKinematics::TfMatrixInBaseFrame(VectorXd q) {
+void ForwardKinematics::TfMatrixInSpaceFrame(VectorXd q) {
     // tf_se = exp([s1]q1)*exp([s2]q2)*...*exp([sn]qn)*tf_home
     for (int i(0); i<num_joints; i++) {
         tf_se = tf_se * ForwardKinematics::ExponentialMatrix(screw_axes_s.col(i), 
@@ -22,7 +22,7 @@ void ForwardKinematics::TfMatrixInBaseFrame(VectorXd q) {
     tf_se = tf_se * tf_home;
 };
 
-void ForwardKinematics::TfMatrixInEEFrame(VectorXd q) {
+void ForwardKinematics::TfMatrixInBodyFrame(VectorXd q) {
     // tf_es_k = tf_home*exp([B1]q1)*exp([B2]q2)*...*exp([Bn]qn)
     tf_es = tf_home;
     for (int i(0); i<num_joints; i++) {
@@ -31,7 +31,7 @@ void ForwardKinematics::TfMatrixInEEFrame(VectorXd q) {
     }
 };     
 
-MatrixXd ForwardKinematics::KthJointMatrixInBaseFrame(VectorXd q, int k) {
+MatrixXd ForwardKinematics::KthJointMatrixInSpaceFrame(VectorXd q, int k) {
     // tf_se_k = exp([s1]q1)*exp([s2]q2)*...*exp([sk]qk)
     MatrixXd tf_se_k = MatrixXd::Identity(4,4);
     for (int i(0); i<k; i++) {
@@ -40,7 +40,7 @@ MatrixXd ForwardKinematics::KthJointMatrixInBaseFrame(VectorXd q, int k) {
     return tf_se_k;
 };
 
-MatrixXd ForwardKinematics::KthJointMatrixInEEFrame(VectorXd q, int k) {
+MatrixXd ForwardKinematics::KthJointMatrixInBodyFrame(VectorXd q, int k) {
     // tf_es_k = exp(-[Bn]qn)*...*exp(-[Bk]qk)
     MatrixXd tf_es_k = MatrixXd::Identity(4,4);
     for (int i(num_joints-1); i>=k; i--) {
@@ -89,7 +89,7 @@ MatrixXd ForwardKinematics::SpaceJacobian(VectorXd q) {
     MatrixXd space_jacobian(6,num_joints);
     space_jacobian.col(0) = screw_axes_s.col(0);
     for (int k{1}; k<num_joints; k++) {
-        MatrixXd tf_se_k = ForwardKinematics::KthJointMatrixInBaseFrame(q, k);
+        MatrixXd tf_se_k = ForwardKinematics::KthJointMatrixInSpaceFrame(q, k);
         space_jacobian.col(k) = ForwardKinematics::CalculateAdjointOfTfMatrix(tf_se_k) * screw_axes_s.col(k);
     }
     return space_jacobian;
@@ -99,7 +99,7 @@ MatrixXd ForwardKinematics::BodyJacobian(VectorXd q) {
     MatrixXd body_jacobian(6,num_joints);
     body_jacobian.col(num_joints-1) = screw_axes_e.col(num_joints-1);
     for (int i{num_joints-2}; i>=0; i--) {
-        MatrixXd tf_es_k = ForwardKinematics::KthJointMatrixInEEFrame(q, i+1);
+        MatrixXd tf_es_k = ForwardKinematics::KthJointMatrixInBodyFrame(q, i+1);
         body_jacobian.col(i) = ForwardKinematics::CalculateAdjointOfTfMatrix(tf_es_k) * screw_axes_e.col(i);
     }
     return body_jacobian;
