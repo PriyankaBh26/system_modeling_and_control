@@ -67,24 +67,26 @@ void TestTfMatrixInEEFrame(ForwardKinematics* two_joint_robot, VectorXd q, Vecto
     std::cout << "\nr_in space frame: \n" << (tf_es * r0).transpose();
 }
 
-void TestSpaceJacobian(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd qd) {
+void TestSpaceJacobian(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd qd, VectorXd F) {
     MatrixXd space_jacobian = two_joint_robot->SpaceJacobian(q);
     std::cout << "\nspace_jacobian:\n" << space_jacobian;
 
     VectorXd space_twist = two_joint_robot->CalculateEETwist(space_jacobian, qd);
-
     std::cout << "\nspace_twist:\n" << space_twist;
 
+    VectorXd space_joint_torques = two_joint_robot->CalculateJointTorques(space_jacobian, F);
+    std::cout << "\nspace_joint_torques:\n" << space_joint_torques;
 }
 
-void TestBodyJacobian(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd qd) {
-    MatrixXd Body_jacobian = two_joint_robot->BodyJacobian(q);
-    std::cout << "\nBody_jacobian:\n" << Body_jacobian;
+void TestBodyJacobian(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd qd, VectorXd F) {
+    MatrixXd body_jacobian = two_joint_robot->BodyJacobian(q);
+    std::cout << "\nbody_jacobian:\n" << body_jacobian;
 
-    VectorXd body_twist = two_joint_robot->CalculateEETwist(Body_jacobian, qd);
-
+    VectorXd body_twist = two_joint_robot->CalculateEETwist(body_jacobian, qd);
     std::cout << "\nbody_twist:\n" << body_twist;
 
+    VectorXd body_joint_torques = two_joint_robot->CalculateJointTorques(body_jacobian, F);
+    std::cout << "\nbody_joint_torques:\n" << body_joint_torques;
 
 }
 
@@ -140,9 +142,12 @@ int main() {
     VectorXd thetad(num_joints);
     thetad << 1.0, 1.0;
 
-    TestSpaceJacobian(two_joint_robot, theta, thetad);
+    VectorXd F(6);
+    F(0) = 1;
 
-    TestBodyJacobian(two_joint_robot, theta, thetad);
+    TestSpaceJacobian(two_joint_robot, theta, thetad, F);
+
+    TestBodyJacobian(two_joint_robot, theta, thetad, F);
 
     delete two_joint_robot;
 
