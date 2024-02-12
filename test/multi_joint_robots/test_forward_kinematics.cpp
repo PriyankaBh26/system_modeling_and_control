@@ -59,6 +59,14 @@ void TestTfMatrixInBaseFrame(ForwardKinematics* two_joint_robot, VectorXd q, Vec
     std::cout << "\nr_in space frame: \n" << (tf_se * r0).transpose();
 }
 
+void TestTfMatrixInEEFrame(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd r0) {
+    two_joint_robot->TfMatrixInEEFrame(q);
+    MatrixXd tf_es = two_joint_robot->GetTfes();
+    std::cout << "\ntf_es:\n" << tf_es;
+
+    std::cout << "\nr_in space frame: \n" << (tf_es * r0).transpose();
+}
+
 int main() {
         // set number of joints of robot
     int num_joints = 2; 
@@ -106,6 +114,7 @@ int main() {
 
     TestTfMatrixInBaseFrame(two_joint_robot, theta, r0);
 
+    TestTfMatrixInEEFrame(two_joint_robot, theta, r0);
 
     delete two_joint_robot;
 

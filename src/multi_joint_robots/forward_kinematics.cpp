@@ -22,13 +22,14 @@ void ForwardKinematics::TfMatrixInBaseFrame(VectorXd q) {
     tf_se = tf_se * tf_home;
 };
 
-// void ForwardKinematics::TfMatrixInEEFrame() {
-//     // tf_es_k = tf_home*exp([B1]q1)*exp([B2]q2)*...*exp([Bn]qn)
-//     tf_es = tf_home;
-//     for (int i(0); i<num_joints; i++) {
-//         tf_es = tf_es * ForwardKinematics::ExponentialMatrix(screw_axes_e.col(i), q(i), joint_type(i));
-//     }
-// };     
+void ForwardKinematics::TfMatrixInEEFrame(VectorXd q) {
+    // tf_es_k = tf_home*exp([B1]q1)*exp([B2]q2)*...*exp([Bn]qn)
+    tf_es = tf_home;
+    for (int i(0); i<num_joints; i++) {
+        tf_es = tf_es * ForwardKinematics::ExponentialMatrix(screw_axes_e.col(i), 
+                                                            q(i), joint_type[i]);
+    }
+};     
 
 // MatrixXd ForwardKinematics::KthJointMatrixInBaseFrame(int k) {
 //     // tf_se_k = exp([s1]q1)*exp([s2]q2)*...*exp([sk]qk)
@@ -131,3 +132,5 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, double q_i, s
 // };
 
 MatrixXd ForwardKinematics::GetTfse() {return tf_se;};
+
+MatrixXd ForwardKinematics::GetTfes() {return tf_es;};
