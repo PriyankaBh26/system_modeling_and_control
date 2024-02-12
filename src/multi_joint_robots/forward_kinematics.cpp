@@ -81,7 +81,7 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis,
 
         exp_q.block(0,3,3,1) = v * q_i;
     }
-
+    exp_q(3,3) = 1;
     return exp_q;
 };
 
