@@ -3,16 +3,17 @@
 # include <cmath>
 # include <Eigen/Dense>
 
-# include "forward_kinematics.h"
+# include "multi_joint_robots/forward_kinematics.h"
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 ForwardKinematics::ForwardKinematics(int n, VectorXd L, std::vector<std::string> joint_type, 
-                                     MatrixXd m1, MatrixXd m2, MatrixXd m3) : num_joints(n), link_length(L), joint_type(joint_type), 
-                                                                             tf_0_se(m1), screw_axes_s(m2), screw_axes_e(m3), 
-                                                                             q(n), tf_se(4,4), tf_es_k(4,4);
+                                     MatrixXd m1, MatrixXd m2, MatrixXd m3) : num_joints(n), link_length(L), 
+                                                                             joint_type(joint_type), tf_0_se(m1), 
+                                                                             screw_axes_s(m2), screw_axes_e(m3), 
+                                                                             q(n), tf_se(4,4), tf_es_k(4,4) {};
 
-ForwardKinematics::TfMatrixInBaseFrame() {
+void ForwardKinematics::TfMatrixInBaseFrame() {
     // tf_se = exp([s1]q1)*exp([s2]q2)*...*exp([sn]qn)*tf_0_se
     tf_se = tf_0_se;
     for (int i(num_joints-1); i>0; i--) {
@@ -20,7 +21,7 @@ ForwardKinematics::TfMatrixInBaseFrame() {
     }
 };
 
-ForwardKinematics::TfMatrixInEEFrame() {
+void ForwardKinematics::TfMatrixInEEFrame() {
     // tf_es_k = tf_0_se*exp([B1]q1)*exp([B2]q2)*...*exp([Bn]qn)
     tf_es = tf_0_se;
     for (int i(0); i<num_joints; i++) {

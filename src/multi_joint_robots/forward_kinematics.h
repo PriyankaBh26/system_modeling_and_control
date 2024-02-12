@@ -10,11 +10,25 @@ class ForwardKinematics {
         ForwardKinematics(int n, VectorXd L, std::vector<std::string> joint_type, 
                           MatrixXd tf_0_se, MatrixXd screw_axes_s, MatrixXd screw_axes_e);
 
-        poe_tf_in_base_frame();
+        void TfMatrixInBaseFrame();
 
-        poe_tf_in_ee_frame();
+        void TfMatrixInEEFrame();
 
-        MatrixXd exponential_matrix(VectorXd screw_axis, double q_i, std::string joint_type_i);
+        MatrixXd KthJointMatrixInBaseFrame(int k);
+
+        MatrixXd KthJointMatrixInEEFrame(int k);
+
+        MatrixXd ExponentialMatrix(VectorXd screw_axis, double q_i, std::string joint_type_i);
+
+        MatrixXd SpaceJacobian();
+
+        MatrixXd BodyJacobian();
+
+        MatrixXd CalculateAdjointOfTfMatrix(MatrixXd tf_mat);
+
+        VectorXd CalculateEETwist(MatrixXd jacobian, VectorXd qd);
+    
+        VectorXd CalculateJointTorques(MatrixXd jacobian, VectorXd F);
 
     private:
         int num_joints;
