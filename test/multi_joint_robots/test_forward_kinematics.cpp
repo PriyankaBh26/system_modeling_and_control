@@ -90,8 +90,8 @@ void TestBodyJacobian(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd q
 
 }
 
-int main() {
-        // set number of joints of robot
+void TestTwoJointRobot() {
+    // set number of joints of robot
     int num_joints = 2; 
     // set link lengths
     VectorXd L(num_joints);
@@ -150,6 +150,10 @@ int main() {
     TestBodyJacobian(two_joint_robot, theta, thetad, F);
 
     delete two_joint_robot;
+}
+
+int main() {
+    TestTwoJointRobot();
 
     return 0;
 }
