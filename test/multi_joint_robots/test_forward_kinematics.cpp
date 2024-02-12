@@ -51,27 +51,27 @@ void ProductOfTFMatrices(VectorXd L, VectorXd theta, VectorXd r0) {
     std::cout << "\nr expected: \n" << (T03 * r0).transpose();
 }
 
-void TestTfMatrixInBaseFrame(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd r0) {
-    two_joint_robot->TfMatrixInBaseFrame(q);
-    MatrixXd tf_se = two_joint_robot->GetTfse();
-    std::cout << "\ntf_se:\n" << tf_se;
+void TestTfMatrixInSpaceFrame(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd r0) {
+    two_joint_robot->TfInSpaceFrame(q);
+    MatrixXd tf_space = two_joint_robot->GetTfSpace();
+    std::cout << "\ntf_space:\n" << tf_space;
 
-    std::cout << "\nr_in space frame: \n" << (tf_se * r0).transpose();
+    std::cout << "\nr_in space frame: \n" << (tf_space * r0).transpose();
 }
 
-void TestTfMatrixInEEFrame(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd r0) {
-    two_joint_robot->TfMatrixInEEFrame(q);
-    MatrixXd tf_es = two_joint_robot->GetTfes();
-    std::cout << "\ntf_es:\n" << tf_es;
+void TestTfMatrixInBodyFrame(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd r0) {
+    two_joint_robot->TfInBodyFrame(q);
+    MatrixXd tf_body = two_joint_robot->GetTfBody();
+    std::cout << "\ntf_body:\n" << tf_body;
 
-    std::cout << "\nr_in space frame: \n" << (tf_es * r0).transpose();
+    std::cout << "\nr_in space frame: \n" << (tf_body * r0).transpose();
 }
 
 void TestSpaceJacobian(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd qd, VectorXd F) {
     MatrixXd space_jacobian = two_joint_robot->SpaceJacobian(q);
     std::cout << "\nspace_jacobian:\n" << space_jacobian;
 
-    VectorXd space_twist = two_joint_robot->CalculateEETwist(space_jacobian, qd);
+    VectorXd space_twist = two_joint_robot->CalculateTwist(space_jacobian, qd);
     std::cout << "\nspace_twist:\n" << space_twist;
 
     VectorXd space_joint_torques = two_joint_robot->CalculateJointTorques(space_jacobian, F);
@@ -82,7 +82,7 @@ void TestBodyJacobian(ForwardKinematics* two_joint_robot, VectorXd q, VectorXd q
     MatrixXd body_jacobian = two_joint_robot->BodyJacobian(q);
     std::cout << "\nbody_jacobian:\n" << body_jacobian;
 
-    VectorXd body_twist = two_joint_robot->CalculateEETwist(body_jacobian, qd);
+    VectorXd body_twist = two_joint_robot->CalculateTwist(body_jacobian, qd);
     std::cout << "\nbody_twist:\n" << body_twist;
 
     VectorXd body_joint_torques = two_joint_robot->CalculateJointTorques(body_jacobian, F);
@@ -112,38 +112,40 @@ void TestTwoJointRobot() {
     // set home position: 
     // the position and orientation of end effector frame 
     // when all joint angles are set to zero
-    MatrixXd tf_0_se = MatrixXd::Identity(4, 4);
-    tf_0_se(0,3) = L.sum();
+    MatrixXd tf_home = MatrixXd::Identity(4, 4);
+    tf_home(0,3) = L.sum();
 
-    MatrixXd screw_axes_s(6,num_joints+1);
-    screw_axes_s << 0, 0, 0,
+    MatrixXd screw_space(6,num_joints+1);
+    screw_space << 0, 0, 0,
                     0, 0, 0,
                     1, 1, 1,
                     0, 0, 0,
                     0, -L(0), -L.sum(),
                     0, 0, 0;
 
-    MatrixXd screw_axes_e(6,num_joints+1);
-    screw_axes_e << 0, 0, 0,
+    MatrixXd screw_body(6,num_joints+1);
+    screw_body << 0, 0, 0,
                     0, 0, 0,
                     1, 1, 1,
                     0, 0, 0,
                     L.sum(), L(1), 0,
                     0, 0, 0;
 
+
     ForwardKinematics* two_joint_robot = new ForwardKinematics(num_joints, L, 
-                                                              joint_type, tf_0_se, 
-                                                              screw_axes_s, screw_axes_e);
+                                                              joint_type, tf_home, 
+                                                              screw_space, screw_body);
 
-    // TestTfMatrixInBaseFrame(two_joint_robot, theta, r0);
-
-    // TestTfMatrixInEEFrame(two_joint_robot, theta, r0);
 
     VectorXd thetad(num_joints);
     thetad << 1.0, 1.0;
 
     VectorXd F(6);
     F(0) = 1;
+
+    TestTfMatrixInSpaceFrame(two_joint_robot, theta, r0);
+
+    TestTfMatrixInBodyFrame(two_joint_robot, theta, r0);
 
     TestSpaceJacobian(two_joint_robot, theta, thetad, F);
 
