@@ -57,6 +57,9 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, double q_i, s
     VectorXd v(3);
     v << screw_axis(3), screw_axis(4), screw_axis(5);
 
+    MatrixXd R;
+    VectorXd p;
+
     if (joint_type_i == "R") {
         // revolute joint
         MatrixXd W = ForwardKinematics::VecToSkewSymmetricMat(w);
@@ -72,7 +75,7 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, double q_i, s
         VectorXd p = v * q_i;
     }
     // Combine R matrix and p vector into TF matrix
-    MatrixXd exp_q = ForwardKinematics::RotMatPosToTFMat(R, p)
+    MatrixXd exp_q = ForwardKinematics::RotMatPosToTFMat(R, p);
 
     return exp_q;
 };
@@ -140,6 +143,6 @@ MatrixXd ForwardKinematics::VecToSkewSymmetricMat(VectorXd v) {
     return skew_sym_matrix;
 };
 
-MatrixXd ForwardKinematics::GetTfse() {return tf_space;};
+MatrixXd ForwardKinematics::GetTfSpace() {return tf_space;};
 
-MatrixXd ForwardKinematics::GetTfes() {return tf_body;};
+MatrixXd ForwardKinematics::GetTfBody() {return tf_body;};
