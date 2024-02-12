@@ -7,11 +7,15 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-ForwardKinematics::ForwardKinematics(int n, VectorXd L, std::vector<std::string> joint_type, 
-                                     MatrixXd m1, MatrixXd m2, MatrixXd m3) : num_joints(n), link_length(L), 
-                                                                             joint_type(joint_type), tf_home(m1), 
-                                                                             screw_space(m2), screw_body(m3), 
-                                                                             tf_space(MatrixXd::Identity(4,4)), tf_body(MatrixXd::Identity(4,4)) {};
+ForwardKinematics::ForwardKinematics(int n,
+                    std::vector<std::string> joint_type, 
+                    MatrixXd m1, MatrixXd m2, MatrixXd m3) : num_joints(n), 
+                                                            joint_type(joint_type), 
+                                                            tf_home(m1), 
+                                                            screw_space(m2), 
+                                                            screw_body(m3), 
+                                                            tf_space(MatrixXd::Identity(4,4)), 
+                                                            tf_body(MatrixXd::Identity(4,4)) {};
 
 void ForwardKinematics::TfInSpaceFrame(VectorXd q) {
     // tf_space = exp([s1]q1)*exp([s2]q2)*...*exp([sn]qn)*tf_home
