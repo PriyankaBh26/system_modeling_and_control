@@ -50,7 +50,6 @@ MatrixXd ForwardKinematics::KthJointMatrixInEEFrame(VectorXd q, int k) {
 };
 
 MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, double q_i, std::string joint_type_i) {
-    MatrixXd exp_q(4,4);
     // angular velocity axis
     VectorXd w(3);
     w << screw_axis(0), screw_axis(1), screw_axis(2);
@@ -62,20 +61,29 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, double q_i, s
         // revolute joint
         MatrixXd W = ForwardKinematics::VecToSkewSymmetricMat(w);
 
-        exp_q.block(0,0,3,3) = MatrixXd::Identity(3,3) + sin(q_i) * W + (1- cos(q_i)) * W * W;
+        MatrixXd R = MatrixXd::Identity(3,3) + sin(q_i) * W + (1- cos(q_i)) * W * W;
 
-        exp_q.block(0,3,3,1) = (MatrixXd::Identity(3,3) * q_i + (1 - cos(q_i)) * W + (q_i - sin(q_i)) * W * W) * v;
+        VectorXd p = (MatrixXd::Identity(3,3) * q_i + (1 - cos(q_i)) * W + (q_i - sin(q_i)) * W * W) * v;
     
     } else if (joint_type_i == "P") {
         // prismatic joint
-        exp_q.block(0,0,3,3) = MatrixXd::Identity(3,3);
+        MatrixXd R = MatrixXd::Identity(3,3);
 
-        exp_q.block(0,3,3,1) = v * q_i;
+        VectorXd p = v * q_i;
     }
-    exp_q(3,3) = 1;
+    // Combine R matrix and p vector into TF matrix
+    MatrixXd exp_q = ForwardKinematics::RotMatPosToTFMat(R, p)
 
     return exp_q;
 };
+
+MatrixXd ForwardKinematics::RotMatPosToTFMat(MatrixXd R, VectorXd p) {
+    MatrixXd TFMat(4,4);
+    TFMat.block(0,0,3,3) = R;
+    TFMat.block(0,3,3,1) = p;
+    TFMat(3,3) = 1;
+    return TFMat;
+}
 
 MatrixXd ForwardKinematics::SpaceJacobian(VectorXd q) {
     MatrixXd space_jacobian(6,num_joints);

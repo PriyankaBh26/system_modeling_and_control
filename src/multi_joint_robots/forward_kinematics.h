@@ -20,6 +20,8 @@ class ForwardKinematics {
 
         MatrixXd ExponentialMatrix(VectorXd screw_axis, double q_i, std::string joint_type_i);
 
+        MatrixXd RotMatPosToTFMat(MatrixXd R, VectorXd p);
+
         MatrixXd SpaceJacobian(VectorXd q);
 
         MatrixXd BodyJacobian(VectorXd q);
