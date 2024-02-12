@@ -1,5 +1,7 @@
 #ifndef FORWARD_KINEMATICS_H
 #define FORWARD_KINEMATICS_H
+
+# include <iostream>
 # include <Eigen/Dense>
 
 using Eigen::MatrixXd;
@@ -40,6 +42,8 @@ class ForwardKinematics {
         MatrixXd GetTfSpace();
 
         MatrixXd GetTfBody();
+
+        friend std::ostream& operator << (std::ostream&  out, ForwardKinematics& robot);
 
     private:
         int num_joints;

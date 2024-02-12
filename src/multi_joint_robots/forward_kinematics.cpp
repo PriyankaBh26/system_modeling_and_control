@@ -65,25 +65,22 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis,
     VectorXd v(3);
     v << screw_axis(3), screw_axis(4), screw_axis(5);
 
-    MatrixXd R(3,3);
-    VectorXd p(3);
+    MatrixXd exp_q(4,4);
 
     if (joint_type_i == "R") {
         // revolute joint
         MatrixXd W = ForwardKinematics::VecToSkewSymmetricMat(w);
 
-        MatrixXd R = MatrixXd::Identity(3,3) + sin(q_i) * W + (1- cos(q_i)) * W * W;
+        exp_q.block(0,0,3,3) = MatrixXd::Identity(3,3) + sin(q_i) * W + (1- cos(q_i)) * W * W;
 
-        VectorXd p = (MatrixXd::Identity(3,3) * q_i + (1 - cos(q_i)) * W + (q_i - sin(q_i)) * W * W) * v;
+        exp_q.block(0,3,3,1) = (MatrixXd::Identity(3,3) * q_i + (1 - cos(q_i)) * W + (q_i - sin(q_i)) * W * W) * v;
     
     } else if (joint_type_i == "P") {
         // prismatic joint
-        MatrixXd R = MatrixXd::Identity(3,3);
+        exp_q.block(0,0,3,3) = MatrixXd::Identity(3,3);
 
-        VectorXd p = v * q_i;
+        exp_q.block(0,3,3,1) = v * q_i;
     }
-    // Combine R matrix and p vector into TF matrix
-    MatrixXd exp_q = ForwardKinematics::RotMatPosToTFMat(R, p);
 
     return exp_q;
 };
@@ -154,3 +151,15 @@ MatrixXd ForwardKinematics::VecToSkewSymmetricMat(VectorXd v) {
 MatrixXd ForwardKinematics::GetTfSpace() {return tf_space;};
 
 MatrixXd ForwardKinematics::GetTfBody() {return tf_body;};
+
+std::ostream& operator << (std::ostream&  out, ForwardKinematics& robot) {
+    out << "\n Robot parameters:";
+    out << "\nnumber of joints: " << robot.num_joints;
+    out << "\njoint types: ";
+    for (const auto& j : robot.joint_type) {
+        out << j << " ";
+    }
+    out << "\n TF_home:\n";
+    out << robot.tf_home << "\n";
+    return out;
+}
