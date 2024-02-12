@@ -39,7 +39,8 @@ MatrixXd ForwardKinematics::KthJointMatInSpaceFrame(VectorXd q, int k) {
     // tf_space_k = exp([s1]q1)*exp([s2]q2)*...*exp([sk]qk)
     MatrixXd tf_space_k = MatrixXd::Identity(4,4);
     for (int i(0); i<k; i++) {
-        tf_space_k = tf_space_k * ForwardKinematics::ExponentialMatrix(screw_space.col(i), q(i), joint_type[i]);
+        tf_space_k = tf_space_k * ForwardKinematics::ExponentialMatrix(screw_space.col(i), 
+                                                                    q(i), joint_type[i]);
     }
     return tf_space_k;
 };
@@ -48,12 +49,15 @@ MatrixXd ForwardKinematics::KthJointMatInBodyFrame(VectorXd q, int k) {
     // tf_body_k = exp(-[Bn]qn)*...*exp(-[Bk]qk)
     MatrixXd tf_body_k = MatrixXd::Identity(4,4);
     for (int i(num_joints-1); i>=k; i--) {
-        tf_body_k = tf_body_k * ForwardKinematics::ExponentialMatrix(-screw_body.col(i), q(i), joint_type[i]);
+        tf_body_k = tf_body_k * ForwardKinematics::ExponentialMatrix(-screw_body.col(i), 
+                                                                    q(i), joint_type[i]);
     }
     return tf_body_k;
 };
 
-MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, double q_i, std::string joint_type_i) {
+MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, 
+                                              double q_i, 
+                                              std::string joint_type_i) {
     // angular velocity axis
     VectorXd w(3);
     w << screw_axis(0), screw_axis(1), screw_axis(2);

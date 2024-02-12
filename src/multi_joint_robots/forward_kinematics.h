@@ -7,8 +7,11 @@ using Eigen::VectorXd;
 
 class ForwardKinematics {
     public:
-        ForwardKinematics(int n, std::vector<std::string> joint_type, 
-                          MatrixXd tf_home, MatrixXd screw_space, MatrixXd screw_body);
+        ForwardKinematics(int n, 
+                          std::vector<std::string> joint_type, 
+                          MatrixXd tf_home, 
+                          MatrixXd screw_space, 
+                          MatrixXd screw_body);
 
         void TfInSpaceFrame(VectorXd q);
 
