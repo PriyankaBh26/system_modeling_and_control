@@ -13,7 +13,7 @@ ForwardKinematics::ForwardKinematics(int n, VectorXd L, std::vector<std::string>
                                                                              screw_space(m2), screw_body(m3), 
                                                                              tf_space(MatrixXd::Identity(4,4)), tf_body(MatrixXd::Identity(4,4)) {};
 
-void ForwardKinematics::TfMatrixInSpaceFrame(VectorXd q) {
+void ForwardKinematics::TfInSpaceFrame(VectorXd q) {
     // tf_space = exp([s1]q1)*exp([s2]q2)*...*exp([sn]qn)*tf_home
     for (int i(0); i<num_joints; i++) {
         tf_space = tf_space * ForwardKinematics::ExponentialMatrix(screw_space.col(i), 
@@ -22,7 +22,7 @@ void ForwardKinematics::TfMatrixInSpaceFrame(VectorXd q) {
     tf_space = tf_space * tf_home;
 };
 
-void ForwardKinematics::TfMatrixInBodyFrame(VectorXd q) {
+void ForwardKinematics::TfInBodyFrame(VectorXd q) {
     // tf_body_k = tf_home*exp([B1]q1)*exp([B2]q2)*...*exp([Bn]qn)
     tf_body = tf_home;
     for (int i(0); i<num_joints; i++) {
@@ -57,8 +57,8 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, double q_i, s
     VectorXd v(3);
     v << screw_axis(3), screw_axis(4), screw_axis(5);
 
-    MatrixXd R;
-    VectorXd p;
+    MatrixXd R(3,3);
+    VectorXd p(3);
 
     if (joint_type_i == "R") {
         // revolute joint

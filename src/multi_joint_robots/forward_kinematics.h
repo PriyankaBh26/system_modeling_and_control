@@ -10,9 +10,9 @@ class ForwardKinematics {
         ForwardKinematics(int n, VectorXd L, std::vector<std::string> joint_type, 
                           MatrixXd tf_home, MatrixXd screw_space, MatrixXd screw_body);
 
-        void TfMatrixInSpaceFrame(VectorXd q);
+        void TfInSpaceFrame(VectorXd q);
 
-        void TfMatrixInBodyFrame(VectorXd q);
+        void TfInBodyFrame(VectorXd q);
 
         MatrixXd KthJointMatrixInSpaceFrame(VectorXd q, int k);
 
