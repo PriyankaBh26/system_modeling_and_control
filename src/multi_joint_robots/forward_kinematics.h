@@ -1,5 +1,7 @@
 #ifndef FORWARD_KINEMATICS_H
 #define FORWARD_KINEMATICS_H
+
+# include <iostream>
 # include <Eigen/Dense>
 
 using Eigen::MatrixXd;
@@ -7,25 +9,50 @@ using Eigen::VectorXd;
 
 class ForwardKinematics {
     public:
-        ForwardKinematics(int n, VectorXd L, std::vector<std::string> joint_type, 
-                          MatrixXd tf_0_se, MatrixXd screw_axes_s, MatrixXd screw_axes_e);
+        ForwardKinematics(int n, 
+                          std::vector<std::string> joint_type, 
+                          MatrixXd tf_home, 
+                          MatrixXd screw_space, 
+                          MatrixXd screw_body);
 
-        poe_tf_in_base_frame();
+        void TfInSpaceFrame(VectorXd q);
 
-        poe_tf_in_ee_frame();
+        void TfInBodyFrame(VectorXd q);
 
-        MatrixXd exponential_matrix(VectorXd screw_axis, double q_i, std::string joint_type_i);
+        MatrixXd KthJointMatInSpaceFrame(VectorXd q, int k);
+
+        MatrixXd KthJointMatInBodyFrame(VectorXd q, int k);
+
+        MatrixXd ExponentialMatrix(VectorXd screw_axis, double q_i, std::string joint_type_i);
+
+        MatrixXd RotMatPosToTFMat(MatrixXd R, VectorXd p);
+
+        MatrixXd SpaceJacobian(VectorXd q);
+
+        MatrixXd BodyJacobian(VectorXd q);
+
+        MatrixXd CalculateAdjointOfTfMatrix(MatrixXd tf_mat);
+
+        VectorXd CalculateTwist(MatrixXd jacobian, VectorXd qd);
+    
+        VectorXd CalculateJointTorques(MatrixXd jacobian, VectorXd F);
+
+        MatrixXd VecToSkewSymmetricMat(VectorXd v);
+
+        MatrixXd GetTfSpace();
+
+        MatrixXd GetTfBody();
+
+        friend std::ostream& operator << (std::ostream&  out, ForwardKinematics& robot);
 
     private:
         int num_joints;
-        VectorXd link_length;
         std::vector<std::string> joint_type;
-        MatrixXd tf_0_se;
-        MatrixXd screw_axes_s;
-        MatrixXd screw_axes_e;
-        VectorXd q;
-        MatrixXd tf_se;
-        MatrixXd tf_es;
+        MatrixXd tf_home;
+        MatrixXd screw_space;
+        MatrixXd screw_body;
+        MatrixXd tf_space;
+        MatrixXd tf_body;
 };
 
 
