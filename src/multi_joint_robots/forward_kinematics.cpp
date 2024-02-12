@@ -40,14 +40,14 @@ MatrixXd ForwardKinematics::KthJointMatrixInBaseFrame(VectorXd q, int k) {
     return tf_se_k;
 };
 
-// MatrixXd ForwardKinematics::KthJointMatrixInEEFrame(VectorXd q, int k) {
-//     // tf_es_k = exp(-[Bn]qn)*...*exp(-[Bk]qk)
-//     MatrixXd tf_es_k = MatrixXd::Identity(4,4);
-//     for (int i(num_joints-1); i>=k; i--) {
-//         tf_es_k = tf_es_k * ForwardKinematics::ExponentialMatrix(-screw_axes_e.col(i), q(i), joint_type(i));
-//     }
-//     return tf_es_k;
-// };
+MatrixXd ForwardKinematics::KthJointMatrixInEEFrame(VectorXd q, int k) {
+    // tf_es_k = exp(-[Bn]qn)*...*exp(-[Bk]qk)
+    MatrixXd tf_es_k = MatrixXd::Identity(4,4);
+    for (int i(num_joints-1); i>=k; i--) {
+        tf_es_k = tf_es_k * ForwardKinematics::ExponentialMatrix(-screw_axes_e.col(i), q(i), joint_type[i]);
+    }
+    return tf_es_k;
+};
 
 MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, double q_i, std::string joint_type_i) {
     MatrixXd exp_q(4,4);
@@ -90,15 +90,15 @@ MatrixXd ForwardKinematics::SpaceJacobian(VectorXd q) {
     return space_jacobian;
 };
 
-// MatrixXd ForwardKinematics::BodyJacobian(VectorXd q) {
-//     MatrixXd body_jacobian(6,num_joints);
-//     body_jacobian.col(num_joints-1) = screw_axes_e.col(num_joints-1);
-//     for (int i{num_joints-2}; i>=0; i--) {
-//         MatrixXd tf_es_k = ForwardKinematics::KthJointMatrixInEEFrame(q, i+1);
-//         body_jacobian.col(i) = ForwardKinematics::CalculateAdjointOfTfMatrix(tf_es_k) * screw_axes_e.col(i);
-//     }
-//     return body_jacobian;
-// };
+MatrixXd ForwardKinematics::BodyJacobian(VectorXd q) {
+    MatrixXd body_jacobian(6,num_joints);
+    body_jacobian.col(num_joints-1) = screw_axes_e.col(num_joints-1);
+    for (int i{num_joints-2}; i>=0; i--) {
+        MatrixXd tf_es_k = ForwardKinematics::KthJointMatrixInEEFrame(q, i+1);
+        body_jacobian.col(i) = ForwardKinematics::CalculateAdjointOfTfMatrix(tf_es_k) * screw_axes_e.col(i);
+    }
+    return body_jacobian;
+};
 
 MatrixXd ForwardKinematics::CalculateAdjointOfTfMatrix(MatrixXd tf_mat) {
     MatrixXd ad_tf_mat(6,6);
