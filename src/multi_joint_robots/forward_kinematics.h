@@ -30,6 +30,8 @@ class ForwardKinematics {
     
         VectorXd CalculateJointTorques(MatrixXd jacobian, VectorXd F);
 
+        MatrixXd VecToSkewSymmetricMat(VectorXd v);
+
         MatrixXd GetTfse();
 
         MatrixXd GetTfes();

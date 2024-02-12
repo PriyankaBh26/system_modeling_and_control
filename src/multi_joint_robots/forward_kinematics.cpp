@@ -60,10 +60,7 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis, double q_i, s
 
     if (joint_type_i == "R") {
         // revolute joint
-        MatrixXd W(3,3);
-        W << 0, -w(2), w(1),
-            w(2), 0, -w(0),
-            -w(1), w(0), 0;
+        MatrixXd W = ForwardKinematics::VecToSkewSymmetricMat(w);
 
         exp_q.block(0,0,3,3) = MatrixXd::Identity(3,3) + sin(q_i) * W + (1- cos(q_i)) * W * W;
 
@@ -108,10 +105,7 @@ MatrixXd ForwardKinematics::CalculateAdjointOfTfMatrix(MatrixXd tf_mat) {
     VectorXd p(3);
     p << tf_mat(0,3), tf_mat(1,3), tf_mat(2,3);
 
-    MatrixXd p_mat(3,3);
-    p_mat << 0, -p(2), p(1),
-            p(2), 0, -p(0),
-            -p(1), p(0), 0;
+    MatrixXd p_mat = ForwardKinematics::VecToSkewSymmetricMat(p);
 
     ad_tf_mat.block(0,0,3,3) = R;
     ad_tf_mat.block(3,3,3,3) = R;
@@ -127,6 +121,15 @@ VectorXd ForwardKinematics::CalculateEETwist(MatrixXd jacobian, VectorXd qd) {
 VectorXd ForwardKinematics::CalculateJointTorques(MatrixXd jacobian, VectorXd F) {
     VectorXd joint_torque = jacobian.transpose() * F;
     return joint_torque;
+};
+
+MatrixXd ForwardKinematics::VecToSkewSymmetricMat(VectorXd v) {
+    MatrixXd skew_sym_matrix(3,3);
+    skew_sym_matrix << 0, -v(2), v(1),
+                        v(2), 0, -v(0),
+                        -v(1), v(0), 0;
+
+    return skew_sym_matrix;
 };
 
 MatrixXd ForwardKinematics::GetTfse() {return tf_se;};
