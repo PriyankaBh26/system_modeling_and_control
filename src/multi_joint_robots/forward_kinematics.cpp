@@ -119,11 +119,10 @@ MatrixXd ForwardKinematics::CalculateAdjointOfTfMatrix(MatrixXd tf_mat) {
     return ad_tf_mat;
 };
 
-// VectorXd ForwardKinematics::CalculateEETwist(MatrixXd jacobian, VectorXd qd) {
-//     VectorXd ee_twist(6);
-//     ee_twist = jacobian * qd;
-//     return ee_twist;
-// };
+VectorXd ForwardKinematics::CalculateEETwist(MatrixXd jacobian, VectorXd qd) {
+    VectorXd ee_twist = jacobian * qd;
+    return ee_twist;
+};
 
 // VectorXd ForwardKinematics::CalculateJointTorques(MatrixXd jacobian, VectorXd F) {
 //     VectorXd joint_torque(num_joints);
