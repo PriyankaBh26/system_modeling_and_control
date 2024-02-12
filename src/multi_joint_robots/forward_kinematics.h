@@ -28,7 +28,7 @@ class ForwardKinematics {
 
         MatrixXd CalculateAdjointOfTfMatrix(MatrixXd tf_mat);
 
-        VectorXd CalculateEETwist(MatrixXd jacobian, VectorXd qd);
+        VectorXd CalculateTwist(MatrixXd jacobian, VectorXd qd);
     
         VectorXd CalculateJointTorques(MatrixXd jacobian, VectorXd F);
 
