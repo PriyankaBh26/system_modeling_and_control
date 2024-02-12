@@ -67,6 +67,14 @@ void TestTfMatrixInEEFrame(ForwardKinematics* two_joint_robot, VectorXd q, Vecto
     std::cout << "\nr_in space frame: \n" << (tf_es * r0).transpose();
 }
 
+void TestSpaceJacobian(ForwardKinematics* two_joint_robot, VectorXd q) {
+    MatrixXd space_jacobian = two_joint_robot->SpaceJacobian(q);
+    std::cout << "\nspace_jacobian:\n" << space_jacobian;
+
+    // std::cout << "\nr_in space frame: \n" << (tf_es * r0).transpose();
+}
+
+
 int main() {
         // set number of joints of robot
     int num_joints = 2; 
@@ -112,9 +120,11 @@ int main() {
                                                               joint_type, tf_0_se, 
                                                               screw_axes_s, screw_axes_e);
 
-    TestTfMatrixInBaseFrame(two_joint_robot, theta, r0);
+    // TestTfMatrixInBaseFrame(two_joint_robot, theta, r0);
 
-    TestTfMatrixInEEFrame(two_joint_robot, theta, r0);
+    // TestTfMatrixInEEFrame(two_joint_robot, theta, r0);
+
+    TestSpaceJacobian(two_joint_robot, theta);
 
     delete two_joint_robot;
 
