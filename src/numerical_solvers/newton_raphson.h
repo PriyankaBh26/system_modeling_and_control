@@ -15,7 +15,7 @@ class NewtonRaphson {
         virtual VectorXd f(VectorXd q);
         // the jacobian dfdq(q)
         virtual MatrixXd dfdq(VectorXd q);
-        // iteration q = q0 - pinv(dfdq(q0)) * g(q0);
+        // iteration q = q0 - pinv(dfdq(q0)) * f(q0);
         VectorXd Iterate();
         // save q history
         std::vector<VectorXd> GetSolutionHistory();
