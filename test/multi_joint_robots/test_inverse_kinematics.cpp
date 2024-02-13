@@ -91,6 +91,23 @@ void TestVecToSkewSymMat(InverseKinematics* inv_kin) {
 
 }
 
+void TestMatrixLog3(InverseKinematics* inv_kin) {
+    MatrixXd R(3,3);
+    R << 0, 0, 1,
+         1, 0, 0,
+         0, 1, 0;
+    
+    MatrixXd W_expected(3,3);
+    W_expected << 0, -1.20919958,  1.20919958,
+                  1.20919958,    0, -1.20919958,
+                 -1.20919958,  1.20919958,  0;
+
+    MatrixXd W = inv_kin->MatrixLog3(R);
+    std::cout << "\nTestMatrixLog3\n";
+    std::cout << "\n W - W_expected\n: " << W - W_expected;
+    std::cout << "\n";
+}
+
 int main() {
 
     int num_joints = 2; 
@@ -155,6 +172,8 @@ int main() {
     TestSkewSymMatToVec(inv_kin);
 
     TestVecToSkewSymMat(inv_kin);
+
+    TestMatrixLog3(inv_kin);
 
     // VectorXd qd = inv_kin->SolveIK();
 

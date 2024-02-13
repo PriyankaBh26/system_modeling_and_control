@@ -58,25 +58,27 @@ MatrixXd InverseKinematics::VecToSkewSymMat(VectorXd w) {
     return W;
 }
 
-// MatrixXd InverseKinematics::MatrixLog3(MatrixXd R) {
-//     double costh = (R.trace() - 1) / 2;
-//     if (costh >= 1.0) {
-//         MatrixXd W = MatrixXd::zero(3,3);
-//     } else if (costh <= -1.0) {
-//         if (abs(1 + R(2,2)) > 1e-8) {
-//             VecrorXd w = 1/sqrt(2 * (1 + R(2,2))) * R.col(2).array();
-//         } else if (abs(1 + R(1,1)) > 1e-8) {
-//             VecrorXd w = 1/sqrt(2 * (1 + R(1,1))) * R.col(1).array();
-//         } else if (abs(1 + R(0,0)) > 1e-8) {
-//             VecrorXd w = 1/sqrt(2 * (1 + R(0,0))) * R.col(0).array();
-//         }
-//         MatrixXd W = InverseKinematics::VecToSkewSymMat(M_PI * w);
-//     } else {
-//         double theta = acos(costh);
-//         MatrixXd W = theta / 2 / sin(theta) * (R - R.transpose());
-//     }
-//     return W;
-// };
+MatrixXd InverseKinematics::MatrixLog3(MatrixXd R) {
+    double costh = (R.trace() - 1) / 2;
+    MatrixXd W;
+    VectorXd w;
+    if (costh >= 1.0) {
+        W = MatrixXd::Zero(3,3);
+    } else if (costh <= -1.0) {
+        if (abs(1 + R(2,2)) > 1e-8) {
+            w = 1/sqrt(2 * (1 + R(2,2))) * R.col(2).array();
+        } else if (abs(1 + R(1,1)) > 1e-8) {
+            w = 1/sqrt(2 * (1 + R(1,1))) * R.col(1).array();
+        } else if (abs(1 + R(0,0)) > 1e-8) {
+            w = 1/sqrt(2 * (1 + R(0,0))) * R.col(0).array();
+        }
+        W = InverseKinematics::VecToSkewSymMat(M_PI * w.array());
+    } else {
+        double theta = acos(costh);
+        W = theta / 2 / sin(theta) * (R - R.transpose());
+    }
+    return W;
+};
 
 // VectorXd InverseKinematics::Se3ToVec(MatrixXd V_B) {
 //     VectorXd V_b(6);
