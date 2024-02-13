@@ -26,7 +26,7 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
 
         VectorXd SkewSymMatToVec(MatrixXd W);
 
-        // MatrixXd VecToSkewSymMat(VectorXd w);
+        MatrixXd VecToSkewSymMat(VectorXd w);
 
         // MatrixXd MatrixLog3(MatrixXd R);
 

@@ -50,13 +50,13 @@ VectorXd InverseKinematics::SkewSymMatToVec(MatrixXd W) {
     return w_theta;
 };
 
-// MatrixXd InverseKinematics::VecToSkewSymMat(VectorXd w) {
-//     MatrixXd W(3,3);
-//     W << 0, -w(2),  w(1),
-//          w(2), 0,  -w(0),
-//         -w(1), w(0),  0;
-//     return W;
-// }
+MatrixXd InverseKinematics::VecToSkewSymMat(VectorXd w) {
+    MatrixXd W(3,3);
+    W << 0, -w(2),  w(1),
+         w(2), 0,  -w(0),
+        -w(1), w(0),  0;
+    return W;
+}
 
 // MatrixXd InverseKinematics::MatrixLog3(MatrixXd R) {
 //     double costh = (R.trace() - 1) / 2;

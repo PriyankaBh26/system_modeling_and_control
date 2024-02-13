@@ -60,7 +60,7 @@ void TestTfSpaceToBody(InverseKinematics* inv_kin, MatrixXd tf_expected, VectorX
     MatrixXd tf_body = inv_kin->TfSpaceToBody(tf_expected, q0);
     std::cout << "\nTestTfSpaceToBody\n";
     std::cout << "\n tf_body: \n" << tf_body;
-    std::Cout << "\n";
+    std::cout << "\n";
 }
 
 void TestSkewSymMatToVec(InverseKinematics* inv_kin) {
@@ -73,7 +73,21 @@ void TestSkewSymMatToVec(InverseKinematics* inv_kin) {
     w_expected << 1, 2, 3;
     std::cout << "\nTestSkewSymMatToVec\n";
     std::cout << "\n w - w_expected : " << w.transpose() - w_expected.transpose();
-    std::Cout << "\n";
+    std::cout << "\n";
+
+}
+
+void TestVecToSkewSymMat(InverseKinematics* inv_kin) {
+    MatrixXd W_expected(3,3);
+    W_expected << 0, -3,  2,
+                  3,  0, -1,
+                 -2,  1,  0;
+    VectorXd w(3);
+    w << 1, 2, 3;
+    MatrixXd W = inv_kin->VecToSkewSymMat(w);
+    std::cout << "\nTestVecToSkewSymMat\n";
+    std::cout << "\n W - W_expected : " << W - W_expected;
+    std::cout << "\n";
 
 }
 
@@ -139,6 +153,8 @@ int main() {
     TestTfSpaceToBody(inv_kin, tf_expected, q0);
 
     TestSkewSymMatToVec(inv_kin);
+
+    TestVecToSkewSymMat(inv_kin);
 
     // VectorXd qd = inv_kin->SolveIK();
 
