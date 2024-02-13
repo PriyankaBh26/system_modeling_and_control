@@ -80,12 +80,12 @@ MatrixXd InverseKinematics::MatrixLog3(MatrixXd R) {
     return W;
 };
 
-// VectorXd InverseKinematics::Se3ToVec(MatrixXd V_B) {
-//     VectorXd V_b(6);
-//     V_b << V_B(2,1), V_B(0,2), V_B(1,0),
-//             V_B(0,3), V_B(1,3), V_B(2,3);
-//     return V_b;
-// }
+VectorXd InverseKinematics::Se3ToVec(MatrixXd V_B) {
+    VectorXd V_b(6);
+    V_b << V_B(2,1), V_B(0,2), V_B(1,0),
+            V_B(0,3), V_B(1,3), V_B(2,3);
+    return V_b;
+}
 
 // VectorXd InverseKinematics::BodyTwistFromTF(MatrixXd tf_body) {
 //     MatrixXd R = tf_body.block(0,0,3,3);

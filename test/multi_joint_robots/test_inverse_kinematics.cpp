@@ -108,6 +108,21 @@ void TestMatrixLog3(InverseKinematics* inv_kin) {
     std::cout << "\n";
 }
 
+void TestSe3ToVec(InverseKinematics* inv_kin) {
+    MatrixXd V_B(4,4);
+    V_B <<   0, -3,  2, 4,
+             3,  0, -1, 5,
+            -2,  1,  0, 6,
+             0,  0,  0, 0;
+
+    VectorXd V_b_expected(6);
+    V_b_expected << 1, 2, 3, 4, 5, 6;
+    VectorXd V_b = inv_kin->Se3ToVec(V_B);
+    std::cout << "\nTestSe3ToVec\n";
+    std::cout << "\n V_b - V_b_expected : " << V_b.transpose() - V_b_expected.transpose();
+    std::cout << "\n";
+}
+
 int main() {
 
     int num_joints = 2; 
@@ -174,6 +189,8 @@ int main() {
     TestVecToSkewSymMat(inv_kin);
 
     TestMatrixLog3(inv_kin);
+
+    TestSe3ToVec(inv_kin);
 
     // VectorXd qd = inv_kin->SolveIK();
 

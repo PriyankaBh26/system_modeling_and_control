@@ -30,7 +30,7 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
 
         MatrixXd MatrixLog3(MatrixXd R);
 
-        // VectorXd Se3ToVec(MatrixXd V_B);
+        VectorXd Se3ToVec(MatrixXd V_B);
 
         // VectorXd BodyTwistFromTF(MatrixXd tf_body);
 
