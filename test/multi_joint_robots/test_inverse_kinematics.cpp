@@ -146,9 +146,17 @@ void Testf(InverseKinematics* inv_kin, VectorXd q) {
     VectorXd V_b = inv_kin->f(q);
     
     std::cout << "\nTestf\n";
-    std::cout << "\n V_b - V_b_expected:\n " << V_b;
+    std::cout << "\n V_b\n " << V_b;
     std::cout << "\n";
 }
+
+void Testdfdq(InverseKinematics* inv_kin, VectorXd q) {
+    MatrixXd Jac = inv_kin->dfdq(q);
+    std::cout << "\nTestdfdq\n";
+    std::cout << "\n Jacobian:\n " << Jac;
+    std::cout << "\n";
+}
+
 
 int main() {
 
@@ -165,7 +173,9 @@ int main() {
     VectorXd theta(num_joints);
     theta << M_PI/180 * 30, M_PI/180 * 30;
 
-    VectorXd q0 = theta.array();
+    std::cout << "\nq desired: " << theta.transpose();
+
+    VectorXd q0 = theta.array() + 0.1;
 
     VectorXd x_d = GetXdesired(L, theta, num_joints);
 
@@ -219,9 +229,11 @@ int main() {
 
     // TestSe3ToVec(inv_kin);
 
-    TestMatrixLog6(inv_kin);
+    // TestMatrixLog6(inv_kin);
 
     Testf(inv_kin, q0);
+
+    Testdfdq(inv_kin, q0);
 
     // VectorXd qd = inv_kin->SolveIK();
 

@@ -36,9 +36,9 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
 
         VectorXd f(VectorXd q) override;
 
-        // MatrixXd dfdq(VectorXd q) override;
+        MatrixXd dfdq(VectorXd q) override;
         
-        // VectorXd SolveIK();
+        // VectorXd SolveIKBody();
 
         friend std::ostream& operator << (std::ostream& out, InverseKinematics& system);
     

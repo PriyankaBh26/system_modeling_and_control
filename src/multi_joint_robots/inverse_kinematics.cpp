@@ -117,12 +117,12 @@ VectorXd InverseKinematics::f(VectorXd q) {
     return V_b;
 };
 
-// MatrixXd InverseKinematics::dfdq(VectorXd q) {
-//     MatrixXd mat = BodyJacobian(q);
-//     return mat;
-// };
+MatrixXd InverseKinematics::dfdq(VectorXd q) {
+    MatrixXd mat = BodyJacobian(q);
+    return -mat;
+};
 
-// VectorXd InverseKinematics::SolveIK() {
+// VectorXd InverseKinematics::SolveIKBody() {
 //     Iterate();
 //     std::vector<VectorXd> q_history = GetSolutionHistory();
 //     std::cout << "Solution, q =\n" << q_history.back() << "\n";
