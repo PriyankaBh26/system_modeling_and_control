@@ -57,6 +57,27 @@ void TestVecToSkewSymMat() {
 
 }
 
+void TestMatrixExp3() {
+    MatrixXd W(3,3);
+    W << 0, -3,  2,
+              3,  0, -1,
+             -2,  1,  0;
+
+    MatrixXd expmat_expected(3,3);
+    expmat_expected << -0.69492056,  0.71352099,  0.08929286,
+              -0.19200697, -0.30378504,  0.93319235,
+               0.69297817,  0.6313497 ,  0.34810748;
+
+    VectorXd w = SkewSymMatToVec(W);
+    double theta = w.norm();
+
+    MatrixXd expmat = MatrixExp3(W, theta);
+
+    std::cout << "\n TestMatrixExp3\n";
+    std::cout << "\n expmat - expmat_expected:\n" << expmat - expmat_expected;         
+    std::cout << "\n";
+}
+
 void TestMatrixLog3() {
     MatrixXd R(3,3);
     R << 0, 0, 1,

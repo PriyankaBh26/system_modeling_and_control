@@ -48,6 +48,11 @@ MatrixXd AdjointOfTfMatrix(MatrixXd tf_mat) {
     return ad_tf_mat;
 };
 
+MatrixXd MatrixExp3(MatrixXd W, double theta) {
+    MatrixXd exp_mat = MatrixXd::Identity(3,3) + sin(theta) / theta  * W + (1 - cos(theta)) / theta / theta * W * W;
+    return exp_mat;
+}
+
 MatrixXd MatrixLog3(MatrixXd R) {
     double costh = (R.trace() - 1) / 2;
     MatrixXd W;
