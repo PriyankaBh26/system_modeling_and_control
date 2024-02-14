@@ -20,21 +20,10 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
                           double tolerance,
                           int max_iterations);
 
-        MatrixXd TfmatInverse(MatrixXd Mat);
 
         MatrixXd TfBody(VectorXd q);
 
         MatrixXd TfSpace(VectorXd q);
-
-        VectorXd SkewSymMatToVec(MatrixXd W);
-
-        MatrixXd VecToSkewSymMat(VectorXd w);
-
-        MatrixXd MatrixLog3(MatrixXd R);
-
-        VectorXd Se3ToVec(MatrixXd V_B);
-
-        MatrixXd MatrixLog6(MatrixXd tf_mat);
 
         VectorXd f(VectorXd q) override;
 

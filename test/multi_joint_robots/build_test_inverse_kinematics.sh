@@ -19,7 +19,7 @@ LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_c
 LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
 SRCS="test/multi_joint_robots/test_inverse_kinematics.cpp 
-     src/data_logging/savecsv.cpp
+     src/multi_joint_robots/multi_joint_robots_helper_funs.cpp
      src/multi_joint_robots/inverse_kinematics.cpp
      src/multi_joint_robots/forward_kinematics.cpp
      src/numerical_solvers/newton_raphson.cpp"
