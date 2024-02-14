@@ -109,6 +109,24 @@ void TestMatrixLog6() {
     std::cout << "\n";
 }
 
+void TestVecToSe3() {
+    VectorXd V_b(6);
+    V_b << 1, 2, 3, 4, 5, 6;
+
+    MatrixXd V_B = VecToSe3(V_b);
+
+    MatrixXd V_B_expected(4,4);
+    V_B_expected <<   0, -3,  2, 4,
+             3,  0, -1, 5,
+            -2,  1,  0, 6,
+             0,  0,  0, 0;
+
+    std::cout << "\nTestVecToSe3\n";
+    std::cout << "\n V_B - V_B_expected:\n " << V_B - V_B_expected;
+    std::cout << "\n";
+
+}
+
 int main() {
 
     TestSkewSymMatToVec();
@@ -120,6 +138,8 @@ int main() {
     TestSe3ToVec();
 
     TestMatrixLog6();
+
+    TestVecToSe3();
 
     return 0;
 }

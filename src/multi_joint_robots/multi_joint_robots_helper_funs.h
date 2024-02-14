@@ -22,4 +22,6 @@ MatrixXd RotMatPosToTFMat(MatrixXd R, VectorXd p);
 
 VectorXd Se3ToVec(MatrixXd V_B);
 
+MatrixXd VecToSe3(VectorXd V_b);
+
 #endif

@@ -106,3 +106,17 @@ VectorXd Se3ToVec(MatrixXd V_B) {
     return V_b;
 };
 
+MatrixXd VecToSe3(VectorXd V_b) {
+    MatrixXd V_mat(4,4);
+
+    VectorXd w(3);
+    w << V_b(0), V_b(1), V_b(2);
+
+    VectorXd v(3);
+    v << V_b(3), V_b(4), V_b(5);
+
+    V_mat.block(0,0,3,3) = VecToSkewSymMat(w);
+    V_mat.block(0,3,3,1) = v;
+
+    return V_mat;
+};
