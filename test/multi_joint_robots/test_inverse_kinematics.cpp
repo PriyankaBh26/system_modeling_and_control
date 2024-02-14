@@ -123,6 +123,25 @@ void TestSe3ToVec(InverseKinematics* inv_kin) {
     std::cout << "\n";
 }
 
+void TestMatrixLog6(InverseKinematics* inv_kin) {
+    MatrixXd tf_body(4,4);
+    tf_body << 1, 0,  0, 0,
+               0, 0, -1, 0,
+               0, 1,  0, 3,
+               0, 0,  0, 1;
+    MatrixXd V_B_expected(4,4);
+    V_B_expected << 0,          0,           0,           0,
+                    0,          0, -1.57079633,  2.35619449,
+                    0, 1.57079633,           0,  2.35619449,
+                    0,          0,           0,           0;
+
+    MatrixXd V_B = inv_kin->MatrixLog6(tf_body);
+
+    std::cout << "\nTestMatrixLog6\n";
+    std::cout << "\n V_B - V_B_expected:\n " << V_B - V_B_expected;
+    std::cout << "\n";
+}
+
 int main() {
 
     int num_joints = 2; 
@@ -191,6 +210,8 @@ int main() {
     TestMatrixLog3(inv_kin);
 
     TestSe3ToVec(inv_kin);
+
+    TestMatrixLog6(inv_kin);
 
     // VectorXd qd = inv_kin->SolveIK();
 

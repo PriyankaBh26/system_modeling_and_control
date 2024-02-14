@@ -40,7 +40,7 @@ InverseKinematics::InverseKinematics(int num_joints,
 MatrixXd InverseKinematics::TfSpaceToBody(MatrixXd tf_desired, VectorXd q) {
     TfInSpaceFrame(q);
     MatrixXd tf_mat_sb = GetTfSpace();
-    tf_body = tf_mat_sb.inverse() * tf_desired;
+    MatrixXd tf_body = tf_mat_sb.inverse() * tf_desired;
     return tf_body;
 };
 
@@ -87,30 +87,31 @@ VectorXd InverseKinematics::Se3ToVec(MatrixXd V_B) {
     return V_b;
 }
 
-// VectorXd InverseKinematics::BodyTwistFromTF(MatrixXd tf_body) {
-//     MatrixXd R = tf_body.block(0,0,3,3);
-//     VectorXd p = tf_body.block(0,3,3,1);
+MatrixXd InverseKinematics::MatrixLog6(MatrixXd tf_body) {
+    MatrixXd R = tf_body.block(0,0,3,3);
+    VectorXd p = tf_body.block(0,3,3,1);
 
-//     MatrixXd W = InverseKinematics::MatrixLog3(R);
+    MatrixXd W = InverseKinematics::MatrixLog3(R);
 
-//     Matrix V_B(4,4);
+    MatrixXd V_B(4,4);
 
-//     if (abs(R.minCoeff()) < 1e-8 && abs(R.maxCoeff()) < 1e-8) {
-//         V_B.block(0,3,3,1) = p;
-//         double theta = p.norm();
-//         VectorXd w = vectorXd::zero(3);
-//         VectorXd v = p/p.norm();
-//     } else {
-//         double theta = acos((R.trace() - 1) / 2);
-//         VectorXd w = InverseKinematics::SkewSymMatToVec(W / theta);
-//         VectorXd v = (1/theta * MatrixXd::Identity(3,3) - 1/2 * W + (1/theta - 1/2/tan(theta/2)) * W * W) * p;
-//         V_B.block(0,0,3,3) = W;
-//         V_B.block(0,3,3,1) = v;
+    if (abs(R.minCoeff()) < 1e-8 && abs(R.maxCoeff()) < 1e-8) {
+        V_B.block(0,3,3,1) = p;
+        double theta = p.norm();
+        VectorXd w = VectorXd::Zero(3);
+        VectorXd v = p/p.norm();
+    } else {
+        double theta = acos((R.trace() - 1) / 2);
+        VectorXd w = InverseKinematics::SkewSymMatToVec(W / theta);
+        double n1 = (1/theta - 1.0/2.0/tan(theta/2.0));
+        VectorXd v = (MatrixXd::Identity(3,3) - 1.0/2.0 * W + n1 * W * W / theta) * p;
 
-//     }
-//     VectorXd V_b = InverseKinematics::Se3ToVec(V_B);
-//     return V_b;
-// };
+        V_B.block(0,0,3,3) = W;
+        V_B.block(0,3,3,1) = v;
+
+    }
+    return V_B;
+};
 
 // VectorXd InverseKinematics::f(VectorXd q) {
 //     MatrixXd tf_body = InverseKinematics::TfSpaceToBody(tf_desired, q);
