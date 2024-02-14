@@ -25,19 +25,13 @@ class ForwardKinematics {
 
         MatrixXd ExponentialMatrix(VectorXd screw_axis, double q_i, std::string joint_type_i);
 
-        MatrixXd RotMatPosToTFMat(MatrixXd R, VectorXd p);
-
         MatrixXd SpaceJacobian(VectorXd q);
 
         MatrixXd BodyJacobian(VectorXd q);
 
-        MatrixXd AdjointOfTfMatrix(MatrixXd tf_mat);
-
         VectorXd CalculateTwist(MatrixXd jacobian, VectorXd qd);
     
         VectorXd CalculateJointTorques(MatrixXd jacobian, VectorXd F);
-
-        MatrixXd VecToSkewSymmetricMat(VectorXd v);
 
         MatrixXd GetTfSpace();
 
