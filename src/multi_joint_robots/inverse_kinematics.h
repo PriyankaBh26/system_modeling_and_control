@@ -17,8 +17,6 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
                           MatrixXd screw_space, 
                           MatrixXd screw_body,
                           std::string desired_config_type,
-                          MatrixXd tf_desired,
-                          VectorXd q0,
                           double tolerance,
                           int max_iterations);
 
@@ -42,7 +40,12 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
 
         MatrixXd dfdq(VectorXd q) override;
         
-        VectorXd SolveIK();
+        void SetTfDesired(MatrixXd tf_des);
+
+        void SetInitialJointAngles(VectorXd q0);
+
+        VectorXd SolveIK(MatrixXd tf_des, 
+                        VectorXd q0);
 
         friend std::ostream& operator << (std::ostream& out, InverseKinematics& system);
     
@@ -54,6 +57,8 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
         std::string desired_config_type;
         MatrixXd tf_desired;
         VectorXd q;
+        double tolerance;
+        int max_iterations;
 
 };
 

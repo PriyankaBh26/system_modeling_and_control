@@ -19,8 +19,6 @@ InverseKinematics::InverseKinematics(
     MatrixXd screw_space, 
     MatrixXd screw_body,
     std::string str,
-    MatrixXd tf_d,
-    VectorXd q0,
     double tolerance,
     int max_iterations) : ForwardKinematics(num_joints, 
                                             joint_type,
@@ -28,15 +26,16 @@ InverseKinematics::InverseKinematics(
                                             screw_space,
                                             screw_body), 
 
-                                NewtonRaphson(num_joints,
-                                              6,
-                                              q0,
-                                              tolerance,
-                                              max_iterations),
+                          NewtonRaphson(num_joints,
+                                        6,
+                                        tolerance,
+                                        max_iterations),
 
-                                              desired_config_type(str),
-                                              tf_desired(tf_d),
-                                              q(q0) {};
+                                        desired_config_type(str),
+                                        tf_desired(MatrixXd::Identity(4,4)),
+                                        q(VectorXd::Zero(num_joints)) {};
+
+
 
 MatrixXd InverseKinematics::TfmatInverse(MatrixXd Mat) {
     MatrixXd Mat_inverse(4,4);
@@ -152,9 +151,23 @@ MatrixXd InverseKinematics::dfdq(VectorXd q) {
     return mat;
 };
 
-VectorXd InverseKinematics::SolveIK() {
-    Iterate();
+void InverseKinematics::SetTfDesired(MatrixXd tf_des) {
+    tf_desired = tf_des;
+}
+
+void InverseKinematics::SetInitialJointAngles(VectorXd q0) {
+    q = q0;
+}
+
+VectorXd InverseKinematics::SolveIK(MatrixXd tf_des, 
+                                    VectorXd q0) {
+    SetTfDesired(tf_des);
+    SetInitialJointAngles(q0);
+
+    Iterate(q0);
+
     std::vector<VectorXd> q_history = GetSolutionHistory();
+
     return q_history.back();
 };
 

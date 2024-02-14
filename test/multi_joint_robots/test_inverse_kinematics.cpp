@@ -32,7 +32,10 @@ VectorXd GetXdesired(VectorXd L, VectorXd theta, int num_joints) {
     return xd;
 }
 
-MatrixXd ProductOfTFMatrices(VectorXd L, VectorXd theta, VectorXd r0) {
+MatrixXd ProductOfTFMatrices(VectorXd L, VectorXd theta) {
+    VectorXd r0(4);
+    r0 << 0, 0, 0, 1;
+    
     // create TF mat:
     Matrix3d R1;
     R1 = AngleAxisd(theta(0), Vector3d::UnitZ());
@@ -52,7 +55,7 @@ MatrixXd ProductOfTFMatrices(VectorXd L, VectorXd theta, VectorXd r0) {
     T03 = T01 * T12 * T23;
     // std::cout << "\n T03 expected:\n" << T03;
 
-    std::cout << "\nr expected: \n" << (T03 * r0).transpose();
+    // std::cout << "\nr expected: \n" << (T03 * r0).transpose();
     return T03;
 }
 
@@ -203,10 +206,20 @@ void Testdfdq(InverseKinematics* inv_kin, VectorXd q) {
     std::cout << "\n";
 }
 
-void TestSolveIK(InverseKinematics* inv_kin, VectorXd q_expected) {
-    VectorXd q_result = inv_kin->SolveIK();
+void TestSolveIK(InverseKinematics* inv_kin,
+                 VectorXd L,
+                 VectorXd theta) {
+
+    MatrixXd tf_desired = ProductOfTFMatrices(L, theta);
+
+    VectorXd q0 = VectorXd::Random(2);
+
     std::cout << "\n TestSolveIK \n";
-    std::cout << "\nq_expected - q_result:" << q_expected.transpose() - q_result.transpose();
+    std::cout << "\n";
+
+    VectorXd q_result = inv_kin->SolveIK(tf_desired, q0);
+    std::cout << "\nq_expected:" << theta.transpose();
+    std::cout << "\nq_result:" << q_result.transpose();
 }
 
 int main() {
@@ -215,29 +228,14 @@ int main() {
     double tolerance = 1e-4;
     int max_iterations = 100;
 
-    std::string desired_config_type = "space_frame";
+    std::string desired_config_type = "body_frame";
 
     // set link lengths
     VectorXd L(num_joints);
     L << 1.0, 1.5;
     // set joint types
     std::vector<std::string> joint_type = {"R", "R"};
-    // set link angle of rotation
-    VectorXd theta(num_joints);
-    theta << M_PI/180 * 30, M_PI/180 * 30;
 
-    std::cout << "\nq desired: " << theta.transpose();
-
-    VectorXd q0(num_joints);
-    q0 << 1.5, 0.2;
-
-    VectorXd x_d = GetXdesired(L, theta, num_joints);
-
-    VectorXd r0(4);
-    r0 << 0, 0, 0, 1;
-    
-    MatrixXd tf_expected = ProductOfTFMatrices(L, theta, r0);
-    std::cout << "\n tf_desired : \n" << tf_expected;
     // set home position: 
     // the position and orientation of end effector frame 
     // when all joint angles are set to zero
@@ -266,8 +264,6 @@ int main() {
                                                         screw_space, 
                                                         screw_body,
                                                         desired_config_type,
-                                                        tf_expected,
-                                                        q0,
                                                         tolerance,
                                                         max_iterations);
     
@@ -275,9 +271,9 @@ int main() {
 
     // TestTfmatInverse(inv_kin);
 
-    // TestTfBody(inv_kin, tf_expected, theta);
+    // TestTfBody(inv_kin, tf_desired, theta);
 
-    // TestTfSpace(inv_kin, tf_expected, theta);
+    // TestTfSpace(inv_kin, tf_desired, theta);
 
     // TestSkewSymMatToVec(inv_kin);
 
@@ -289,13 +285,29 @@ int main() {
 
     // TestMatrixLog6(inv_kin);
 
-    // TestMatrixLog6inv(inv_kin, tf_expected, theta);
+    // TestMatrixLog6inv(inv_kin, tf_desired, theta);
 
     // Testf(inv_kin, q0);
 
     // Testdfdq(inv_kin, q0);
 
-    TestSolveIK(inv_kin, theta);
+    // set link angle of rotation
+    VectorXd theta(num_joints);
+    theta << M_PI/180 * 30, M_PI/180 * 30;
+
+    TestSolveIK(inv_kin, L, theta);
+
+    // set link angle of rotation
+    VectorXd theta1(num_joints);
+    theta1 << M_PI/180 * 50, M_PI/180 * 40;
+
+    TestSolveIK(inv_kin, L, theta1);
+
+    // set link angle of rotation
+    VectorXd theta2(num_joints);
+    theta2 << M_PI/180 * 20, M_PI/180 * 90;
+
+    TestSolveIK(inv_kin, L, theta2);
 
     delete inv_kin;
 
