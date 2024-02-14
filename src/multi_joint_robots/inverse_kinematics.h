@@ -36,7 +36,7 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
 
         VectorXd Se3ToVec(MatrixXd V_B);
 
-        MatrixXd MatrixLog6(MatrixXd tf_body_);
+        MatrixXd MatrixLog6(MatrixXd tf_mat);
 
         VectorXd f(VectorXd q) override;
 

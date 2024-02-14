@@ -106,9 +106,9 @@ VectorXd InverseKinematics::Se3ToVec(MatrixXd V_B) {
     return V_b;
 }
 
-MatrixXd InverseKinematics::MatrixLog6(MatrixXd tf_body_) {
-    MatrixXd R = tf_body_.block(0,0,3,3);
-    VectorXd p = tf_body_.block(0,3,3,1);
+MatrixXd InverseKinematics::MatrixLog6(MatrixXd tf_mat) {
+    MatrixXd R = tf_mat.block(0,0,3,3);
+    VectorXd p = tf_mat.block(0,3,3,1);
 
     MatrixXd W = InverseKinematics::MatrixLog3(R);
 
