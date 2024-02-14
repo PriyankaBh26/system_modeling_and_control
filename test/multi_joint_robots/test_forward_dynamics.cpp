@@ -74,7 +74,8 @@ ForwardDynamics* InitializeFD() {
                 1, 0, 0,
                 0, 0, 0.425;
 
-    ForwardDynamics* fd = new ForwardDynamics(q,
+    ForwardDynamics* fd = new ForwardDynamics(num_joints,
+                                              q,
                                               dq,
                                               tau,
                                               g,

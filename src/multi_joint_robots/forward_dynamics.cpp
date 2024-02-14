@@ -5,14 +5,17 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-ForwardDynamics::ForwardDynamics(VectorXd q_in,
+ForwardDynamics::ForwardDynamics(int n, 
+                                VectorXd q_in,
                                 VectorXd dq_in,
                                 VectorXd tau_in,
                                 VectorXd g_in,
                                 VectorXd Ftip_in,
                     std::vector<MatrixXd> Mlist_in,
                     std::vector<MatrixXd> Glist_in,
-                                MatrixXd screw_space_in) : q(q_in), 
+                                MatrixXd screw_space_in) : 
+                                                           num_joints(n),
+                                                           q(q_in), 
                                                            dq(dq_in), 
                                                            tau(tau_in), 
                                                            g(g_in), 

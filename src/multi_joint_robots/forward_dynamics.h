@@ -11,7 +11,8 @@ using Eigen::VectorXd;
 
 class ForwardDynamics {
     public:
-        ForwardDynamics(VectorXd q, 
+        ForwardDynamics(int num_joints,
+                        VectorXd q, 
                         VectorXd dq, 
                         VectorXd taulist, 
                         VectorXd g, 
@@ -29,6 +30,7 @@ class ForwardDynamics {
         VectorXd EndEffectorForces();
 
     private:
+        int num_joints;
         VectorXd q; 
         VectorXd dq; 
         VectorXd tau; 
