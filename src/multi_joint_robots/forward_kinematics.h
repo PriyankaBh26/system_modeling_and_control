@@ -31,7 +31,7 @@ class ForwardKinematics {
 
         MatrixXd BodyJacobian(VectorXd q);
 
-        MatrixXd CalculateAdjointOfTfMatrix(MatrixXd tf_mat);
+        MatrixXd AdjointOfTfMatrix(MatrixXd tf_mat);
 
         VectorXd CalculateTwist(MatrixXd jacobian, VectorXd qd);
     
