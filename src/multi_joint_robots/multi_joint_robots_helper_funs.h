@@ -14,7 +14,11 @@ VectorXd SkewSymMatToVec(MatrixXd W);
 
 MatrixXd AdjointOfTfMatrix(MatrixXd tf_mat);
 
+MatrixXd MatrixExp3(MatrixXd W, double theta) ;
+
 MatrixXd MatrixLog3(MatrixXd R);
+
+MatrixXd MatrixExp6(MatrixXd se3mat);
 
 MatrixXd MatrixLog6(MatrixXd tf_mat);
 
