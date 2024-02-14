@@ -43,7 +43,6 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
         friend std::ostream& operator << (std::ostream& out, InverseKinematics& system);
     
     private:
-        int num_joints;
         std::vector<std::string> joint_type;
         MatrixXd tf_home;
         MatrixXd screw_space;
