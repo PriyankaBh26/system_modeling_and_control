@@ -27,8 +27,6 @@ VectorXd NewtonRaphson::Iterate() {
     VectorXd error = f(q);
     int num_iterations = 0;
     while (error.norm() > tolerance & num_iterations < max_iterations) {
-        // calculate error
-        error = f(q);
         // compute jacobian
         MatrixXd jacobian = dfdq(q);
         // Compute the pseudo-inverse
@@ -39,6 +37,8 @@ VectorXd NewtonRaphson::Iterate() {
         q_history.push_back(q);
         // increment number of iterations
         num_iterations += 1;
+        // calculate error
+        error = f(q);
     }
     NewtonRaphson::ConvergenceCheck(error.norm(), num_iterations);
     return q;
