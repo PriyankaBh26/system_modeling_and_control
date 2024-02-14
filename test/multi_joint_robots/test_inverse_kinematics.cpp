@@ -57,7 +57,7 @@ MatrixXd ProductOfTFMatrices(VectorXd L, VectorXd theta, VectorXd r0) {
 }
 
 void TestTfSpaceToBody(InverseKinematics* inv_kin, MatrixXd tf_expected, VectorXd q0) {
-    MatrixXd tf_body = inv_kin->TfSpaceToBody(tf_expected, q0);
+    MatrixXd tf_body = inv_kin->TfSpaceToBody(q0);
     std::cout << "\nTestTfSpaceToBody\n";
     std::cout << "\n tf_body: \n" << tf_body;
     std::cout << "\n";
@@ -138,8 +138,27 @@ void TestMatrixLog6(InverseKinematics* inv_kin) {
     MatrixXd V_B = inv_kin->MatrixLog6(tf_body);
 
     std::cout << "\nTestMatrixLog6\n";
-    std::cout << "\n V_B - V_B_expected:\n " << V_B - V_B_expected;
+    std::cout << "\n V_B:\n " << V_B;
     std::cout << "\n";
+}
+
+void TestMatrixLog6inv(InverseKinematics* inv_kin, MatrixXd tf_desired, VectorXd q0) {
+    inv_kin->TfInSpaceFrame(q0);
+    MatrixXd tf_space = inv_kin->GetTfSpace();
+    std::cout << "\ntf_space:\n" << tf_space;
+
+    VectorXd V_b = inv_kin->f(q0);
+
+    MatrixXd tf_body = inv_kin->TfSpaceToBody(q0);
+
+    std::cout << "\n tf_body:\n " << tf_body;
+
+    MatrixXd V_B = inv_kin->MatrixLog6(tf_body);
+
+    std::cout << "\nTestMatrixLog6inv\n";
+    std::cout << "\n V_B:\n " << V_B;
+    std::cout << "\n";
+
 }
 
 void Testf(InverseKinematics* inv_kin, VectorXd q) {
@@ -157,6 +176,11 @@ void Testdfdq(InverseKinematics* inv_kin, VectorXd q) {
     std::cout << "\n";
 }
 
+void TestSolveIKBody(InverseKinematics* inv_kin, VectorXd q_expected) {
+    VectorXd q_result = inv_kin->SolveIKBody();
+    std::cout << "\n TestSolveIKBody \n";
+    std::cout << "\nq_expected - q_result:" << q_expected - q_result;
+}
 
 int main() {
 
@@ -175,7 +199,8 @@ int main() {
 
     std::cout << "\nq desired: " << theta.transpose();
 
-    VectorXd q0 = theta.array() + 0.1;
+    VectorXd q0(num_joints);
+    q0 << 0.1, 0.2;
 
     VectorXd x_d = GetXdesired(L, theta, num_joints);
 
@@ -219,25 +244,25 @@ int main() {
     
     std::cout << *inv_kin;
 
-    // TestTfSpaceToBody(inv_kin, tf_expected, q0);
+    TestTfSpaceToBody(inv_kin, tf_expected, q0);
 
-    // TestSkewSymMatToVec(inv_kin);
+    TestSkewSymMatToVec(inv_kin);
 
-    // TestVecToSkewSymMat(inv_kin);
+    TestVecToSkewSymMat(inv_kin);
 
-    // TestMatrixLog3(inv_kin);
+    TestMatrixLog3(inv_kin);
 
-    // TestSe3ToVec(inv_kin);
+    TestSe3ToVec(inv_kin);
 
-    // TestMatrixLog6(inv_kin);
+    TestMatrixLog6(inv_kin);
+
+    TestMatrixLog6inv(inv_kin, tf_expected, q0);
 
     Testf(inv_kin, q0);
 
     Testdfdq(inv_kin, q0);
 
-    // VectorXd qd = inv_kin->SolveIK();
-
-    // std::cout << "\n q_desired: \n" << qd.transpose();
+    TestSolveIKBody(inv_kin, theta);
 
     delete inv_kin;
 

@@ -39,11 +39,11 @@ InverseKinematics::InverseKinematics(
                                               q(q0) {};
 
 
-MatrixXd InverseKinematics::TfSpaceToBody(MatrixXd tf_desired, VectorXd q) {
+MatrixXd InverseKinematics::TfSpaceToBody(VectorXd q) {
     TfInSpaceFrame(q);
     MatrixXd tf_mat_sb = GetTfSpace();
-    MatrixXd tf_body = tf_mat_sb.inverse() * tf_desired;
-    return tf_body;
+    MatrixXd tf_body_ = tf_mat_sb.inverse() * tf_desired;
+    return tf_body_;
 };
 
 VectorXd InverseKinematics::SkewSymMatToVec(MatrixXd W) {
@@ -89,9 +89,9 @@ VectorXd InverseKinematics::Se3ToVec(MatrixXd V_B) {
     return V_b;
 }
 
-MatrixXd InverseKinematics::MatrixLog6(MatrixXd tf_body) {
-    MatrixXd R = tf_body.block(0,0,3,3);
-    VectorXd p = tf_body.block(0,3,3,1);
+MatrixXd InverseKinematics::MatrixLog6(MatrixXd tf_body_) {
+    MatrixXd R = tf_body_.block(0,0,3,3);
+    VectorXd p = tf_body_.block(0,3,3,1);
 
     MatrixXd W = InverseKinematics::MatrixLog3(R);
 
@@ -111,23 +111,22 @@ MatrixXd InverseKinematics::MatrixLog6(MatrixXd tf_body) {
 };
 
 VectorXd InverseKinematics::f(VectorXd q) {
-    MatrixXd tf_body = InverseKinematics::TfSpaceToBody(tf_desired, q);
-    MatrixXd V_B = InverseKinematics::MatrixLog6(tf_body);
+    MatrixXd tf_body_ = InverseKinematics::TfSpaceToBody(q);
+    MatrixXd V_B = InverseKinematics::MatrixLog6(tf_body_);
     VectorXd V_b = InverseKinematics::Se3ToVec(V_B);
     return V_b;
 };
 
 MatrixXd InverseKinematics::dfdq(VectorXd q) {
-    MatrixXd mat = BodyJacobian(q);
-    return -mat;
+    MatrixXd mat = -BodyJacobian(q);
+    return mat;
 };
 
-// VectorXd InverseKinematics::SolveIKBody() {
-//     Iterate();
-//     std::vector<VectorXd> q_history = GetSolutionHistory();
-//     std::cout << "Solution, q =\n" << q_history.back() << "\n";
-//     return q_history.back();
-// };
+VectorXd InverseKinematics::SolveIKBody() {
+    Iterate();
+    std::vector<VectorXd> q_history = GetSolutionHistory();
+    return q_history.back();
+};
 
 std::ostream& operator << (std::ostream& out, InverseKinematics& system) {
     out << "\n Inverse Kinematics parameters :\n";

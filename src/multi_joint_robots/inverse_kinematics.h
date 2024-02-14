@@ -22,7 +22,7 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
                           double tolerance,
                           int max_iterations);
 
-        MatrixXd TfSpaceToBody(MatrixXd tf_desired, VectorXd q);
+        MatrixXd TfSpaceToBody(VectorXd q);
 
         VectorXd SkewSymMatToVec(MatrixXd W);
 
@@ -32,13 +32,13 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
 
         VectorXd Se3ToVec(MatrixXd V_B);
 
-        MatrixXd MatrixLog6(MatrixXd tf_body);
+        MatrixXd MatrixLog6(MatrixXd tf_body_);
 
         VectorXd f(VectorXd q) override;
 
         MatrixXd dfdq(VectorXd q) override;
         
-        // VectorXd SolveIKBody();
+        VectorXd SolveIKBody();
 
         friend std::ostream& operator << (std::ostream& out, InverseKinematics& system);
     
@@ -51,8 +51,6 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
         std::string desired_config_type;
         MatrixXd tf_desired;
         VectorXd q;
-        MatrixXd tf_space;
-        MatrixXd tf_body;
 
 };
 
