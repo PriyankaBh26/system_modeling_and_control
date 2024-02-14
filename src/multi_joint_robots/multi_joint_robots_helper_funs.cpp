@@ -32,6 +32,20 @@ VectorXd SkewSymMatToVec(MatrixXd W) {
     return w_theta;
 };
 
+MatrixXd ad(VectorXd V) {
+    MatrixXd ad_w_v(6,6);
+    VectorXd w = V.head(3);
+    VectorXd v = V.tail(3);
+
+    MatrixXd W = VecToSkewSymMat(w);
+    MatrixXd vmat = VecToSkewSymMat(v);
+
+    ad_w_v.block(0,0,3,3) = W;
+    ad_w_v.block(3,3,3,3) = W;
+    ad_w_v.block(3,0,3,3) = vmat;
+    return ad_w_v;
+};
+
 MatrixXd AdjointOfTfMatrix(MatrixXd tf_mat) {
     MatrixXd ad_tf_mat(6,6);
     MatrixXd R(3,3);

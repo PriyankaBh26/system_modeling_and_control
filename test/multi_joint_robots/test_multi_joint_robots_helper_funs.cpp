@@ -57,6 +57,27 @@ void TestVecToSkewSymMat() {
 
 }
 
+void Testad() {
+    VectorXd V(6);
+    V << 1, 2, 3, 4, 5, 6;
+
+    MatrixXd ad_wv_expected(6,6);
+    ad_wv_expected << 0, -3,  2,  0,  0,  0,
+                        3,  0, -1,  0,  0,  0,
+                        -2,  1,  0,  0,  0,  0,
+                        0, -6,  5,  0, -3,  2,
+                        6,  0, -4,  3,  0, -1,
+                        -5,  4,  0, -2,  1,  0;
+
+    MatrixXd ad_wv = ad(V);
+
+    std::cout << "\nTestad\n";
+    std::cout << "\n ad_wv - ad_wv_expected : " << ad_wv - ad_wv_expected;
+    std::cout << "\n";
+
+
+}
+
 void TestMatrixExp3() {
     MatrixXd W(3,3);
     W << 0, -3,  2,
