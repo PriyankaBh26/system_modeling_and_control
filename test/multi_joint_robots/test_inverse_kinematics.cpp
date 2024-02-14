@@ -142,6 +142,14 @@ void TestMatrixLog6(InverseKinematics* inv_kin) {
     std::cout << "\n";
 }
 
+void Testf(InverseKinematics* inv_kin, VectorXd q) {
+    VectorXd V_b = inv_kin->f(q);
+    
+    std::cout << "\nTestf\n";
+    std::cout << "\n V_b - V_b_expected:\n " << V_b;
+    std::cout << "\n";
+}
+
 int main() {
 
     int num_joints = 2; 
@@ -201,17 +209,19 @@ int main() {
     
     std::cout << *inv_kin;
 
-    TestTfSpaceToBody(inv_kin, tf_expected, q0);
+    // TestTfSpaceToBody(inv_kin, tf_expected, q0);
 
-    TestSkewSymMatToVec(inv_kin);
+    // TestSkewSymMatToVec(inv_kin);
 
-    TestVecToSkewSymMat(inv_kin);
+    // TestVecToSkewSymMat(inv_kin);
 
-    TestMatrixLog3(inv_kin);
+    // TestMatrixLog3(inv_kin);
 
-    TestSe3ToVec(inv_kin);
+    // TestSe3ToVec(inv_kin);
 
     TestMatrixLog6(inv_kin);
+
+    Testf(inv_kin, q0);
 
     // VectorXd qd = inv_kin->SolveIK();
 

@@ -12,29 +12,31 @@ using Eigen::VectorXd;
 
 // desired end-effector configuration represented as tf_desired is given
 
-InverseKinematics::InverseKinematics(int num_joints, 
-                          std::vector<std::string> joint_type, 
-                          MatrixXd tf_home, 
-                          MatrixXd screw_space, 
-                          MatrixXd screw_body,
-                          std::string str,
-                          MatrixXd tf_d,
-                          VectorXd q0,
-                          double tolerance,
-                          int max_iterations) : ForwardKinematics(num_joints, 
-                                                            joint_type,
-                                                            tf_home,
-                                                            screw_space,
-                                                            screw_body), 
+InverseKinematics::InverseKinematics(
+    int num_joints, 
+    std::vector<std::string> joint_type, 
+    MatrixXd tf_home, 
+    MatrixXd screw_space, 
+    MatrixXd screw_body,
+    std::string str,
+    MatrixXd tf_d,
+    VectorXd q0,
+    double tolerance,
+    int max_iterations) : ForwardKinematics(num_joints, 
+                                            joint_type,
+                                            tf_home,
+                                            screw_space,
+                                            screw_body), 
 
-                                                NewtonRaphson(num_joints,
-                                                                6,
-                                                                q0,
-                                                                tolerance,
-                                                                max_iterations),
-                                                                desired_config_type(str),
-                                                                tf_desired(tf_d),
-                                                                q(q0) {};
+                                NewtonRaphson(num_joints,
+                                              6,
+                                              q0,
+                                              tolerance,
+                                              max_iterations),
+
+                                              desired_config_type(str),
+                                              tf_desired(tf_d),
+                                              q(q0) {};
 
 
 MatrixXd InverseKinematics::TfSpaceToBody(MatrixXd tf_desired, VectorXd q) {
@@ -95,32 +97,28 @@ MatrixXd InverseKinematics::MatrixLog6(MatrixXd tf_body) {
 
     MatrixXd V_B(4,4);
 
-    if (abs(R.minCoeff()) < 1e-8 && abs(R.maxCoeff()) < 1e-8) {
+    if (abs(W.minCoeff()) < 1e-8 && abs(W.maxCoeff()) < 1e-8) {
         V_B.block(0,3,3,1) = p;
-        double theta = p.norm();
-        VectorXd w = VectorXd::Zero(3);
-        VectorXd v = p/p.norm();
     } else {
         double theta = acos((R.trace() - 1) / 2);
-        VectorXd w = InverseKinematics::SkewSymMatToVec(W / theta);
         double n1 = (1/theta - 1.0/2.0/tan(theta/2.0));
         VectorXd v = (MatrixXd::Identity(3,3) - 1.0/2.0 * W + n1 * W * W / theta) * p;
 
         V_B.block(0,0,3,3) = W;
         V_B.block(0,3,3,1) = v;
-
     }
     return V_B;
 };
 
-// VectorXd InverseKinematics::f(VectorXd q) {
-//     MatrixXd tf_body = InverseKinematics::TfSpaceToBody(tf_desired, q);
-
-//     return v;
-// };
+VectorXd InverseKinematics::f(VectorXd q) {
+    MatrixXd tf_body = InverseKinematics::TfSpaceToBody(tf_desired, q);
+    MatrixXd V_B = InverseKinematics::MatrixLog6(tf_body);
+    VectorXd V_b = InverseKinematics::Se3ToVec(V_B);
+    return V_b;
+};
 
 // MatrixXd InverseKinematics::dfdq(VectorXd q) {
-//     MatrixXd mat = SpaceJacobian(q);
+//     MatrixXd mat = BodyJacobian(q);
 //     return mat;
 // };
 
