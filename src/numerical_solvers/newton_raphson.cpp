@@ -9,10 +9,13 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 
-NewtonRaphson::NewtonRaphson(int n, int m, VectorXd q0, 
-                            double eps, int N0) : num_states(n), num_equations(m), q(q0), 
-                            tolerance(eps), max_iterations(N0) {q_history.push_back(q0);
-                                                                success = false;};
+NewtonRaphson::NewtonRaphson(int n, 
+                            int m,
+                            double eps, 
+                            int N0) : num_states(n), 
+                                      num_equations(m), 
+                                      tolerance(eps), 
+                                      max_iterations(N0) {success = false;};
 
 // the equation f(q) = 0
 VectorXd NewtonRaphson::f(VectorXd q) {
@@ -22,8 +25,15 @@ VectorXd NewtonRaphson::f(VectorXd q) {
 MatrixXd NewtonRaphson::dfdq(VectorXd q) {
     MatrixXd mat(num_equations, num_states);
     return mat;};
+// set initial value of q
+void NewtonRaphson::SetInitialq(VectorXd q0) {
+    q = q0;
+};
 // iteration q = q0 - pinv(dfdq(q0)) * f(q0);
-VectorXd NewtonRaphson::Iterate() {
+VectorXd NewtonRaphson::Iterate(VectorXd q0) {
+    NewtonRaphson::SetInitialq(q0);
+    q_history.push_back(q0);
+
     VectorXd error = f(q);
     int num_iterations = 0;
     while (error.norm() > tolerance & num_iterations < max_iterations) {
