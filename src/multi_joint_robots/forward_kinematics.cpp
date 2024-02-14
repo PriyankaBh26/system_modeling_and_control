@@ -19,6 +19,7 @@ ForwardKinematics::ForwardKinematics(int n,
 
 void ForwardKinematics::TfInSpaceFrame(VectorXd q) {
     // tf_space = exp([s1]q1)*exp([s2]q2)*...*exp([sn]qn)*tf_home
+    tf_space = MatrixXd::Identity(4,4);
     for (int i(0); i<num_joints; i++) {
         tf_space = tf_space * ForwardKinematics::ExponentialMatrix(screw_space.col(i), 
                                                     q(i), joint_type[i]);
