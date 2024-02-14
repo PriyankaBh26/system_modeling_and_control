@@ -56,10 +56,37 @@ MatrixXd ProductOfTFMatrices(VectorXd L, VectorXd theta, VectorXd r0) {
     return T03;
 }
 
-void TestTfSpaceToBody(InverseKinematics* inv_kin, MatrixXd tf_expected, VectorXd q0) {
-    MatrixXd tf_body = inv_kin->TfSpaceToBody(q0);
-    std::cout << "\nTestTfSpaceToBody\n";
+void TestTfmatInverse(InverseKinematics* inv_kin) {
+    MatrixXd Mat(4,4); 
+    Mat << 1, 0,  0, 0,
+           0, 0, -1, 0,
+           0, 1,  0, 3,
+           0, 0,  0, 1;
+
+    MatrixXd Mat_inverse_expected(4,4);
+    Mat_inverse_expected << 1,  0, 0,  0,
+                            0,  0, 1, -3,
+                            0, -1, 0,  0,
+                            0,  0, 0,  1;
+
+    MatrixXd Mat_inverse = inv_kin->TfmatInverse(Mat);
+    std::cout << "\nTestTfmatInverse:\n";
+    std::cout << "\n Mat_inverse - Mat_inverse_expected:\n";
+    std::cout << Mat_inverse - Mat_inverse_expected;
+    std::cout << "\n";
+}
+
+void TestTfBody(InverseKinematics* inv_kin, MatrixXd tf_expected, VectorXd q0) {
+    MatrixXd tf_body = inv_kin->TfBody(q0);
+    std::cout << "\nTestBody\n";
     std::cout << "\n tf_body: \n" << tf_body;
+    std::cout << "\n";
+}
+
+void TestTfSpace(InverseKinematics* inv_kin, MatrixXd tf_expected, VectorXd q0) {
+    MatrixXd tf_space = inv_kin->TfSpace(q0);
+    std::cout << "\nTestspace\n";
+    std::cout << "\n tf_space: \n" << tf_space;
     std::cout << "\n";
 }
 
@@ -149,7 +176,7 @@ void TestMatrixLog6inv(InverseKinematics* inv_kin, MatrixXd tf_desired, VectorXd
 
     VectorXd V_b = inv_kin->f(q0);
 
-    MatrixXd tf_body = inv_kin->TfSpaceToBody(q0);
+    MatrixXd tf_body = inv_kin->TfBody(q0);
 
     std::cout << "\n tf_body:\n " << tf_body;
 
@@ -176,10 +203,10 @@ void Testdfdq(InverseKinematics* inv_kin, VectorXd q) {
     std::cout << "\n";
 }
 
-void TestSolveIKBody(InverseKinematics* inv_kin, VectorXd q_expected) {
-    VectorXd q_result = inv_kin->SolveIKBody();
-    std::cout << "\n TestSolveIKBody \n";
-    std::cout << "\nq_expected - q_result:" << q_expected - q_result;
+void TestSolveIK(InverseKinematics* inv_kin, VectorXd q_expected) {
+    VectorXd q_result = inv_kin->SolveIK();
+    std::cout << "\n TestSolveIK \n";
+    std::cout << "\nq_expected - q_result:" << q_expected.transpose() - q_result.transpose();
 }
 
 int main() {
@@ -187,6 +214,8 @@ int main() {
     int num_joints = 2; 
     double tolerance = 1e-4;
     int max_iterations = 100;
+
+    std::string desired_config_type = "space_frame";
 
     // set link lengths
     VectorXd L(num_joints);
@@ -200,7 +229,7 @@ int main() {
     std::cout << "\nq desired: " << theta.transpose();
 
     VectorXd q0(num_joints);
-    q0 << 0.1, 0.2;
+    q0 << 1.5, 0.2;
 
     VectorXd x_d = GetXdesired(L, theta, num_joints);
 
@@ -236,7 +265,7 @@ int main() {
                                                         tf_home, 
                                                         screw_space, 
                                                         screw_body,
-                                                        "body",
+                                                        desired_config_type,
                                                         tf_expected,
                                                         q0,
                                                         tolerance,
@@ -244,25 +273,29 @@ int main() {
     
     std::cout << *inv_kin;
 
-    TestTfSpaceToBody(inv_kin, tf_expected, q0);
+    // TestTfmatInverse(inv_kin);
 
-    TestSkewSymMatToVec(inv_kin);
+    // TestTfBody(inv_kin, tf_expected, theta);
 
-    TestVecToSkewSymMat(inv_kin);
+    // TestTfSpace(inv_kin, tf_expected, theta);
 
-    TestMatrixLog3(inv_kin);
+    // TestSkewSymMatToVec(inv_kin);
 
-    TestSe3ToVec(inv_kin);
+    // TestVecToSkewSymMat(inv_kin);
 
-    TestMatrixLog6(inv_kin);
+    // TestMatrixLog3(inv_kin);
 
-    TestMatrixLog6inv(inv_kin, tf_expected, q0);
+    // TestSe3ToVec(inv_kin);
 
-    Testf(inv_kin, q0);
+    // TestMatrixLog6(inv_kin);
 
-    Testdfdq(inv_kin, q0);
+    // TestMatrixLog6inv(inv_kin, tf_expected, theta);
 
-    TestSolveIKBody(inv_kin, theta);
+    // Testf(inv_kin, q0);
+
+    // Testdfdq(inv_kin, q0);
+
+    TestSolveIK(inv_kin, theta);
 
     delete inv_kin;
 

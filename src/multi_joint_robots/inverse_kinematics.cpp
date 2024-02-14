@@ -38,12 +38,29 @@ InverseKinematics::InverseKinematics(
                                               tf_desired(tf_d),
                                               q(q0) {};
 
+MatrixXd InverseKinematics::TfmatInverse(MatrixXd Mat) {
+    MatrixXd Mat_inverse(4,4);
+    MatrixXd R = Mat.block(0,0,3,3);
+    VectorXd p = Mat.block(0,3,3,1);
 
-MatrixXd InverseKinematics::TfSpaceToBody(VectorXd q) {
+    Mat_inverse.block(0,0,3,3) = R.transpose();
+    Mat_inverse.block(0,3,3,1) = -R.transpose() * p;
+    Mat_inverse(3,3) = 1;
+    return Mat_inverse;
+}
+
+MatrixXd InverseKinematics::TfBody(VectorXd q) {
+    TfInBodyFrame(q);
+    MatrixXd tf_mat_ = GetTfBody();
+    MatrixXd tf_mat = InverseKinematics::TfmatInverse(tf_mat_) * tf_desired;
+    return tf_mat;
+};
+
+MatrixXd InverseKinematics::TfSpace(VectorXd q) {
     TfInSpaceFrame(q);
-    MatrixXd tf_mat_sb = GetTfSpace();
-    MatrixXd tf_body_ = tf_mat_sb.inverse() * tf_desired;
-    return tf_body_;
+    MatrixXd tf_mat_ = GetTfSpace();
+    MatrixXd tf_mat = InverseKinematics::TfmatInverse(tf_mat_) * tf_desired;
+    return tf_mat;
 };
 
 VectorXd InverseKinematics::SkewSymMatToVec(MatrixXd W) {
@@ -111,18 +128,31 @@ MatrixXd InverseKinematics::MatrixLog6(MatrixXd tf_body_) {
 };
 
 VectorXd InverseKinematics::f(VectorXd q) {
-    MatrixXd tf_body_ = InverseKinematics::TfSpaceToBody(q);
-    MatrixXd V_B = InverseKinematics::MatrixLog6(tf_body_);
-    VectorXd V_b = InverseKinematics::Se3ToVec(V_B);
-    return V_b;
+    VectorXd V(4);
+    if (desired_config_type == "body_frame") {
+        MatrixXd tf_body_ = InverseKinematics::TfBody(q);
+        MatrixXd V_B = InverseKinematics::MatrixLog6(tf_body_);
+        V = InverseKinematics::Se3ToVec(V_B);
+    } else if (desired_config_type == "space_frame") {
+        MatrixXd tf_body_ = InverseKinematics::TfSpace(q);
+        MatrixXd V_B = InverseKinematics::MatrixLog6(tf_body_);
+        VectorXd V_b = InverseKinematics::Se3ToVec(V_B);
+        V = AdjointOfTfMatrix(GetTfSpace()) * V_b;
+    }
+    return V;
 };
 
 MatrixXd InverseKinematics::dfdq(VectorXd q) {
-    MatrixXd mat = -BodyJacobian(q);
+    MatrixXd mat(6,q.cols());
+    if (desired_config_type == "body_frame") {
+        mat = -BodyJacobian(q);
+    } else if (desired_config_type == "space_frame") {
+        mat = -SpaceJacobian(q);
+    }
     return mat;
 };
 
-VectorXd InverseKinematics::SolveIKBody() {
+VectorXd InverseKinematics::SolveIK() {
     Iterate();
     std::vector<VectorXd> q_history = GetSolutionHistory();
     return q_history.back();
