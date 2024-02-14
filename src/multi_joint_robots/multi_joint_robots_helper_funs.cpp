@@ -1,4 +1,4 @@
-
+#include <iostream>
 # include <Eigen/Dense>
 
 # include "multi_joint_robots/multi_joint_robots_helper_funs.h"
@@ -74,6 +74,30 @@ MatrixXd MatrixLog3(MatrixXd R) {
     }
     return W;
 };
+
+MatrixXd MatrixExp6(MatrixXd se3mat) {
+    MatrixXd W = se3mat.block(0,0,3,3);
+    VectorXd w = SkewSymMatToVec(W);
+
+    VectorXd v = se3mat.block(0,3,3,1);
+
+    MatrixXd exp_mat(4,4);
+    exp_mat(3,3) = 1;
+    
+    double theta = w.norm();
+
+    if (theta < 1e-8) {
+        exp_mat.block(0,3,3,1) = v;
+    } else {
+        exp_mat.block(0,0,3,3) = MatrixExp3(W, theta);
+        MatrixXd prodw1 = (1 - cos(theta)) / theta * W;
+        MatrixXd prodw2 = (theta - sin(theta)) / theta / theta * W * W;
+        exp_mat.block(0,3,3,1) = ((MatrixXd::Identity(3,3) * theta + prodw1 + prodw2) * v) / theta;
+    }
+    return exp_mat;
+
+};
+
 
 MatrixXd MatrixLog6(MatrixXd tf_mat) {
     MatrixXd R = tf_mat.block(0,0,3,3);

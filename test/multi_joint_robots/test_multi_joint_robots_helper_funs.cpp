@@ -110,6 +110,25 @@ void TestSe3ToVec() {
     std::cout << "\n";
 }
 
+void TestMatrixExp6() {
+    MatrixXd V_B(4,4);
+    V_B << 0,          0,           0,           0,
+            0,          0, -1.57079633,  2.35619449,
+            0, 1.57079633,           0,  2.35619449,
+            0,          0,           0,           0;
+            
+    MatrixXd tf_expected(4,4);
+    tf_expected << 1, 0,  0, 0,
+                    0, 0, -1, 0,
+                    0, 1,  0, 3,
+                    0, 0,  0, 1;
+
+    MatrixXd t_f = MatrixExp6(V_B);
+
+    std::cout << "\nTestMatrixExp6\n";
+    std::cout << "\n t_f - tf_expected:\n " << t_f;
+    std::cout << "\n";
+ }
 
 void TestMatrixLog6() {
     MatrixXd tf_body(4,4);
