@@ -101,10 +101,20 @@ VectorXd SerialChainRobotDynamics::ForwardDynamics(VectorXd q, VectorXd dq, Vect
     return d2q;
 };
 
-VectorXd SerialChainRobotDynamics::EulerStepUpdateQ(VectorXd q, VectorXd dq, double dt) {
-    return q + dt * dq;
+VectorXd SerialChainRobotDynamics::EulerStepUpdate(VectorXd x, VectorXd dxdt, double dt) {
+    return x + dt * dxdt;
 };
 
-VectorXd SerialChainRobotDynamics::EulerStepUpdateDq(VectorXd dq, VectorXd d2q, double dt) {
-    return dq + dt * d2q;
-};
+std::vector<VectorXd> SerialChainRobotDynamics::UpdateInverseDynamicsTrajectory(std::vector<VectorXd> q_trajectory, 
+                                        std::vector<VectorXd> dq_trajectory, 
+                                        std::vector<VectorXd> d2q_trajectory,
+                                        std::vector<VectorXd> Ftip_trajectory) {
+    int trajectory_length = q_trajectory.size();
+    std::vector<VectorXd> tau_trajectory;
+    for (int i{0}; i<trajectory_length; i++) {
+        VectorXd tau = SerialChainRobotDynamics::InverseDynamics(q_trajectory[i], dq_trajectory[i], 
+                                                                 d2q_trajectory[i], g, Ftip_trajectory[i]);
+        tau_trajectory.push_back(tau);
+    }
+    return tau_trajectory;
+}

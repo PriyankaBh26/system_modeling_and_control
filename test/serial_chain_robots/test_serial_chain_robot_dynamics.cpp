@@ -100,13 +100,53 @@ void TestEulerStep(SerialChainRobotDynamics* fd) {
 
         std::cout << "\n TestEulerStep\n";
 
-        VectorXd q_new = fd->EulerStepUpdateQ(q, dq, dt);
+        VectorXd q_new = fd->EulerStepUpdate(q, dq, dt);
         std::cout << "\n q_new:\n" << q_new.transpose();
         std::cout << "\n";
 
-        VectorXd dq_new = fd->EulerStepUpdateDq(dq, d2q, dt);
+        VectorXd dq_new = fd->EulerStepUpdate(dq, d2q, dt);
         std::cout << "\n dq_new:\n" << dq_new.transpose();
         std::cout << "\n";
+
+}
+
+void TestUpdateInverseDynamicsTrajectory(SerialChainRobotDynamics* fd) {
+        std::vector<VectorXd> q_trajectory; 
+        std::vector<VectorXd> dq_trajectory; 
+        std::vector<VectorXd> d2q_trajectory;
+        std::vector<VectorXd> Ftip_trajectory;
+
+        VectorXd q(3);
+        q << 0.1, 0.1, 0.1;
+        
+        VectorXd dq(3);
+        dq << 0.1, 0.1, 0.1;
+
+        VectorXd d2q(3);
+        d2q << 0.1, 0.1, 0.1;
+
+        VectorXd Ftip(6);
+        Ftip << 0.1, 0.1, 0.1, 0.1, 0.1, 0.1;
+
+        double dt = 0.1;
+
+        for (int i{0}; i<10; i++) {
+                q_trajectory.push_back(fd->EulerStepUpdate(q, dq, dt));
+                dq_trajectory.push_back(fd->EulerStepUpdate(dq, d2q, dt));
+                d2q_trajectory.push_back(d2q);
+                Ftip_trajectory.push_back(Ftip);
+        }
+
+        std::vector<VectorXd> tau_trajectory = fd->UpdateInverseDynamicsTrajectory(q_trajectory, 
+                                                                                dq_trajectory, 
+                                                                                d2q_trajectory,
+                                                                                Ftip_trajectory);
+
+        std::cout << "\n TestUpdateInverseDynamicsTrajectory\n";
+        std::cout << tau_trajectory.size();
+        std::cout << "\n";
+
+
 
 }
 
@@ -188,6 +228,8 @@ void TestSerialChainRobotDynamics() {
         TestForwardDynamics(fd, q, dq, Ftip);
 
         TestEulerStep(fd);
+
+        TestUpdateInverseDynamicsTrajectory(fd);
 
     delete fd;
 };
