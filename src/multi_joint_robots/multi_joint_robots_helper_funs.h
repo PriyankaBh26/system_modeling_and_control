@@ -12,6 +12,8 @@ MatrixXd VecToSkewSymMat(VectorXd v);
 
 VectorXd SkewSymMatToVec(MatrixXd W);
 
+MatrixXd ad(VectorXd V);
+
 MatrixXd AdjointOfTfMatrix(MatrixXd tf_mat);
 
 MatrixXd MatrixExp3(MatrixXd W, double theta) ;
