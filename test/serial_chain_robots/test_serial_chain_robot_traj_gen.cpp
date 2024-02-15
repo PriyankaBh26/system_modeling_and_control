@@ -88,14 +88,20 @@ void TestTfScrewTrajectory() {
                                                      time_scaling_type);
 
     std::cout << "\n TestTfScrewTrajectory \n";
-    for (const auto& TF : TF_traj) {
-        std::cout << TF;
-        std::cout << "\n";
-    }
+    // for (const auto& TF : TF_traj) {
+    //     std::cout << TF;
+    //     std::cout << "\n";
+    // }
 
     std::cout << "\nTF_0 error= " << TF_traj[0] - TF_0;
     std::cout << "\nTF_final error = " << TF_traj.back() - TF_final;
     std::cout << "\n";
+
+    if (((TF_traj[0] - TF_0).array().abs() < 1e-8).all() && ((TF_traj.back() - TF_final).array().abs() < 1e-8).all()) {
+        std::cout << "test successful!\n";
+    } else {
+        std::cout << "test failed!\n";
+    }
 }
 
 int main() {
