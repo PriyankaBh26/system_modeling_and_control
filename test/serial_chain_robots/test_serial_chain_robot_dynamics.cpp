@@ -86,6 +86,29 @@ void TestForwardDynamics(SerialChainRobotDynamics* fd, VectorXd q, VectorXd dq, 
 
 }
 
+void TestEulerStep(SerialChainRobotDynamics* fd) {
+        VectorXd q(3);
+        q << 0.1, 0.1, 0.1;
+        
+        VectorXd dq(3);
+        dq << 0.1, 0.1, 0.1;
+
+        VectorXd d2q(3);
+        d2q << 0.1, 0.1, 0.1;
+
+        double dt = 0.1;
+
+        std::cout << "\n TestEulerStep\n";
+
+        VectorXd q_new = fd->EulerStepUpdateQ(q, dq, dt);
+        std::cout << "\n q_new:\n" << q_new.transpose();
+        std::cout << "\n";
+
+        VectorXd dq_new = fd->EulerStepUpdateDq(dq, d2q, dt);
+        std::cout << "\n dq_new:\n" << dq_new.transpose();
+        std::cout << "\n";
+
+}
 
 void TestSerialChainRobotDynamics() {
     int num_joints = 3;
@@ -163,6 +186,8 @@ void TestSerialChainRobotDynamics() {
         TestEndEffectorForces(fd, q, Ftip);
 
         TestForwardDynamics(fd, q, dq, Ftip);
+
+        TestEulerStep(fd);
 
     delete fd;
 };

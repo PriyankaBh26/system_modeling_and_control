@@ -26,6 +26,10 @@ class SerialChainRobotDynamics {
 
         VectorXd ForwardDynamics(VectorXd q, VectorXd dq, VectorXd Ftip, VectorXd tau);
 
+        VectorXd EulerStepUpdateQ(VectorXd q, VectorXd dq, double dt);
+
+        VectorXd EulerStepUpdateDq(VectorXd dq, VectorXd d2q, double dt);
+        
     private:
         int num_joints;
         VectorXd g; 

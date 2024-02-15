@@ -100,3 +100,11 @@ VectorXd SerialChainRobotDynamics::ForwardDynamics(VectorXd q, VectorXd dq, Vect
 
     return d2q;
 };
+
+VectorXd SerialChainRobotDynamics::EulerStepUpdateQ(VectorXd q, VectorXd dq, double dt) {
+    return q + dt * dq;
+};
+
+VectorXd SerialChainRobotDynamics::EulerStepUpdateDq(VectorXd dq, VectorXd d2q, double dt) {
+    return dq + dt * d2q;
+};
