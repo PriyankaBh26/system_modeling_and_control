@@ -3,6 +3,7 @@
 # include <cmath>
 # include <Eigen/Dense>
 #include "serial_chain_robots/serial_chain_robot_traj_gen.h"
+# include "serial_chain_robots/serial_chain_robot_helper_funs.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -41,4 +42,28 @@ std::vector<double> JointTrajectory(double q_0, double q_final,
     }                                 
 
     return q_traj;
+}
+
+std::vector<MatrixXd> TfScrewTrajectory(MatrixXd TF_0, MatrixXd TF_final, 
+                                        double t_final, int traj_length, 
+                                        std::string time_scaling_type) {
+    double dt = t_final/ (traj_length - 1.0);
+    std::vector<MatrixXd> TF_traj;
+    if (time_scaling_type == "cubic") {
+        for (int i{0}; i<traj_length; i++) {
+            double s = CubicTimeScaling(t_final, dt * i);
+            MatrixXd TF_s = MatrixExp6(MatrixLog6(TfmatInverse(TF_0) * TF_final) * s);
+            MatrixXd TF = TF_0 * TF_s;
+            TF_traj.push_back(TF);
+        }
+    } else if (time_scaling_type == "quintic") {
+        for (int i{0}; i<traj_length; i++) {
+            double s = QuinticTimeScaling(t_final, dt * i);
+            MatrixXd TF_s = MatrixExp6(MatrixLog6(TfmatInverse(TF_0) * TF_final) * s);
+            MatrixXd TF = TF_0 * TF_s;            
+            TF_traj.push_back(TF);
+        }
+    }   
+    
+    return TF_traj;
 }
