@@ -150,7 +150,7 @@ void TestMatrixExp6() {
     std::cout << "\n t_f - tf_expected:\n " << t_f;
     std::cout << "\n";
  }
-
+ 
 void TestMatrixLog6() {
     MatrixXd tf_body(4,4);
     tf_body << 1, 0,  0, 0,
@@ -190,17 +190,23 @@ void TestVecToSe3() {
 
 int main() {
 
-    TestSkewSymMatToVec();
+    // TestSkewSymMatToVec();
 
-    TestVecToSkewSymMat();
+    // TestVecToSkewSymMat();
 
-    TestMatrixLog3();
+    Testad();
 
-    TestSe3ToVec();
+    // TestMatrixExp3();
 
-    TestMatrixLog6();
+    // TestMatrixLog3();
 
-    TestVecToSe3();
+    // TestSe3ToVec();
+
+    // TestMatrixExp6();
+
+    // TestMatrixLog6();
+
+    // TestVecToSe3();
 
     return 0;
 }
