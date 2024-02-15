@@ -15,7 +15,7 @@ void TestInverseDynamics(SerialChainRobotDynamics* fd,
                         VectorXd g,
                         VectorXd Ftip) {
     VectorXd d2q(num_joints);
-    dq << 2, 1.5, 1;
+    d2q << 2, 1.5, 1;
 
     VectorXd tau_expected(num_joints);
     tau_expected << 74.69616155, -33.06766016, -3.23057314;
@@ -23,7 +23,7 @@ void TestInverseDynamics(SerialChainRobotDynamics* fd,
     VectorXd tau_out = fd->InverseDynamics(q, dq, d2q, g, Ftip);
 
     std::cout << "\n TestInverseDynamics\n";
-    std::cout << "\n tau_out - tau_expected :\n" << tau_out.transpose();  // - tau_expected.transpose();
+    std::cout << "\n tau_out - tau_expected :\n" << tau_out.transpose() - tau_expected.transpose();
     std::cout << "\n";
 
 }
@@ -43,28 +43,24 @@ void TestMassMatrix(SerialChainRobotDynamics* fd, VectorXd q) {
 
 }
 
-void TestVelQuadraticForces(SerialChainRobotDynamics* fd,
-                        VectorXd q,
-                        VectorXd dq) {
+void TestVelQuadraticForces(SerialChainRobotDynamics* fd, VectorXd q, VectorXd dq) {
         VectorXd C_expected(3);
         C_expected << 0.26453118, -0.05505157, -0.00689132;
         VectorXd C = fd->VelQuadraticForces(q, dq);
 
         std::cout << "\n TestVelQuadraticForces\n";
-        std::cout << "\n C - C_expected :\n" << C - C_expected;
+        std::cout << "\n C - C_expected :\n" << C.transpose() - C_expected.transpose();
         std::cout << "\n";
 
 }
 
-void TestGravityForces(SerialChainRobotDynamics* fd,
-                        VectorXd q,
-                        VectorXd dq) {
+void TestGravityForces(SerialChainRobotDynamics* fd, VectorXd q, VectorXd dq) {
         VectorXd Gf_expected(3);
         Gf_expected << 28.40331262, -37.64094817, -5.4415892;
         VectorXd Gf = fd->GravityForces(q);
 
         std::cout << "\n TestGravityForces\n";
-        std::cout << "\n Gf - Gf_expected :\n" << Gf - Gf_expected;
+        std::cout << "\n Gf - Gf_expected :\n" << Gf.transpose() - Gf_expected.transpose();
         std::cout << "\n";
 
 }
@@ -75,7 +71,7 @@ void TestEndEffectorForces(SerialChainRobotDynamics* fd, VectorXd q, VectorXd Ft
         VectorXd Fee = fd->EndEffectorForces(q, Ftip);
 
         std::cout << "\n TestEndEffectorForces\n";
-        std::cout << "\n Fee - Fee_expected :\n" << Fee - Fee_expected;
+        std::cout << "\n Fee - Fee_expected :\n" << Fee.transpose() - Fee_expected.transpose();
         std::cout << "\n";
 
 }
@@ -88,9 +84,6 @@ SerialChainRobotDynamics* InitializeFD() {
 
     VectorXd dq(num_joints);
     dq << 0.1, 0.2, 0.3;
-
-    VectorXd tau(num_joints);
-    tau << 0.5, 0.6, 0.7;
 
     VectorXd g(3);
     g << 0, 0, -9.8;
@@ -146,17 +139,9 @@ SerialChainRobotDynamics* InitializeFD() {
                 1, 0, 0,
                 0, 0, 0.425;
 
-    SerialChainRobotDynamics* fd = new SerialChainRobotDynamics(num_joints,
-                                              g,
-                                              Mlist,
-                                              Glist,
-                                              Slist);
+    SerialChainRobotDynamics* fd = new SerialChainRobotDynamics(num_joints, g, Mlist, Glist, Slist);
 
-        TestInverseDynamics(fd, num_joints,
-                                q,
-                                dq,
-                                g,
-                                Ftip);
+        TestInverseDynamics(fd, num_joints, q, dq, g, Ftip);
 
         TestMassMatrix(fd, q);
 
