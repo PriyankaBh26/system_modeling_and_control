@@ -3,29 +3,24 @@
 # include <cmath>
 # include <Eigen/Dense>
 
-# include "multi_joint_robots/forward_dynamics.h"
+# include "multi_joint_robots/serial_chain_robot_dynamics.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-void TestInverseDynamics(ForwardDynamics* fd,
+void TestInverseDynamics(SerialChainRobotDynamics* fd,
                         int num_joints,
                         VectorXd q, 
                         VectorXd dq, 
-                        VectorXd g, 
-                        VectorXd Ftip, 
-                        std::vector<MatrixXd> Mlist, 
-                        std::vector<MatrixXd> Glist, 
-                        MatrixXd screw_space) {
+                        VectorXd g,
+                        VectorXd Ftip) {
     VectorXd d2q(num_joints);
     dq << 2, 1.5, 1;
 
     VectorXd tau_expected(num_joints);
     tau_expected << 74.69616155, -33.06766016, -3.23057314;
 
-    VectorXd tau_out = fd->InverseDynamics(q, dq, d2q, 
-                                        g, Ftip, Mlist, 
-                                        Glist, screw_space);
+    VectorXd tau_out = fd->InverseDynamics(q, dq, d2q, g, Ftip);
 
     std::cout << "\n TestInverseDynamics\n";
     std::cout << "\n tau_out - tau_expected :\n" << tau_out.transpose();  // - tau_expected.transpose();
@@ -33,21 +28,14 @@ void TestInverseDynamics(ForwardDynamics* fd,
 
 }
 
-void TestMassMatrix(ForwardDynamics* fd,
-                VectorXd q,
-                std::vector<MatrixXd> Mlist, 
-                std::vector<MatrixXd> Glist, 
-                MatrixXd screw_space) {
+void TestMassMatrix(SerialChainRobotDynamics* fd, VectorXd q) {
 
         MatrixXd M_expected(3,3);
         M_expected << 2.25433380e+01, -3.07146754e-01, -7.18426391e-03,
                      -3.07146754e-01,  1.96850717e+00,  4.32157368e-01,
                      -7.18426391e-03,  4.32157368e-01,  1.91630858e-01;
 
-        MatrixXd M = fd->MassMatrix(q,
-                                Mlist, 
-                                Glist, 
-                                screw_space);
+        MatrixXd M = fd->MassMatrix(q);
 
         std::cout << "\n TestMassMatrix\n";
         std::cout << "\n M - M_expected :\n" << M - M_expected;
@@ -55,19 +43,12 @@ void TestMassMatrix(ForwardDynamics* fd,
 
 }
 
-void TestVelQuadraticForces(ForwardDynamics* fd,
+void TestVelQuadraticForces(SerialChainRobotDynamics* fd,
                         VectorXd q,
-                        VectorXd dq,
-                        std::vector<MatrixXd> Mlist, 
-                        std::vector<MatrixXd> Glist, 
-                        MatrixXd screw_space) {
+                        VectorXd dq) {
         VectorXd C_expected(3);
         C_expected << 0.26453118, -0.05505157, -0.00689132;
-        VectorXd C = fd->VelQuadraticForces(q,
-                                dq,
-                                Mlist, 
-                                Glist, 
-                                screw_space);
+        VectorXd C = fd->VelQuadraticForces(q, dq);
 
         std::cout << "\n TestVelQuadraticForces\n";
         std::cout << "\n C - C_expected :\n" << C - C_expected;
@@ -75,18 +56,12 @@ void TestVelQuadraticForces(ForwardDynamics* fd,
 
 }
 
-void TestGravityForces(ForwardDynamics* fd,
+void TestGravityForces(SerialChainRobotDynamics* fd,
                         VectorXd q,
-                        VectorXd dq,
-                        std::vector<MatrixXd> Mlist, 
-                        std::vector<MatrixXd> Glist, 
-                        MatrixXd screw_space) {
+                        VectorXd dq) {
         VectorXd Gf_expected(3);
         Gf_expected << 28.40331262, -37.64094817, -5.4415892;
-        VectorXd Gf = fd->GravityForces(q,
-                                Mlist, 
-                                Glist, 
-                                screw_space);
+        VectorXd Gf = fd->GravityForces(q);
 
         std::cout << "\n TestGravityForces\n";
         std::cout << "\n Gf - Gf_expected :\n" << Gf - Gf_expected;
@@ -94,17 +69,10 @@ void TestGravityForces(ForwardDynamics* fd,
 
 }
 
-void TestEndEffectorForces(ForwardDynamics* fd,
-                        VectorXd q,
-                        std::vector<MatrixXd> Mlist, 
-                        std::vector<MatrixXd> Glist, 
-                        MatrixXd screw_space) {
+void TestEndEffectorForces(SerialChainRobotDynamics* fd, VectorXd q, VectorXd Ftip) {
         VectorXd Fee_expected(3);
         Fee_expected << 1.40954608, 1.85771497, 1.392409;
-        VectorXd Fee = fd->EndEffectorForces(q,
-                                Mlist, 
-                                Glist, 
-                                screw_space);
+        VectorXd Fee = fd->EndEffectorForces(q, Ftip);
 
         std::cout << "\n TestEndEffectorForces\n";
         std::cout << "\n Fee - Fee_expected :\n" << Fee - Fee_expected;
@@ -112,7 +80,7 @@ void TestEndEffectorForces(ForwardDynamics* fd,
 
 }
 
-ForwardDynamics* InitializeFD() {
+SerialChainRobotDynamics* InitializeFD() {
     int num_joints = 3;
 
     VectorXd q(num_joints);
@@ -178,57 +146,31 @@ ForwardDynamics* InitializeFD() {
                 1, 0, 0,
                 0, 0, 0.425;
 
-    ForwardDynamics* fd = new ForwardDynamics(num_joints,
-                                              q,
-                                              dq,
-                                              tau,
+    SerialChainRobotDynamics* fd = new SerialChainRobotDynamics(num_joints,
                                               g,
-                                              Ftip,
                                               Mlist,
                                               Glist,
                                               Slist);
 
-        TestInverseDynamics(fd,
-                                num_joints,
+        TestInverseDynamics(fd, num_joints,
                                 q,
                                 dq,
                                 g,
-                                Ftip,
-                                Mlist,
-                                Glist,
-                                Slist);
+                                Ftip);
 
-        TestMassMatrix(fd,
-                        q,
-                        Mlist, 
-                        Glist, 
-                        Slist);
+        TestMassMatrix(fd, q);
 
-        TestVelQuadraticForces(fd,
-                                q,
-                                dq,
-                                Mlist, 
-                                Glist, 
-                                Slist);
+        TestVelQuadraticForces(fd, q, dq);
 
-        TestGravityForces(fd,
-                        q,
-                        dq,
-                        Mlist, 
-                        Glist, 
-                        Slist);
+        TestGravityForces(fd, q, dq);
 
-        TestEndEffectorForces(fd,
-                        q,
-                        Mlist, 
-                        Glist, 
-                        Slist);
+        TestEndEffectorForces(fd, q, Ftip);
     return fd;
 };
 
 int main() {
 
-    ForwardDynamics* fd = InitializeFD();
+    SerialChainRobotDynamics* fd = InitializeFD();
 
     delete fd;
 
