@@ -1,5 +1,6 @@
 # include <iostream>
 # include <vector>
+# include <tuple>
 # include <cmath>
 # include <Eigen/Dense>
 
@@ -145,9 +146,43 @@ void TestUpdateInverseDynamicsTrajectory(SerialChainRobotDynamics* fd) {
         std::cout << "\n TestUpdateInverseDynamicsTrajectory\n";
         std::cout << tau_trajectory.size();
         std::cout << "\n";
+}
 
+void TestUpdateForwardDynamicsTrajectory(SerialChainRobotDynamics* fd) {
 
+        VectorXd q(3);
+        q << 0.1, 0.1, 0.1;
+        
+        VectorXd dq(3);
+        dq << 0.1, 0.1, 0.1;
 
+        VectorXd tau(3);
+        tau << 0.1, 0.1, 0.1;
+
+        VectorXd Ftip(6);
+        Ftip << 0.1, 0.1, 0.1, 0.1, 0.1, 0.1;
+
+        double dt = 0.1;
+
+        std::vector<VectorXd> tau_trajectory;
+        std::vector<VectorXd> Ftip_trajectory;
+
+        for (int i{0}; i<10; i++) {
+                tau_trajectory.push_back(tau);
+                Ftip_trajectory.push_back(Ftip);
+        }
+
+        std::vector<VectorXd> q_trajectory;
+        std::vector<VectorXd> dq_trajectory; 
+        std::vector<VectorXd> d2q_trajectory;
+        
+        std::tie(q_trajectory, dq_trajectory, d2q_trajectory) = fd->UpdateForwardDynamicsTrajectory(q, dq, dt,
+                                                                                                tau_trajectory,
+                                                                                                Ftip_trajectory);
+
+        std::cout << "\n TestUpdateForwardDynamicsTrajectory\n";
+        std::cout << q_trajectory.size();
+        std::cout << "\n";
 }
 
 void TestSerialChainRobotDynamics() {
@@ -230,6 +265,8 @@ void TestSerialChainRobotDynamics() {
         TestEulerStep(fd);
 
         TestUpdateInverseDynamicsTrajectory(fd);
+
+        TestUpdateForwardDynamicsTrajectory(fd);
 
     delete fd;
 };

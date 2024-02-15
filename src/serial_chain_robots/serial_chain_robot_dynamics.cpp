@@ -1,4 +1,5 @@
 # include <iostream>
+# include <tuple>
 # include <Eigen/Dense>
 
 # include "serial_chain_robots/serial_chain_robot_helper_funs.h"
@@ -117,4 +118,29 @@ std::vector<VectorXd> SerialChainRobotDynamics::UpdateInverseDynamicsTrajectory(
         tau_trajectory.push_back(tau);
     }
     return tau_trajectory;
-}
+};
+
+
+
+std::tuple<std::vector<VectorXd>, std::vector<VectorXd>, std::vector<VectorXd>>  SerialChainRobotDynamics::UpdateForwardDynamicsTrajectory(VectorXd q, 
+                                                                VectorXd dq, 
+                                                                double dt,
+                                                                std::vector<VectorXd> tau_trajectory,
+                                                                std::vector<VectorXd> Ftip_trajectory) {
+    int trajectory_length = tau_trajectory.size();
+    std::vector<VectorXd> q_trajectory;
+    std::vector<VectorXd> dq_trajectory;
+    std::vector<VectorXd> d2q_trajectory;
+
+    for (int i{0}; i<trajectory_length; i++) {
+        VectorXd d2q = SerialChainRobotDynamics::ForwardDynamics(q, dq, Ftip_trajectory[i], tau_trajectory[i]);
+        d2q_trajectory.push_back(d2q);
+
+        q = SerialChainRobotDynamics::EulerStepUpdate(q, dq, dt);
+        q_trajectory.push_back(q);
+
+        dq = SerialChainRobotDynamics::EulerStepUpdate(dq, d2q, dt);
+        dq_trajectory.push_back(dq);
+    }
+    return std::make_tuple(q_trajectory, dq_trajectory, d2q_trajectory);
+};
