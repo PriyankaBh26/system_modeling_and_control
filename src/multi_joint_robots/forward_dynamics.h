@@ -21,13 +21,25 @@ class ForwardDynamics {
             std::vector<MatrixXd> Glist, 
                         MatrixXd screw_space);
 
-        MatrixXd MassMatrix();
+        VectorXd InverseDynamics(VectorXd q, 
+                                 VectorXd dq, 
+                                 VectorXd d2q, 
+                                 VectorXd g, 
+                                 VectorXd Ftip, 
+                                 std::vector<MatrixXd> Mlist, 
+                                 std::vector<MatrixXd> Glist, 
+                                 MatrixXd screw_space);
 
-        VectorXd VelQuadraticForces();
+        MatrixXd MassMatrix(VectorXd q,
+                            std::vector<MatrixXd> Mlist, 
+                            std::vector<MatrixXd> Glist, 
+                            MatrixXd screw_space);
 
-        VectorXd GravityForces();
+        // VectorXd VelQuadraticForces();
 
-        VectorXd EndEffectorForces();
+        // VectorXd GravityForces();
+
+        // VectorXd EndEffectorForces();
 
     private:
         int num_joints;

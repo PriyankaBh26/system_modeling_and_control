@@ -8,6 +8,53 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
+void TestInverseDynamics(ForwardDynamics* fd,
+                        int num_joints,
+                        VectorXd q, 
+                        VectorXd dq, 
+                        VectorXd g, 
+                        VectorXd Ftip, 
+                        std::vector<MatrixXd> Mlist, 
+                        std::vector<MatrixXd> Glist, 
+                        MatrixXd screw_space) {
+    VectorXd d2q(num_joints);
+    dq << 2, 1.5, 1;
+
+    VectorXd tau_expected(num_joints);
+    tau_expected << 74.69616155, -33.06766016, -3.23057314;
+
+    VectorXd tau_out = fd->InverseDynamics(q, dq, d2q, 
+                                        g, Ftip, Mlist, 
+                                        Glist, screw_space);
+
+    std::cout << "\n TestInverseDynamics\n";
+    std::cout << "\n tau_out - tau_expected :\n" << tau_out.transpose();  // - tau_expected.transpose();
+    std::cout << "\n";
+
+}
+
+void TestMassMatrix(ForwardDynamics* fd,
+                VectorXd q,
+                std::vector<MatrixXd> Mlist, 
+                std::vector<MatrixXd> Glist, 
+                MatrixXd screw_space) {
+
+        MatrixXd M_expected(3,3);
+        M_expected << 2.25433380e+01, -3.07146754e-01, -7.18426391e-03,
+                     -3.07146754e-01,  1.96850717e+00,  4.32157368e-01,
+                     -7.18426391e-03,  4.32157368e-01,  1.91630858e-01;
+
+        MatrixXd M = fd->MassMatrix(q,
+                                Mlist, 
+                                Glist, 
+                                screw_space);
+
+        std::cout << "\n TestMassMatrix\n";
+        std::cout << "\n M - M_expected :\n" << M - M_expected;
+        std::cout << "\n";
+
+}
+
 ForwardDynamics* InitializeFD() {
     int num_joints = 3;
 
@@ -83,6 +130,23 @@ ForwardDynamics* InitializeFD() {
                                               Mlist,
                                               Glist,
                                               Slist);
+
+        TestInverseDynamics(fd,
+                                num_joints,
+                                q,
+                                dq,
+                                g,
+                                Ftip,
+                                Mlist,
+                                Glist,
+                                Slist);
+
+        TestMassMatrix(fd,
+                        q,
+                        Mlist, 
+                        Glist, 
+                        Slist);
+
 
     return fd;
 };
