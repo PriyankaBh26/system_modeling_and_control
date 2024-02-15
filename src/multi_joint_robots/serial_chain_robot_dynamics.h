@@ -14,11 +14,7 @@ class SerialChainRobotDynamics {
             std::vector<MatrixXd> Glist, 
                         MatrixXd screw_space);
 
-        VectorXd InverseDynamics(VectorXd q, 
-                                 VectorXd dq, 
-                                 VectorXd d2q, 
-                                 VectorXd g_vec,
-                                 VectorXd Ftip);
+        VectorXd InverseDynamics(VectorXd q, VectorXd dq, VectorXd d2q, VectorXd g_vec, VectorXd Ftip);
 
         MatrixXd MassMatrix(VectorXd q);
 
