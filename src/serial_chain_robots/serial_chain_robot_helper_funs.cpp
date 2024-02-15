@@ -101,6 +101,7 @@ MatrixXd MatrixExp6(MatrixXd se3mat) {
     double theta = w.norm();
 
     if (theta < 1e-8) {
+        exp_mat.block(0,0,3,3) = MatrixXd::Identity(3,3);
         exp_mat.block(0,3,3,1) = v;
     } else {
         exp_mat.block(0,0,3,3) = MatrixExp3(W, theta);
