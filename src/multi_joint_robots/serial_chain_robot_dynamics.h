@@ -6,9 +6,6 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-// This function computes d2q by solving:
-//    d2q = inv(Mlist(q)) * (tau - c(q,dq) - g(q) - J.T(q) * Ftip)
-
 class SerialChainRobotDynamics {
     public:
         SerialChainRobotDynamics(int num_joints,
@@ -30,6 +27,8 @@ class SerialChainRobotDynamics {
         VectorXd GravityForces(VectorXd q);
 
         VectorXd EndEffectorForces(VectorXd q, VectorXd Ftip);
+
+        VectorXd ForwardDynamics(VectorXd q, VectorXd dq, VectorXd Ftip, VectorXd tau);
 
     private:
         int num_joints;

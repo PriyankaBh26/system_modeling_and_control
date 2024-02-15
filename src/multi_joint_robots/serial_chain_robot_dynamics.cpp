@@ -22,6 +22,8 @@ VectorXd SerialChainRobotDynamics::InverseDynamics(VectorXd q,
                                         VectorXd d2q, 
                                         VectorXd g_vec,
                                         VectorXd Ftip) {
+    // tau = Mlist(q)d2q + c(q,dq) + g(q) + J.T(q)Ftip
+
     MatrixXd Mi = MatrixXd::Identity(4,4);
     MatrixXd Ai = MatrixXd::Zero(6,num_joints);
     std::vector<MatrixXd> AdTi;
@@ -30,7 +32,7 @@ VectorXd SerialChainRobotDynamics::InverseDynamics(VectorXd q,
     Vdi.block(3,0,3,1) = -g_vec;
 
     VectorXd Fi = Ftip;
-    VectorXd tau_list(num_joints);
+    VectorXd tau(num_joints);
 
     for (int i{0}; i<num_joints; i++) {
         Mi = Mi * Mlist[i];
@@ -49,10 +51,10 @@ VectorXd SerialChainRobotDynamics::InverseDynamics(VectorXd q,
     for (int i{num_joints-1}; i>=0; i--) {
         Fi = AdTi[i+1].transpose() * Fi + Glist[i] * Vdi.col(i+1) - ad(Vi.col(i+1)).transpose() * (Glist[i] * Vi.col(i+1));
         
-        tau_list(i) = Fi.transpose() * Ai.col(i);
+        tau(i) = Fi.transpose() * Ai.col(i);
     }
 
-    return tau_list;
+    return tau;
 };
 
 MatrixXd SerialChainRobotDynamics::MassMatrix(VectorXd q) {
@@ -85,4 +87,16 @@ VectorXd SerialChainRobotDynamics::EndEffectorForces(VectorXd q, VectorXd Ftip) 
 
     VectorXd Fee = SerialChainRobotDynamics::InverseDynamics(q, 0 * q, 0 * q, 0 * g, Ftip);
     return Fee;
+};
+
+VectorXd SerialChainRobotDynamics::ForwardDynamics(VectorXd q, VectorXd dq, VectorXd Ftip, VectorXd tau) {
+    //  d2q = inv(M(q)) * (tau - C(q,dq) - Gforce(q) - J.T(q) * Fee)
+    MatrixXd M = SerialChainRobotDynamics::MassMatrix(q);
+    VectorXd C = SerialChainRobotDynamics::VelQuadraticForces(q, dq);
+    VectorXd Gforce = SerialChainRobotDynamics::GravityForces(q);
+    VectorXd JTFee = SerialChainRobotDynamics::EndEffectorForces(q, Ftip);
+
+    VectorXd d2q = M.inverse() * (tau - C - Gforce - JTFee);
+
+    return d2q;
 };

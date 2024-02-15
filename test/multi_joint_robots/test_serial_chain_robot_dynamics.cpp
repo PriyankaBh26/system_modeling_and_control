@@ -8,23 +8,19 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-void TestInverseDynamics(SerialChainRobotDynamics* fd,
-                        int num_joints,
-                        VectorXd q, 
-                        VectorXd dq, 
-                        VectorXd g,
-                        VectorXd Ftip) {
-    VectorXd d2q(num_joints);
-    d2q << 2, 1.5, 1;
+void TestInverseDynamics(SerialChainRobotDynamics* fd, int num_joints, VectorXd q, 
+                        VectorXd dq, VectorXd g, VectorXd Ftip) {
+        VectorXd d2q(num_joints);
+        d2q << 2, 1.5, 1;
 
-    VectorXd tau_expected(num_joints);
-    tau_expected << 74.69616155, -33.06766016, -3.23057314;
+        VectorXd tau_expected(num_joints);
+        tau_expected << 74.69616155, -33.06766016, -3.23057314;
 
-    VectorXd tau_out = fd->InverseDynamics(q, dq, d2q, g, Ftip);
+        VectorXd tau_out = fd->InverseDynamics(q, dq, d2q, g, Ftip);
 
-    std::cout << "\n TestInverseDynamics\n";
-    std::cout << "\n tau_out - tau_expected :\n" << tau_out.transpose() - tau_expected.transpose();
-    std::cout << "\n";
+        std::cout << "\n TestInverseDynamics\n";
+        std::cout << "\n tau_out - tau_expected :\n" << tau_out.transpose() - tau_expected.transpose();
+        std::cout << "\n";
 
 }
 
@@ -32,8 +28,8 @@ void TestMassMatrix(SerialChainRobotDynamics* fd, VectorXd q) {
 
         MatrixXd M_expected(3,3);
         M_expected << 2.25433380e+01, -3.07146754e-01, -7.18426391e-03,
-                     -3.07146754e-01,  1.96850717e+00,  4.32157368e-01,
-                     -7.18426391e-03,  4.32157368e-01,  1.91630858e-01;
+                        -3.07146754e-01,  1.96850717e+00,  4.32157368e-01,
+                        -7.18426391e-03,  4.32157368e-01,  1.91630858e-01;
 
         MatrixXd M = fd->MassMatrix(q);
 
@@ -76,7 +72,22 @@ void TestEndEffectorForces(SerialChainRobotDynamics* fd, VectorXd q, VectorXd Ft
 
 }
 
-SerialChainRobotDynamics* InitializeFD() {
+void TestForwardDynamics(SerialChainRobotDynamics* fd, VectorXd q, VectorXd dq, VectorXd Ftip) {
+        VectorXd tau(3);
+        tau << 0.5, 0.6, 0.7;
+        VectorXd d2q_expected(3);
+        d2q_expected << -0.97392907, 25.58466784, -32.91499212;
+
+        VectorXd d2q = fd->ForwardDynamics(q, dq, Ftip, tau);
+
+        std::cout << "\n TestForwardDynamics\n";
+        std::cout << "\n d2q - d2q_expected :\n" << d2q.transpose() - d2q_expected.transpose();
+        std::cout << "\n";
+
+}
+
+
+void TestSerialChainRobotDynamics() {
     int num_joints = 3;
 
     VectorXd q(num_joints);
@@ -150,14 +161,15 @@ SerialChainRobotDynamics* InitializeFD() {
         TestGravityForces(fd, q, dq);
 
         TestEndEffectorForces(fd, q, Ftip);
-    return fd;
+
+        TestForwardDynamics(fd, q, dq, Ftip);
+
+    delete fd;
 };
 
 int main() {
 
-    SerialChainRobotDynamics* fd = InitializeFD();
-
-    delete fd;
+        TestSerialChainRobotDynamics();
 
     return 0;
 }
