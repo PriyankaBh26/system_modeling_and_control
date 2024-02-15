@@ -75,6 +75,43 @@ void TestVelQuadraticForces(ForwardDynamics* fd,
 
 }
 
+void TestGravityForces(ForwardDynamics* fd,
+                        VectorXd q,
+                        VectorXd dq,
+                        std::vector<MatrixXd> Mlist, 
+                        std::vector<MatrixXd> Glist, 
+                        MatrixXd screw_space) {
+        VectorXd Gf_expected(3);
+        Gf_expected << 28.40331262, -37.64094817, -5.4415892;
+        VectorXd Gf = fd->GravityForces(q,
+                                Mlist, 
+                                Glist, 
+                                screw_space);
+
+        std::cout << "\n TestGravityForces\n";
+        std::cout << "\n Gf - Gf_expected :\n" << Gf - Gf_expected;
+        std::cout << "\n";
+
+}
+
+void TestEndEffectorForces(ForwardDynamics* fd,
+                        VectorXd q,
+                        std::vector<MatrixXd> Mlist, 
+                        std::vector<MatrixXd> Glist, 
+                        MatrixXd screw_space) {
+        VectorXd Fee_expected(3);
+        Fee_expected << 1.40954608, 1.85771497, 1.392409;
+        VectorXd Fee = fd->EndEffectorForces(q,
+                                Mlist, 
+                                Glist, 
+                                screw_space);
+
+        std::cout << "\n TestEndEffectorForces\n";
+        std::cout << "\n Fee - Fee_expected :\n" << Fee - Fee_expected;
+        std::cout << "\n";
+
+}
+
 ForwardDynamics* InitializeFD() {
     int num_joints = 3;
 
@@ -88,7 +125,7 @@ ForwardDynamics* InitializeFD() {
     tau << 0.5, 0.6, 0.7;
 
     VectorXd g(3);
-    g << 0, 0, -9.81;
+    g << 0, 0, -9.8;
 
     VectorXd Ftip(6);
     Ftip << 1, 1, 1, 1, 1, 1;
@@ -174,7 +211,18 @@ ForwardDynamics* InitializeFD() {
                                 Glist, 
                                 Slist);
 
+        TestGravityForces(fd,
+                        q,
+                        dq,
+                        Mlist, 
+                        Glist, 
+                        Slist);
 
+        TestEndEffectorForces(fd,
+                        q,
+                        Mlist, 
+                        Glist, 
+                        Slist);
     return fd;
 };
 
