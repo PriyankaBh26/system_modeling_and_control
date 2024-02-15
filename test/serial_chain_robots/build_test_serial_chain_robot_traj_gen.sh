@@ -19,6 +19,7 @@ LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_c
 LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
 SRCS="test/serial_chain_robots/test_serial_chain_robot_traj_gen.cpp 
+     src/serial_chain_robots/serial_chain_robot_helper_funs.cpp
      src/serial_chain_robots/serial_chain_robot_traj_gen.cpp"
 
 # Output executable name
