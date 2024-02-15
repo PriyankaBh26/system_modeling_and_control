@@ -104,6 +104,45 @@ void TestTfScrewTrajectory() {
     }
 }
 
+
+void TestTfCartesianTrajectory() {
+    MatrixXd TF_0(4,4);
+    TF_0 << 1, 0, 0, 1,
+            0, 1, 0, 0,
+            0, 0, 1, 1,
+            0, 0, 0, 1;
+
+    MatrixXd TF_final(4,4);
+    TF_final << 0, 0, 1, 0.1,
+            1, 0, 0,   0,
+            0, 1, 0, 4.1,
+            0, 0, 0,   1;
+
+    double t_final = 5;
+    int traj_length = 4;
+    std::string time_scaling_type = "quintic";
+
+    std::vector<MatrixXd> TF_traj = TfCartesianTrajectory(TF_0, TF_final, 
+                                                     t_final, traj_length, 
+                                                     time_scaling_type);
+
+    std::cout << "\n TestTfCartesianTrajectory \n";
+    // for (const auto& TF : TF_traj) {
+    //     std::cout << TF;
+    //     std::cout << "\n";
+    // }
+
+    std::cout << "\nTF_0 error= " << TF_traj[0] - TF_0;
+    std::cout << "\nTF_final error = " << TF_traj.back() - TF_final;
+    std::cout << "\n";
+
+    if (((TF_traj[0] - TF_0).array().abs() < 1e-8).all() && ((TF_traj.back() - TF_final).array().abs() < 1e-8).all()) {
+        std::cout << "test successful!\n";
+    } else {
+        std::cout << "test failed!\n";
+    }
+}
+
 int main() {
 
     TestCubicTimeScaling();
@@ -114,6 +153,7 @@ int main() {
 
     TestTfScrewTrajectory();
 
+    TestTfCartesianTrajectory();
 
     return 0;
 }

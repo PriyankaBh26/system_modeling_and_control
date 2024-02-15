@@ -19,4 +19,7 @@ std::vector<MatrixXd> TfScrewTrajectory(MatrixXd TF_0, MatrixXd TF_final,
                                         double t_final, int traj_length, 
                                         std::string time_scaling_type);
 
+std::vector<MatrixXd> TfCartesianTrajectory(MatrixXd TF_0, MatrixXd TF_final, 
+                                        double t_final, int traj_length, 
+                                        std::string time_scaling_type);
 #endif
