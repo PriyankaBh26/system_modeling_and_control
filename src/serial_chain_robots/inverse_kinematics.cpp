@@ -3,9 +3,9 @@
 # include <cmath>
 # include <Eigen/Dense>
 
-# include "multi_joint_robots/multi_joint_robots_helper_funs.h"
-# include "multi_joint_robots/inverse_kinematics.h"
-# include "multi_joint_robots/forward_kinematics.h"
+# include "serial_chain_robots/serial_chain_robot_helper_funs.h"
+# include "serial_chain_robots/inverse_kinematics.h"
+# include "serial_chain_robots/forward_kinematics.h"
 # include "numerical_solvers/newton_raphson.h"
 
 using Eigen::MatrixXd;

@@ -3,7 +3,7 @@
 # include <cmath>
 # include <Eigen/Dense>
 
-# include "multi_joint_robots/inverse_kinematics.h"
+# include "serial_chain_robots/inverse_kinematics.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

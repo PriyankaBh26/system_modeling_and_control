@@ -1,7 +1,7 @@
 #include <iostream>
 # include <Eigen/Dense>
 
-# include "multi_joint_robots/serial_chain_robot_helper_funs.h"
+# include "serial_chain_robots/serial_chain_robot_helper_funs.h"
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 

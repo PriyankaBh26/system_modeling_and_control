@@ -4,7 +4,7 @@
 # include <iostream>
 # include <Eigen/Dense>
 # include "numerical_solvers/newton_raphson.h"
-# include "multi_joint_robots/forward_kinematics.h"
+# include "serial_chain_robots/forward_kinematics.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

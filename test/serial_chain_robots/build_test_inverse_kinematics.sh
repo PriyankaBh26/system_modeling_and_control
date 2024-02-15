@@ -18,9 +18,11 @@ LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_c
 # Include flags for local header files
 LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
-SRCS="test/multi_joint_robots/test_forward_kinematics.cpp 
-     src/multi_joint_robots/multi_joint_robots_helper_funs.cpp
-     src/multi_joint_robots/forward_kinematics.cpp"
+SRCS="test/serial_chain_robots/test_inverse_kinematics.cpp 
+     src/serial_chain_robots/serial_chain_robot_helper_funs.cpp
+     src/serial_chain_robots/inverse_kinematics.cpp
+     src/serial_chain_robots/forward_kinematics.cpp
+     src/numerical_solvers/newton_raphson.cpp"
 
 # Output executable name
 TARGET="build/myprogram"
