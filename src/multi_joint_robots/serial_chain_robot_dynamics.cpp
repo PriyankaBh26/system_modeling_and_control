@@ -22,7 +22,7 @@ VectorXd SerialChainRobotDynamics::InverseDynamics(VectorXd q,
                                         VectorXd d2q, 
                                         VectorXd g_vec,
                                         VectorXd Ftip) {
-    // tau = Mlist(q)d2q + c(q,dq) + g(q) + J.T(q)Ftip
+    // tau = M(q)d2q + C(q,dq) + Gforce(q) + J.T(q)Fee
 
     MatrixXd Mi = MatrixXd::Identity(4,4);
     MatrixXd Ai = MatrixXd::Zero(6,num_joints);
