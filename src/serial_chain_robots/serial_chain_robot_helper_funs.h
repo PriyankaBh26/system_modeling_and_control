@@ -16,7 +16,9 @@ MatrixXd ad(VectorXd V);
 
 MatrixXd AdjointOfTfMatrix(MatrixXd tf_mat);
 
-MatrixXd MatrixExp3(MatrixXd W, double theta) ;
+MatrixXd MatrixExp3(MatrixXd W, double theta);
+
+MatrixXd MatrixExp3(MatrixXd W);
 
 MatrixXd MatrixLog3(MatrixXd R);
 

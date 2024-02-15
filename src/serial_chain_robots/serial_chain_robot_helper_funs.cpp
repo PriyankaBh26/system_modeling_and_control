@@ -67,6 +67,19 @@ MatrixXd MatrixExp3(MatrixXd W, double theta) {
     return exp_mat;
 }
 
+MatrixXd MatrixExp3(MatrixXd W) {
+    VectorXd w = SkewSymMatToVec(W);
+    double theta = w.norm();
+
+    MatrixXd exp_mat(3,3);
+    if (theta < 1e-8) {
+        exp_mat = MatrixXd::Identity(3,3);
+    } else {
+        exp_mat = MatrixXd::Identity(3,3) + sin(theta) / theta  * W + (1 - cos(theta)) / theta / theta * W * W;
+    }
+    return exp_mat;
+}
+
 MatrixXd MatrixLog3(MatrixXd R) {
     double costh = (R.trace() - 1) / 2;
     MatrixXd W;
