@@ -3,7 +3,9 @@
 # include <cmath>
 # include <Eigen/Dense>
 
-# include "multi_joint_robots/forward_kinematics.h"
+# include "serial_chain_robots/serial_chain_robot_helper_funs.h"
+# include "serial_chain_robots/forward_kinematics.h"
+
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -70,7 +72,7 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis,
 
     if (joint_type_i == "R") {
         // revolute joint
-        MatrixXd W = ForwardKinematics::VecToSkewSymmetricMat(w);
+        MatrixXd W = VecToSkewSymMat(w);
 
         exp_q.block(0,0,3,3) = MatrixXd::Identity(3,3) + sin(q_i) * W + (1- cos(q_i)) * W * W;
 
@@ -86,20 +88,13 @@ MatrixXd ForwardKinematics::ExponentialMatrix(VectorXd screw_axis,
     return exp_q;
 };
 
-MatrixXd ForwardKinematics::RotMatPosToTFMat(MatrixXd R, VectorXd p) {
-    MatrixXd TFMat(4,4);
-    TFMat.block(0,0,3,3) = R;
-    TFMat.block(0,3,3,1) = p;
-    TFMat(3,3) = 1;
-    return TFMat;
-}
 
 MatrixXd ForwardKinematics::SpaceJacobian(VectorXd q) {
     MatrixXd space_jacobian(6,num_joints);
     space_jacobian.col(0) = screw_space.col(0);
     for (int k{1}; k<num_joints; k++) {
         MatrixXd tf_space_k = ForwardKinematics::KthJointMatInSpaceFrame(q, k);
-        space_jacobian.col(k) = ForwardKinematics::AdjointOfTfMatrix(tf_space_k) * screw_space.col(k);
+        space_jacobian.col(k) = AdjointOfTfMatrix(tf_space_k) * screw_space.col(k);
     }
     return space_jacobian;
 };
@@ -109,25 +104,9 @@ MatrixXd ForwardKinematics::BodyJacobian(VectorXd q) {
     body_jacobian.col(num_joints-1) = screw_body.col(num_joints-1);
     for (int i{num_joints-2}; i>=0; i--) {
         MatrixXd tf_body_k = ForwardKinematics::KthJointMatInBodyFrame(q, i+1);
-        body_jacobian.col(i) = ForwardKinematics::AdjointOfTfMatrix(tf_body_k) * screw_body.col(i);
+        body_jacobian.col(i) = AdjointOfTfMatrix(tf_body_k) * screw_body.col(i);
     }
     return body_jacobian;
-};
-
-MatrixXd ForwardKinematics::AdjointOfTfMatrix(MatrixXd tf_mat) {
-    MatrixXd ad_tf_mat(6,6);
-    MatrixXd R(3,3);
-    R = tf_mat.block(0,0,3,3);
-
-    VectorXd p(3);
-    p << tf_mat(0,3), tf_mat(1,3), tf_mat(2,3);
-
-    MatrixXd p_mat = ForwardKinematics::VecToSkewSymmetricMat(p);
-
-    ad_tf_mat.block(0,0,3,3) = R;
-    ad_tf_mat.block(3,3,3,3) = R;
-    ad_tf_mat.block(3,0,3,3) = p_mat * R;
-    return ad_tf_mat;
 };
 
 VectorXd ForwardKinematics::CalculateTwist(MatrixXd jacobian, VectorXd qd) {
@@ -138,15 +117,6 @@ VectorXd ForwardKinematics::CalculateTwist(MatrixXd jacobian, VectorXd qd) {
 VectorXd ForwardKinematics::CalculateJointTorques(MatrixXd jacobian, VectorXd F) {
     VectorXd joint_torque = jacobian.transpose() * F;
     return joint_torque;
-};
-
-MatrixXd ForwardKinematics::VecToSkewSymmetricMat(VectorXd v) {
-    MatrixXd skew_sym_matrix(3,3);
-    skew_sym_matrix << 0, -v(2), v(1),
-                        v(2), 0, -v(0),
-                        -v(1), v(0), 0;
-
-    return skew_sym_matrix;
 };
 
 MatrixXd ForwardKinematics::GetTfSpace() {return tf_space;};

@@ -4,7 +4,7 @@
 # include <iostream>
 # include <Eigen/Dense>
 # include "numerical_solvers/newton_raphson.h"
-# include "multi_joint_robots/forward_kinematics.h"
+# include "serial_chain_robots/forward_kinematics.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -20,21 +20,10 @@ class InverseKinematics: public ForwardKinematics, public NewtonRaphson {
                           double tolerance,
                           int max_iterations);
 
-        MatrixXd TfmatInverse(MatrixXd Mat);
 
         MatrixXd TfBody(VectorXd q);
 
         MatrixXd TfSpace(VectorXd q);
-
-        VectorXd SkewSymMatToVec(MatrixXd W);
-
-        MatrixXd VecToSkewSymMat(VectorXd w);
-
-        MatrixXd MatrixLog3(MatrixXd R);
-
-        VectorXd Se3ToVec(MatrixXd V_B);
-
-        MatrixXd MatrixLog6(MatrixXd tf_mat);
 
         VectorXd f(VectorXd q) override;
 

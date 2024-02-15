@@ -3,7 +3,7 @@
 # include <cmath>
 # include <Eigen/Dense>
 
-# include "multi_joint_robots/inverse_kinematics.h"
+# include "serial_chain_robots/inverse_kinematics.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -59,26 +59,6 @@ MatrixXd ProductOfTFMatrices(VectorXd L, VectorXd theta) {
     return T03;
 }
 
-void TestTfmatInverse(InverseKinematics* inv_kin) {
-    MatrixXd Mat(4,4); 
-    Mat << 1, 0,  0, 0,
-           0, 0, -1, 0,
-           0, 1,  0, 3,
-           0, 0,  0, 1;
-
-    MatrixXd Mat_inverse_expected(4,4);
-    Mat_inverse_expected << 1,  0, 0,  0,
-                            0,  0, 1, -3,
-                            0, -1, 0,  0,
-                            0,  0, 0,  1;
-
-    MatrixXd Mat_inverse = inv_kin->TfmatInverse(Mat);
-    std::cout << "\nTestTfmatInverse:\n";
-    std::cout << "\n Mat_inverse - Mat_inverse_expected:\n";
-    std::cout << Mat_inverse - Mat_inverse_expected;
-    std::cout << "\n";
-}
-
 void TestTfBody(InverseKinematics* inv_kin, MatrixXd tf_expected, VectorXd q0) {
     MatrixXd tf_body = inv_kin->TfBody(q0);
     std::cout << "\nTestBody\n";
@@ -91,104 +71,6 @@ void TestTfSpace(InverseKinematics* inv_kin, MatrixXd tf_expected, VectorXd q0) 
     std::cout << "\nTestspace\n";
     std::cout << "\n tf_space: \n" << tf_space;
     std::cout << "\n";
-}
-
-void TestSkewSymMatToVec(InverseKinematics* inv_kin) {
-    MatrixXd W(3,3);
-    W << 0, -3,  2,
-         3,  0, -1,
-        -2,  1,  0;
-    VectorXd w = inv_kin->SkewSymMatToVec(W);
-    VectorXd w_expected(3);
-    w_expected << 1, 2, 3;
-    std::cout << "\nTestSkewSymMatToVec\n";
-    std::cout << "\n w - w_expected : " << w.transpose() - w_expected.transpose();
-    std::cout << "\n";
-
-}
-
-void TestVecToSkewSymMat(InverseKinematics* inv_kin) {
-    MatrixXd W_expected(3,3);
-    W_expected << 0, -3,  2,
-                  3,  0, -1,
-                 -2,  1,  0;
-    VectorXd w(3);
-    w << 1, 2, 3;
-    MatrixXd W = inv_kin->VecToSkewSymMat(w);
-    std::cout << "\nTestVecToSkewSymMat\n";
-    std::cout << "\n W - W_expected : " << W - W_expected;
-    std::cout << "\n";
-
-}
-
-void TestMatrixLog3(InverseKinematics* inv_kin) {
-    MatrixXd R(3,3);
-    R << 0, 0, 1,
-         1, 0, 0,
-         0, 1, 0;
-    
-    MatrixXd W_expected(3,3);
-    W_expected << 0, -1.20919958,  1.20919958,
-                  1.20919958,    0, -1.20919958,
-                 -1.20919958,  1.20919958,  0;
-
-    MatrixXd W = inv_kin->MatrixLog3(R);
-    std::cout << "\nTestMatrixLog3\n";
-    std::cout << "\n W - W_expected\n: " << W - W_expected;
-    std::cout << "\n";
-}
-
-void TestSe3ToVec(InverseKinematics* inv_kin) {
-    MatrixXd V_B(4,4);
-    V_B <<   0, -3,  2, 4,
-             3,  0, -1, 5,
-            -2,  1,  0, 6,
-             0,  0,  0, 0;
-
-    VectorXd V_b_expected(6);
-    V_b_expected << 1, 2, 3, 4, 5, 6;
-    VectorXd V_b = inv_kin->Se3ToVec(V_B);
-    std::cout << "\nTestSe3ToVec\n";
-    std::cout << "\n V_b - V_b_expected : " << V_b.transpose() - V_b_expected.transpose();
-    std::cout << "\n";
-}
-
-void TestMatrixLog6(InverseKinematics* inv_kin) {
-    MatrixXd tf_body(4,4);
-    tf_body << 1, 0,  0, 0,
-               0, 0, -1, 0,
-               0, 1,  0, 3,
-               0, 0,  0, 1;
-    MatrixXd V_B_expected(4,4);
-    V_B_expected << 0,          0,           0,           0,
-                    0,          0, -1.57079633,  2.35619449,
-                    0, 1.57079633,           0,  2.35619449,
-                    0,          0,           0,           0;
-
-    MatrixXd V_B = inv_kin->MatrixLog6(tf_body);
-
-    std::cout << "\nTestMatrixLog6\n";
-    std::cout << "\n V_B:\n " << V_B;
-    std::cout << "\n";
-}
-
-void TestMatrixLog6inv(InverseKinematics* inv_kin, MatrixXd tf_desired, VectorXd q0) {
-    inv_kin->TfInSpaceFrame(q0);
-    MatrixXd tf_space = inv_kin->GetTfSpace();
-    std::cout << "\ntf_space:\n" << tf_space;
-
-    VectorXd V_b = inv_kin->f(q0);
-
-    MatrixXd tf_body = inv_kin->TfBody(q0);
-
-    std::cout << "\n tf_body:\n " << tf_body;
-
-    MatrixXd V_B = inv_kin->MatrixLog6(tf_body);
-
-    std::cout << "\nTestMatrixLog6inv\n";
-    std::cout << "\n V_B:\n " << V_B;
-    std::cout << "\n";
-
 }
 
 void Testf(InverseKinematics* inv_kin, VectorXd q) {
@@ -268,28 +150,6 @@ int main() {
                                                         max_iterations);
     
     std::cout << *inv_kin;
-
-    // TestTfmatInverse(inv_kin);
-
-    // TestTfBody(inv_kin, tf_desired, theta);
-
-    // TestTfSpace(inv_kin, tf_desired, theta);
-
-    // TestSkewSymMatToVec(inv_kin);
-
-    // TestVecToSkewSymMat(inv_kin);
-
-    // TestMatrixLog3(inv_kin);
-
-    // TestSe3ToVec(inv_kin);
-
-    // TestMatrixLog6(inv_kin);
-
-    // TestMatrixLog6inv(inv_kin, tf_desired, theta);
-
-    // Testf(inv_kin, q0);
-
-    // Testdfdq(inv_kin, q0);
 
     // set link angle of rotation
     VectorXd theta(num_joints);
