@@ -88,7 +88,7 @@ VectorXd ForwardDynamics::VelQuadraticForces(VectorXd q,
                                     std::vector<MatrixXd> Mlist, 
                                     std::vector<MatrixXd> Glist, 
                                     MatrixXd screw_space) {
-                                        
+
     VectorXd C = ForwardDynamics::InverseDynamics(q, dq, 0*q, \
                            0*g, 0*Ftip, Mlist, Glist, \
                            screw_space);
@@ -96,6 +96,22 @@ VectorXd ForwardDynamics::VelQuadraticForces(VectorXd q,
     return C;
 };
 
-// VectorXd ForwardDynamics::GravityForces();
+VectorXd ForwardDynamics::GravityForces(VectorXd q,
+                            std::vector<MatrixXd> Mlist, 
+                            std::vector<MatrixXd> Glist, 
+                            MatrixXd screw_space) {
+    
+    VectorXd Gforce = ForwardDynamics::InverseDynamics(q, 0 * q, 0 * q, g,
+                                                        0 * Ftip, Mlist, Glist, screw_space);
+    return Gforce;
+};
 
-// VectorXd ForwardDynamics::EndEffectorForces();
+VectorXd ForwardDynamics::EndEffectorForces(VectorXd q,
+                                            std::vector<MatrixXd> Mlist, 
+                                            std::vector<MatrixXd> Glist, 
+                                            MatrixXd screw_space) {
+
+    VectorXd Fee = ForwardDynamics::InverseDynamics(q, 0 * q, 0 * q, 0 * g, Ftip,
+                                                    Mlist, Glist, screw_space);
+    return Fee;
+};
