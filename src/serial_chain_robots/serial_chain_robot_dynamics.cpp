@@ -120,8 +120,6 @@ std::vector<VectorXd> SerialChainRobotDynamics::UpdateInverseDynamicsTrajectory(
     return tau_trajectory;
 };
 
-
-
 std::tuple<std::vector<VectorXd>, std::vector<VectorXd>, std::vector<VectorXd>>  SerialChainRobotDynamics::UpdateForwardDynamicsTrajectory(VectorXd q, 
                                                                 VectorXd dq, 
                                                                 double dt,
