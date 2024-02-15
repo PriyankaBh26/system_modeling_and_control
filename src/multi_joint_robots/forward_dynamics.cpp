@@ -83,7 +83,18 @@ MatrixXd ForwardDynamics::MassMatrix(VectorXd q,
     return M;
 };
 
-// VectorXd ForwardDynamics::VelQuadraticForces();
+VectorXd ForwardDynamics::VelQuadraticForces(VectorXd q,
+                                    VectorXd dq,
+                                    std::vector<MatrixXd> Mlist, 
+                                    std::vector<MatrixXd> Glist, 
+                                    MatrixXd screw_space) {
+                                        
+    VectorXd C = ForwardDynamics::InverseDynamics(q, dq, 0*q, \
+                           0*g, 0*Ftip, Mlist, Glist, \
+                           screw_space);
+
+    return C;
+};
 
 // VectorXd ForwardDynamics::GravityForces();
 

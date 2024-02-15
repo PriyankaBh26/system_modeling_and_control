@@ -55,6 +55,26 @@ void TestMassMatrix(ForwardDynamics* fd,
 
 }
 
+void TestVelQuadraticForces(ForwardDynamics* fd,
+                        VectorXd q,
+                        VectorXd dq,
+                        std::vector<MatrixXd> Mlist, 
+                        std::vector<MatrixXd> Glist, 
+                        MatrixXd screw_space) {
+        VectorXd C_expected(3);
+        C_expected << 0.26453118, -0.05505157, -0.00689132;
+        VectorXd C = fd->VelQuadraticForces(q,
+                                dq,
+                                Mlist, 
+                                Glist, 
+                                screw_space);
+
+        std::cout << "\n TestVelQuadraticForces\n";
+        std::cout << "\n C - C_expected :\n" << C - C_expected;
+        std::cout << "\n";
+
+}
+
 ForwardDynamics* InitializeFD() {
     int num_joints = 3;
 
@@ -146,6 +166,13 @@ ForwardDynamics* InitializeFD() {
                         Mlist, 
                         Glist, 
                         Slist);
+
+        TestVelQuadraticForces(fd,
+                                q,
+                                dq,
+                                Mlist, 
+                                Glist, 
+                                Slist);
 
 
     return fd;

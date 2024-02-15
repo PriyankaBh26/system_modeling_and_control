@@ -35,7 +35,11 @@ class ForwardDynamics {
                             std::vector<MatrixXd> Glist, 
                             MatrixXd screw_space);
 
-        // VectorXd VelQuadraticForces();
+        VectorXd VelQuadraticForces(VectorXd q,
+                                    VectorXd dq,
+                                    std::vector<MatrixXd> Mlist, 
+                                    std::vector<MatrixXd> Glist, 
+                                    MatrixXd screw_space);
 
         // VectorXd GravityForces();
 
