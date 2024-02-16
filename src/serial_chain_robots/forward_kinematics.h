@@ -19,9 +19,9 @@ class ForwardKinematics {
 
         void TfInBodyFrame(VectorXd q);
 
-        MatrixXd KthJointMatInSpaceFrame(VectorXd q, int k);
+        MatrixXd KthJointMatInSpaceFrame(MatrixXd tf_space_k, VectorXd q, int k);
 
-        MatrixXd KthJointMatInBodyFrame(VectorXd q, int k);
+        MatrixXd KthJointMatInBodyFrame(MatrixXd tf_body_k, VectorXd q, int k);
 
         MatrixXd ExponentialMatrix(VectorXd screw_axis, double q_i, std::string joint_type_i);
 
@@ -29,9 +29,9 @@ class ForwardKinematics {
 
         MatrixXd BodyJacobian(VectorXd q);
 
-        VectorXd CalculateTwist(MatrixXd jacobian, VectorXd qd);
+        VectorXd TwistFromJointVelocity(MatrixXd jacobian, VectorXd qd);
     
-        VectorXd CalculateJointTorques(MatrixXd jacobian, VectorXd F);
+        VectorXd JointTorqueFromEEForce(MatrixXd jacobian, VectorXd F);
 
         MatrixXd GetTfSpace();
 

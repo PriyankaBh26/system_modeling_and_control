@@ -21,7 +21,9 @@ LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 SRCS="test/system_models/test_dc_motor_velocity.cpp 
      src/numerical_solvers/rk_ode_solver.cpp
      src/system_models/dc_motor_velocity.cpp
-     src/data_logging/savecsv.cpp"
+     src/data_logging/savecsv.cpp
+     src/data_logging/data_logging_helper_funs.cpp"
+
 
 # Output executable name
 TARGET="build/myprogram"

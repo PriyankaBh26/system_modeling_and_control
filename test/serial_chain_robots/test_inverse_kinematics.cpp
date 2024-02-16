@@ -59,38 +59,80 @@ MatrixXd ProductOfTFMatrices(VectorXd L, VectorXd theta) {
     return T03;
 }
 
-void TestTfBody(InverseKinematics* inv_kin, MatrixXd tf_expected, VectorXd q0) {
+void TestTfBody(InverseKinematics* inv_kin, VectorXd L, VectorXd q0) {
+    MatrixXd tf_desired = ProductOfTFMatrices(L, q0);
+    inv_kin->SetTfDesired(tf_desired);
+
     MatrixXd tf_body = inv_kin->TfBody(q0);
     std::cout << "\nTestBody\n";
-    std::cout << "\n tf_body: \n" << tf_body;
-    std::cout << "\n";
-}
 
-void TestTfSpace(InverseKinematics* inv_kin, MatrixXd tf_expected, VectorXd q0) {
+    MatrixXd tf_expected = MatrixXd::Identity(4,4);
+
+    if (((tf_body - tf_expected).array().abs() < 1e-8).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
+    std::cout << "\n";}
+
+void TestTfSpace(InverseKinematics* inv_kin, VectorXd L, VectorXd q0) {
+    MatrixXd tf_desired = ProductOfTFMatrices(L, q0);
+    inv_kin->SetTfDesired(tf_desired);
+
     MatrixXd tf_space = inv_kin->TfSpace(q0);
     std::cout << "\nTestspace\n";
-    std::cout << "\n tf_space: \n" << tf_space;
+
+    MatrixXd tf_expected = MatrixXd::Identity(4,4);
+
+    if (((tf_space - tf_expected).array().abs() < 1e-8).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
     std::cout << "\n";
 }
 
-void Testf(InverseKinematics* inv_kin, VectorXd q) {
-    VectorXd V_b = inv_kin->f(q);
+void Testf(InverseKinematics* inv_kin, VectorXd L, VectorXd q0) {
+    MatrixXd tf_desired = ProductOfTFMatrices(L, q0);
+    inv_kin->SetTfDesired(tf_desired);
+
+    VectorXd V_b = inv_kin->f(q0);
     
     std::cout << "\nTestf\n";
-    std::cout << "\n V_b\n " << V_b;
+
+    if (((V_b).array().abs() < 1e-8).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }    
     std::cout << "\n";
 }
 
-void Testdfdq(InverseKinematics* inv_kin, VectorXd q) {
-    MatrixXd Jac = inv_kin->dfdq(q);
+void Testdfdq(InverseKinematics* inv_kin, VectorXd L, VectorXd q0) {
+    MatrixXd tf_desired = ProductOfTFMatrices(L, q0);
+    inv_kin->SetTfDesired(tf_desired);
+
+    VectorXd V_b = inv_kin->f(q0);
+    MatrixXd Jac = inv_kin->dfdq(q0);
+
+    MatrixXd pinv_Jac = Eigen::CompleteOrthogonalDecomposition<MatrixXd>(Jac).pseudoInverse();
+
     std::cout << "\nTestdfdq\n";
-    std::cout << "\n Jacobian:\n " << Jac;
+
+    VectorXd delta_q  = pinv_Jac * V_b;
+
+    if (((delta_q).array().abs() < 1e-8).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
     std::cout << "\n";
 }
 
 void TestSolveIK(InverseKinematics* inv_kin,
                  VectorXd L,
-                 VectorXd theta) {
+                 VectorXd theta,
+                 double tolerance) {
 
     MatrixXd tf_desired = ProductOfTFMatrices(L, theta);
 
@@ -100,17 +142,20 @@ void TestSolveIK(InverseKinematics* inv_kin,
     std::cout << "\n";
 
     VectorXd q_result = inv_kin->SolveIK(tf_desired, q0);
-    std::cout << "\nq_expected:" << theta.transpose();
-    std::cout << "\nq_result:" << q_result.transpose();
+    if (((theta - q_result).array().abs() < tolerance).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
 }
 
 int main() {
 
     int num_joints = 2; 
-    double tolerance = 1e-4;
+    double tolerance = 1e-8;
     int max_iterations = 100;
 
-    std::string desired_config_type = "body_frame";
+    std::string desired_config_type = "space_frame";
 
     // set link lengths
     VectorXd L(num_joints);
@@ -155,19 +200,27 @@ int main() {
     VectorXd theta(num_joints);
     theta << M_PI/180 * 30, M_PI/180 * 30;
 
-    TestSolveIK(inv_kin, L, theta);
+    TestTfBody(inv_kin, L, theta);
+
+    TestTfSpace(inv_kin, L, theta);
+
+    Testf(inv_kin, L, theta);
+
+    Testdfdq(inv_kin, L, theta);
+
+    TestSolveIK(inv_kin, L, theta, tolerance);
 
     // set link angle of rotation
     VectorXd theta1(num_joints);
     theta1 << M_PI/180 * 50, M_PI/180 * 40;
 
-    TestSolveIK(inv_kin, L, theta1);
+    TestSolveIK(inv_kin, L, theta1, tolerance);
 
     // set link angle of rotation
     VectorXd theta2(num_joints);
     theta2 << M_PI/180 * 20, M_PI/180 * 90;
 
-    TestSolveIK(inv_kin, L, theta2);
+    TestSolveIK(inv_kin, L, theta2, tolerance);
 
     delete inv_kin;
 

@@ -24,8 +24,12 @@ void TestTfmatInverse() {
 
     MatrixXd Mat_inverse = TfmatInverse(Mat);
     std::cout << "\nTestTfmatInverse:\n";
-    std::cout << "\n Mat_inverse - Mat_inverse_expected:\n";
-    std::cout << Mat_inverse - Mat_inverse_expected;
+
+    if (((Mat_inverse - Mat_inverse_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }
     std::cout << "\n";
 }
 
@@ -38,7 +42,12 @@ void TestSkewSymMatToVec() {
     VectorXd w_expected(3);
     w_expected << 1, 2, 3;
     std::cout << "\nTestSkewSymMatToVec\n";
-    std::cout << "\n w - w_expected : " << w.transpose() - w_expected.transpose();
+
+    if (((w - w_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }
     std::cout << "\n";
 
 }
@@ -52,7 +61,12 @@ void TestVecToSkewSymMat() {
     w << 1, 2, 3;
     MatrixXd W = VecToSkewSymMat(w);
     std::cout << "\nTestVecToSkewSymMat\n";
-    std::cout << "\n W - W_expected : " << W - W_expected;
+
+    if (((W - W_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }
     std::cout << "\n";
 
 }
@@ -72,7 +86,12 @@ void Testad() {
     MatrixXd ad_wv = ad(V);
 
     std::cout << "\nTestad\n";
-    std::cout << "\n ad_wv - ad_wv_expected : " << ad_wv - ad_wv_expected;
+
+    if (((ad_wv - ad_wv_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }
     std::cout << "\n";
 
 
@@ -95,7 +114,12 @@ void TestMatrixExp3() {
     MatrixXd expmat = MatrixExp3(W, theta);
 
     std::cout << "\n TestMatrixExp3\n";
-    std::cout << "\n expmat - expmat_expected:\n" << expmat - expmat_expected;         
+
+    if (((expmat - expmat_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }       
     std::cout << "\n";
 }
 
@@ -112,7 +136,12 @@ void TestMatrixLog3() {
 
     MatrixXd W = MatrixLog3(R);
     std::cout << "\nTestMatrixLog3\n";
-    std::cout << "\n W - W_expected\n: " << W - W_expected;
+
+    if (((W - W_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }     
     std::cout << "\n";
 }
 
@@ -127,7 +156,12 @@ void TestSe3ToVec() {
     V_b_expected << 1, 2, 3, 4, 5, 6;
     VectorXd V_b = Se3ToVec(V_B);
     std::cout << "\nTestSe3ToVec\n";
-    std::cout << "\n V_b - V_b_expected : " << V_b.transpose() - V_b_expected.transpose();
+
+    if (((V_b - V_b_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }     
     std::cout << "\n";
 }
 
@@ -147,7 +181,12 @@ void TestMatrixExp6() {
     MatrixXd t_f = MatrixExp6(V_B);
 
     std::cout << "\nTestMatrixExp6\n";
-    std::cout << "\n t_f - tf_expected:\n " << t_f;
+
+    if (((t_f - tf_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }   
     std::cout << "\n";
  }
  
@@ -166,7 +205,12 @@ void TestMatrixLog6() {
     MatrixXd V_B = MatrixLog6(tf_body);
 
     std::cout << "\nTestMatrixLog6\n";
-    std::cout << "\n V_B - V_B_expected:\n " << V_B - V_B_expected;
+
+    if (((V_B - V_B_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }   
     std::cout << "\n";
 }
 
@@ -183,30 +227,35 @@ void TestVecToSe3() {
              0,  0,  0, 0;
 
     std::cout << "\nTestVecToSe3\n";
-    std::cout << "\n V_B - V_B_expected:\n " << V_B - V_B_expected;
+
+    if (((V_B - V_B_expected).array().abs() < 1e-5).all()) {
+            std::cout << "\ntest successful!\n";
+    } else {
+            std::cout << "\ntest failed!\n";
+    }   
     std::cout << "\n";
 
 }
 
 int main() {
 
-    // TestSkewSymMatToVec();
+    TestSkewSymMatToVec();
 
-    // TestVecToSkewSymMat();
+    TestVecToSkewSymMat();
 
     Testad();
 
-    // TestMatrixExp3();
+    TestMatrixExp3();
 
-    // TestMatrixLog3();
+    TestMatrixLog3();
 
-    // TestSe3ToVec();
+    TestSe3ToVec();
 
-    // TestMatrixExp6();
+    TestMatrixExp6();
 
-    // TestMatrixLog6();
+    TestMatrixLog6();
 
-    // TestVecToSe3();
+    TestVecToSe3();
 
     return 0;
 }

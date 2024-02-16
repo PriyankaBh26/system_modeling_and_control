@@ -49,11 +49,23 @@ int main () {
     std::vector<VectorXd> x_history = system->GetXHistory();
     std::vector<double> t_history = system->GetTHistory();
 
-    // save simulation data
-    std::string directory = "test/system_models";
-    std::string problem = "wing_rock_model";
-    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history);
-    SaveTimeHistory(directory, problem, t_history);
+    // save simulation data 
+    std::string directory = "test/system_models/";
+    std::string problem = system->GetName();
+    std::string data_type = "solution";
+    std::vector<std::string> column_names = system->GetColumnNames();
+ 
+    SaveSimDataHistory(directory,
+                        problem,
+                        data_type,
+                        column_names,
+                        x_history,
+                        "replace");
+    
+    SaveTimeHistory(directory, 
+                    problem, 
+                    t_history,
+                    "replace");
 
     delete system;
 

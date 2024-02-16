@@ -23,23 +23,25 @@ double QuinticTimeScaling(double t_final, double t) {
     return s;
 }
 
+double UpdateTimeScaling(std::string time_scaling_type, double t_final, double t) {
+    double s = 0;
+    if (time_scaling_type == "cubic") {
+        s = CubicTimeScaling(t_final, t);
+    } else if (time_scaling_type == "quintic")  {
+        s = QuinticTimeScaling(t_final, t);
+    }
+    return s;
+}
+
 std::vector<double> JointTrajectory(double q_0, double q_final, 
                                     double t_final, int traj_length, 
                                     std::string time_scaling_type) {
-
     double dt = t_final/ (traj_length - 1.0);
     std::vector<double> q_traj;                                    
-    if (time_scaling_type == "cubic") {
-        for (int i{0}; i<traj_length; i++) {
-            double s = CubicTimeScaling(t_final, dt * i);
-            q_traj.push_back((1 - s)  * q_0 + s * q_final);
-        }
-    } else if (time_scaling_type == "quintic") {
-        for (int i{0}; i<traj_length; i++) {
-            double s = QuinticTimeScaling(t_final, dt * i);
-            q_traj.push_back((1 - s)  * q_0 + s * q_final);
-        }
-    }                                 
+    for (int i{0}; i<traj_length; i++) {
+        double s = UpdateTimeScaling(time_scaling_type, t_final, dt * i);
+        q_traj.push_back((1 - s)  * q_0 + s * q_final);
+    }                             
 
     return q_traj;
 }
@@ -49,21 +51,12 @@ std::vector<MatrixXd> TfScrewTrajectory(MatrixXd TF_0, MatrixXd TF_final,
                                         std::string time_scaling_type) {
     double dt = t_final/ (traj_length - 1.0);
     std::vector<MatrixXd> TF_traj;
-    if (time_scaling_type == "cubic") {
-        for (int i{0}; i<traj_length; i++) {
-            double s = CubicTimeScaling(t_final, dt * i);
-            MatrixXd TF_s = MatrixExp6(MatrixLog6(TfmatInverse(TF_0) * TF_final) * s);
-            MatrixXd TF = TF_0 * TF_s;
-            TF_traj.push_back(TF);
-        }
-    } else if (time_scaling_type == "quintic") {
-        for (int i{0}; i<traj_length; i++) {
-            double s = QuinticTimeScaling(t_final, dt * i);
-            MatrixXd TF_s = MatrixExp6(MatrixLog6(TfmatInverse(TF_0) * TF_final) * s);
-            MatrixXd TF = TF_0 * TF_s;            
-            TF_traj.push_back(TF);
-        }
-    }   
+    for (int i{0}; i<traj_length; i++) {
+        double s = UpdateTimeScaling(time_scaling_type, t_final, dt * i);
+        MatrixXd TF_s = MatrixExp6(MatrixLog6(TfmatInverse(TF_0) * TF_final) * s);
+        MatrixXd TF = TF_0 * TF_s;
+        TF_traj.push_back(TF);
+    }
     
     return TF_traj;
 }
@@ -79,39 +72,21 @@ std::vector<MatrixXd> TfCartesianTrajectory(MatrixXd TF_0, MatrixXd TF_final,
     VectorXd p_final = TF_final.block(0,3,3,1);
 
     std::vector<MatrixXd> TF_traj;
-    if (time_scaling_type == "cubic") {
-        for (int i{0}; i<traj_length; i++) {
-            double s = CubicTimeScaling(t_final, dt * i);
+    for (int i{0}; i<traj_length; i++) {
+        double s = UpdateTimeScaling(time_scaling_type, t_final, dt * i);
 
-            MatrixXd R_i = MatrixLog3(R_0.transpose() * R_final) * s;
+        MatrixXd R_i = MatrixLog3(R_0.transpose() * R_final) * s;
 
-            MatrixXd R_s = R_0 * MatrixExp3(R_i);
-            VectorXd p_s = (1 - s)  * p_0 + s * p_final;
+        MatrixXd R_s = R_0 * MatrixExp3(R_i);
+        VectorXd p_s = (1 - s)  * p_0 + s * p_final;
 
-            MatrixXd TF(4,4);
-            TF.block(0,0,3,3) = R_s;
-            TF.block(0,3,3,1) = p_s;
-            TF(3,3) = 1.0;
+        MatrixXd TF(4,4);
+        TF.block(0,0,3,3) = R_s;
+        TF.block(0,3,3,1) = p_s;
+        TF(3,3) = 1.0;
 
-            TF_traj.push_back(TF);
-        }
-    } else if (time_scaling_type == "quintic") {
-        for (int i{0}; i<traj_length; i++) {
-            double s = QuinticTimeScaling(t_final, dt * i);
+        TF_traj.push_back(TF);
+    }
 
-            MatrixXd R_i = MatrixLog3(R_0.transpose() * R_final) * s;
-
-            MatrixXd R_s = R_0 * MatrixExp3(R_i);
-            VectorXd p_s = (1 - s)  * p_0 + s * p_final;
-
-            MatrixXd TF(4,4);
-            TF.block(0,0,3,3) = R_s;
-            TF.block(0,3,3,1) = p_s;
-            TF(3,3) = 1.0;
-
-            TF_traj.push_back(TF);
-        }
-    }   
-    
     return TF_traj;
 }

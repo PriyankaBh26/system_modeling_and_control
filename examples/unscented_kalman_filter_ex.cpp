@@ -2,10 +2,8 @@
 # include <vector>
 # include <Eigen/Dense>
 
-# include "numerical_solvers/rk_ode_solver.h"
 # include "system_models/van_der_pol_oscillator.h"
 # include "controllers/pid_controller.h"
-# include "data_logging/savecsv.h"
 # include "data_logging/data_logging_helper_funs.h"
 # include "state_estimators/unscented_kalman_filter.h"
 
@@ -109,10 +107,10 @@ int main() {
     // save simulation data for plotting
     std::string directory = "examples";
     std::string problem = "ukf";
-    SaveTimeHistory(directory, problem, t_history);
-    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history);
-    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history);
-    SaveSimDataHistory(directory, problem, "est_history", system->GetColumnNames(), x_est_history);
+    SaveTimeHistory(directory, problem, t_history, "replace");
+    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history, "replace");
+    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history, "replace");
+    SaveSimDataHistory(directory, problem, "est_history", system->GetColumnNames(), x_est_history, "replace");
 
     delete ukf;
     delete system;
