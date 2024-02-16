@@ -68,16 +68,18 @@ int main () {
 
      // initialize measured output z
     std::vector<VectorXd> meas_history;
-    double measurement_noise = 0.001;
+    double measurement_noise = 0.01;
     
     // save x and t history
     std::vector<VectorXd> x_history;
     std::vector<double> t_history;
+    std::vector<VectorXd> x_ref_history;
     // system dynamics and controller action
     double t = 0;
 
     meas_history.push_back(x0);
     x_history.push_back(x0);
+    x_ref_history.push_back(x_ref);
     t_history.push_back(t);
 
     int ode_timesteps = dt/dh;
@@ -94,24 +96,27 @@ int main () {
         system->IntegrateODE(ode_timesteps, u);
 
         VectorXd x = system->GetX();
-        meas_history.push_back(x + measurement_noise * VectorXd::Random(2));
+        VectorXd z = x + measurement_noise * VectorXd::Random(num_states);
+        meas_history.push_back(z);
 
-        pid_controller->CalculateError(x_ref, x);
+        pid_controller->CalculateError(x_ref, z);
 
         u = pid_controller->GenerateControlInput();
 
         // std::cout << "entered here";
         t += dt;
         x_history.push_back(x);
+        x_ref_history.push_back(x_ref);
         t_history.push_back(t);
     }
 
     // save final outputs to csv files
-    SaveTimeHistory(soln_directory, problem, t_history);
-    SaveSimDataHistory(soln_directory, problem, "state_history", system->GetColumnNames(), x_history);
-    SaveSimDataHistory(soln_directory, problem, "meas_history", system->GetColumnNames(), meas_history);
-    SaveSimDataHistory(soln_directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory());
-    SaveSimDataHistory(soln_directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory());
+    SaveTimeHistory(soln_directory, problem, t_history, "replace");
+    SaveSimDataHistory(soln_directory, problem, "state_history", system->GetColumnNames(), x_history, "replace");
+    SaveSimDataHistory(soln_directory, problem, "meas_history", system->GetColumnNames(), meas_history, "replace");
+    SaveSimDataHistory(soln_directory, problem, "ref_history", system->GetColumnNames(), x_ref_history, "replace");
+    SaveSimDataHistory(soln_directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory(), "replace");
+    SaveSimDataHistory(soln_directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory(), "replace");
 
     delete system;
     delete pid_controller;
