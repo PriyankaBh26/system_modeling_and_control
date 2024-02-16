@@ -57,9 +57,11 @@ VectorXd SerialChainRobotPIDControl::ComputeTorque(VectorXd q_ref, VectorXd dq_r
 };
 
 std::tuple<VectorXd, VectorXd, VectorXd, VectorXd> SerialChainRobotPIDControl::ComputedTorqueControl(VectorXd q_ref, VectorXd dq_ref, VectorXd d2q_ref, 
-                                                                                                    VectorXd q, VectorXd dq, VectorXd Ftip, 
+                                                                                                    VectorXd q, VectorXd dq, 
+                                                                                                    VectorXd q_meas, VectorXd dq_meas,
+                                                                                                    VectorXd Ftip, 
                                                                                                     double dt, double dh) {
-    VectorXd tau = SerialChainRobotPIDControl::ComputeTorque(q_ref, dq_ref, d2q_ref, q, dq);
+    VectorXd tau = SerialChainRobotPIDControl::ComputeTorque(q_ref, dq_ref, d2q_ref, q_meas, dq_meas);
     int num_steps = dt / dh;
     VectorXd d2q(num_joints);
     for (int i{0}; i<num_steps; i++) {

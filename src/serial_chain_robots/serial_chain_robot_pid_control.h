@@ -27,7 +27,9 @@ class SerialChainRobotPIDControl: public SerialChainRobotDynamics {
         VectorXd ComputeTorque(VectorXd q_ref, VectorXd dq_ref, VectorXd d2q_ref, VectorXd q, VectorXd dq);
 
         std::tuple<VectorXd, VectorXd, VectorXd, VectorXd> ComputedTorqueControl(VectorXd q_ref, VectorXd dq_ref, VectorXd d2q_ref, 
-                                                                                VectorXd q, VectorXd dq, VectorXd Ftip, 
+                                                                                VectorXd q, VectorXd dq, 
+                                                                                VectorXd q_meas, VectorXd dq_meas,
+                                                                                VectorXd Ftip, 
                                                                                 double dt, double dh);
 
         std::vector<VectorXd> GetQErrorHistory();

@@ -93,7 +93,7 @@ void TestComputedTorqueControl(SerialChainRobotPIDControl* robot, int num_joints
     VectorXd tau(num_joints);
 
     std::tie(q, dq, d2q, tau) = robot->ComputedTorqueControl(q_ref, dq_ref, d2q_ref, 
-                                                             q, dq, Ftip, dt, dh);
+                                                             q, dq, q, dq, Ftip, dt, dh);
 }
 
 void TestGetterFuns(SerialChainRobotPIDControl* robot) {
