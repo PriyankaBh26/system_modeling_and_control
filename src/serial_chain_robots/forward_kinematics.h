@@ -21,7 +21,7 @@ class ForwardKinematics {
 
         MatrixXd KthJointMatInSpaceFrame(MatrixXd tf_space_k, VectorXd q, int k);
 
-        MatrixXd KthJointMatInBodyFrame(VectorXd q, int k);
+        MatrixXd KthJointMatInBodyFrame(MatrixXd tf_body_k, VectorXd q, int k);
 
         MatrixXd ExponentialMatrix(VectorXd screw_axis, double q_i, std::string joint_type_i);
 
