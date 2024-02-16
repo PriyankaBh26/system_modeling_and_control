@@ -29,7 +29,7 @@ int main () {
 
     std::vector<Eigen::VectorXd> my_mat = CreateMatrix();
     
-    WriteMatToFile(filename, column_names, my_mat);
+    WriteMatToFile(filename, column_names, my_mat, "replace");
 
     return 0;
 }

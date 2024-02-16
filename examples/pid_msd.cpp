@@ -3,11 +3,8 @@
 # include <iostream>
 # include <Eigen/Dense>
 
-# include "numerical_solvers/rk_ode_solver.h"
 # include "system_models/mass_spring_damper.h"
-# include "numerical_solvers/solver_helper_funs.h"
 # include "controllers/pid_controller.h"
-# include "data_logging/savecsv.h"
 # include "data_logging/data_logging_helper_funs.h"
 
 using Eigen::MatrixXd;
@@ -110,14 +107,17 @@ int main () {
         system->IntegrateODE(ode_timesteps, u);
 
         VectorXd x = system->GetX();
-        meas_history.push_back(x + measurement_noise * VectorXd::Random(2));
+        VectorXd z = x + measurement_noise * VectorXd::Random(num_states);
+        meas_history.push_back(z);
 
         x_ref = CalculateXref(reference_trajectory_type, num_states, t);
 
         if (control_type == "closed_loop") {
-            u = CalculateControlInput(x_ref, x, pid_controller, num_states);
+            pid_controller->CalculateError(x_ref, z);
+            u = pid_controller->GenerateControlInput();
         } else if (control_type == "open_loop") {
-            u = CalculateControlInput(x_ref, num_states);
+            double A = 10;
+            u = A * x_ref;
             u_history.push_back(u);
         }
 
@@ -127,16 +127,18 @@ int main () {
     }
 
     // save final outputs to csv files
-    SaveTimeHistory(directory, problem, t_history);
-    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history);
-    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history);
+    std::string directory = "examples";
+    std::string problem = "pid_dc_motor";
+    SaveTimeHistory(directory, problem, t_history, "replace");
+    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history, "replace");
+    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history, "replace");
     
     if (control_type == "closed_loop") {
-        SaveSimDataHistory(directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory());
-        SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory());
+        SaveSimDataHistory(directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory(), "replace");
+        SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory(), "replace");
 
     } else if (control_type == "open_loop") {
-        SaveSimDataHistory(directory, problem, "control_history", system->GetColumnNames(), u_history);
+        SaveSimDataHistory(directory, problem, "control_history", system->GetColumnNames(), u_history, "replace");
     }
 
     delete system;

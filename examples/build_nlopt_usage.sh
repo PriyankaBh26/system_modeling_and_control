@@ -10,7 +10,16 @@ CXXFLAGS="-std=c++17 -Wall"
 EIGEN_PATH="/Users/priyankabhovad/Downloads/cpp_libs/eigen"
 
 # Include flags for Eigen
-INCLUDE_FLAGS="-I$EIGEN_PATH"
+EIGEN_FLAGS="-I$EIGEN_PATH"
+
+# Path to Eigen library (change this to match your Eigen installation path)
+NLOPT_PATH="/opt/homebrew/Cellar/nlopt/2.7.1/include"
+NLOPT_LIB_PATH="/opt/homebrew/Cellar/nlopt/2.7.1/lib"
+
+# Include flags for Eigen
+NLOPT_FLAGS="-I$NLOPT_PATH"
+
+NLOPT_LIB_FLAGS="-L$NLOPT_LIB_PATH"
 
 # Include local include path
 LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_control/src"
@@ -18,18 +27,16 @@ LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_c
 # Include flags for local header files
 LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
-SRCS="test/system_models/test_mass_spring_damper.cpp 
-     src/numerical_solvers/rk_ode_solver.cpp
-     src/system_models/mass_spring_damper.cpp
-     src/data_logging/savecsv.cpp
-     src/data_logging/data_logging_helper_funs.cpp"
-
+# Source files
+SRCS="examples/nlopt_usage.cpp 
+      src/data_logging/savecsv.cpp
+      src/data_logging/data_logging_helper_funs.cpp"
 
 # Output executable name
 TARGET="build/myprogram"
 
 # Compilation command
-$CXX $CXXFLAGS $INCLUDE_FLAGS $LOCAL_INCLUDE_FLAGS -o $TARGET $SRCS
+$CXX $CXXFLAGS $EIGEN_FLAGS $NLOPT_FLAGS $NLOPT_LIB_FLAGS $LOCAL_INCLUDE_FLAGS -o $TARGET $SRCS -lnlopt
 
 # Check if compilation was successful
 if [ $? -eq 0 ]; then

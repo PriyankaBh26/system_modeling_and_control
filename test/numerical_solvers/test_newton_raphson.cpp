@@ -28,9 +28,11 @@ class FindRoot: public NewtonRaphson {
                     0.0, 2*q(1);
             return mat;};
 
+
 };
 
 int main() {
+
     int num_states = 2;
     int num_equations = 2;
     VectorXd q0(num_states);
@@ -38,14 +40,29 @@ int main() {
     double tolerance = 1e-3;
     int max_iterations = 50;
 
-    NewtonRaphson* eq1 = new FindRoot(num_states, 
-                                      num_equations,
-                                      tolerance, 
-                                      max_iterations);
+    FindRoot* eq1 = new FindRoot(num_states, 
+                                num_equations,
+                                tolerance, 
+                                max_iterations);
 
     eq1->Iterate(q0);
     std::vector<VectorXd> q_history = eq1->GetSolutionHistory();
-    std::cout << "Solution, q =\n" << q_history.back() << "\n";
+
+    VectorXd q_solution = q_history.back();
+
+    std::cout << "Solution, q =\n" << q_solution << "\n";
+
+    VectorXd q_expected(num_states);
+    q_expected << 1.0, sqrt(2);
+
+    if (((q_solution - q_expected).array().abs() < tolerance).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
+    std::cout << "\n";
+
     delete eq1;
+
     return 0;
 }

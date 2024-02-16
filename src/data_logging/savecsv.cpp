@@ -23,12 +23,19 @@ void WriteToFile(std::vector<double> my_vec, std::ofstream output_file) {
     output_file << "\n";
 }
 
-void WriteMatToFile(std::string filename, std::vector<std::string> column_names, std::vector<VectorXd> my_vec) {
+void WriteMatToFile(std::string filename, 
+                    std::vector<std::string> column_names, 
+                    std::vector<VectorXd> my_vec,
+                    std::string save_type) {
     namespace fs = std::filesystem;
 
     std::ofstream output_file;
 
-    output_file.open(filename, std::ios::app);
+    if (save_type == "append") {
+        output_file.open(filename, std::ios::app);
+    } else if (save_type == "replace") {
+        output_file.open(filename, std::ios::trunc);
+    }
 
     if (output_file.is_open()) {
         if (fs::is_empty(filename)) {
@@ -48,12 +55,19 @@ void WriteMatToFile(std::string filename, std::vector<std::string> column_names,
         }
     }
 
-void WriteVecToFile(std::string filename, std::vector<std::string> column_names, std::vector<double> my_vec) {
+void WriteVecToFile(std::string filename, 
+                    std::vector<std::string> column_names, 
+                    std::vector<double> my_vec,
+                    std::string save_type) {
     namespace fs = std::filesystem;
 
     std::ofstream output_file;
 
-    output_file.open(filename, std::ios::app);
+    if (save_type == "append") {
+        output_file.open(filename, std::ios::app);
+    } else if (save_type == "replace") {
+        output_file.open(filename, std::ios::trunc);
+    }
 
     if (output_file.is_open()) {
         if (fs::is_empty(filename)) {

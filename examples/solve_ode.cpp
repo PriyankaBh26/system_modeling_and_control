@@ -4,7 +4,6 @@
 # include <Eigen/Dense>
 
 # include "system_models/van_der_pol_oscillator.h"
-# include "numerical_solvers/rk_ode_solver.h"
 # include "system_models/mass_spring_damper.h"
 # include "data_logging/savecsv.h"
 
@@ -47,11 +46,11 @@ int main () {
     std::string filename = "examples/" + ode->GetName() + "_solution.csv";
     std::vector<std::string> columnNames = {"Pos", "Vel"};
 
-    WriteMatToFile(filename, columnNames, x_history);
+    WriteMatToFile(filename, columnNames, x_history, "replace");
     
     filename = "examples/" + ode->GetName() + "_time.csv";
     columnNames = {"time"};
-    WriteVecToFile(filename, columnNames, t_history);
+    WriteVecToFile(filename, columnNames, t_history, "replace");
 
     delete ode;
     return 0;
