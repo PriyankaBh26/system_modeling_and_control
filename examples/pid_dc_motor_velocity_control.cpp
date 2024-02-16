@@ -3,10 +3,8 @@
 # include <iostream>
 # include <Eigen/Dense>
 
-# include "numerical_solvers/rk_ode_solver.h"
 # include "system_models/dc_motor_velocity.h"
 # include "controllers/pid_controller.h"
-# include "data_logging/savecsv.h"
 # include "data_logging/data_logging_helper_funs.h"
 
 using Eigen::MatrixXd;
@@ -131,17 +129,17 @@ int main () {
     // save final outputs to csv files
     std::string directory = "examples";
     std::string problem = "pid_dc_motor";
-    SaveTimeHistory(directory, problem, t_history);
-    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history);
-    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history);
+    SaveTimeHistory(directory, problem, t_history, "replace");
+    SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history, "replace");
+    SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history, "replace");
 
     if (control_type == "closed_loop") {
-        SaveSimDataHistory(directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory());
-        SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory());
+        SaveSimDataHistory(directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory(), "replace");
+        SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory(), "replace");
 
 
     } else if (control_type == "open_loop") {
-        SaveSimDataHistory(directory, problem, "control_history", system->GetColumnNames(), u_history);
+        SaveSimDataHistory(directory, problem, "control_history", system->GetColumnNames(), u_history, "replace");
     }
 
     delete system;
