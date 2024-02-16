@@ -19,7 +19,7 @@ class ForwardKinematics {
 
         void TfInBodyFrame(VectorXd q);
 
-        MatrixXd KthJointMatInSpaceFrame(VectorXd q, int k);
+        MatrixXd KthJointMatInSpaceFrame(MatrixXd tf_space_k, VectorXd q, int k);
 
         MatrixXd KthJointMatInBodyFrame(VectorXd q, int k);
 
