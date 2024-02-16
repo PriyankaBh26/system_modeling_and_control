@@ -20,7 +20,12 @@ void TestInverseDynamics(SerialChainRobotDynamics* fd, int num_joints, VectorXd 
         VectorXd tau_out = fd->InverseDynamics(q, dq, d2q, g, Ftip);
 
         std::cout << "\n TestInverseDynamics\n";
-        std::cout << "\n tau_out - tau_expected :\n" << tau_out.transpose() - tau_expected.transpose();
+
+        if (((tau_out.transpose() - tau_expected.transpose()).array().abs() < 1e-8).all()) {
+                std::cout << "\ntest successful!\n";
+        } else {
+                std::cout << "\ntest failed!\n";
+        }
         std::cout << "\n";
 
 }
@@ -35,7 +40,11 @@ void TestMassMatrix(SerialChainRobotDynamics* fd, VectorXd q) {
         MatrixXd M = fd->MassMatrix(q);
 
         std::cout << "\n TestMassMatrix\n";
-        std::cout << "\n M - M_expected :\n" << M - M_expected;
+        if (((M - M_expected).array().abs() < 1e-5).all()) {
+                std::cout << "\ntest successful!\n";
+        } else {
+                std::cout << "\ntest failed!\n";
+        }
         std::cout << "\n";
 
 }
@@ -46,7 +55,11 @@ void TestVelQuadraticForces(SerialChainRobotDynamics* fd, VectorXd q, VectorXd d
         VectorXd C = fd->VelQuadraticForces(q, dq);
 
         std::cout << "\n TestVelQuadraticForces\n";
-        std::cout << "\n C - C_expected :\n" << C.transpose() - C_expected.transpose();
+        if (((C - C_expected).array().abs() < 1e-5).all()) {
+                std::cout << "\ntest successful!\n";
+        } else {
+                std::cout << "\ntest failed!\n";
+        }        
         std::cout << "\n";
 
 }
@@ -57,7 +70,11 @@ void TestGravityForces(SerialChainRobotDynamics* fd, VectorXd q, VectorXd dq) {
         VectorXd Gf = fd->GravityForces(q);
 
         std::cout << "\n TestGravityForces\n";
-        std::cout << "\n Gf - Gf_expected :\n" << Gf.transpose() - Gf_expected.transpose();
+        if (((Gf - Gf_expected).array().abs() < 1e-5).all()) {
+                std::cout << "\ntest successful!\n";
+        } else {
+                std::cout << "\ntest failed!\n";
+        }
         std::cout << "\n";
 
 }
@@ -68,7 +85,11 @@ void TestEndEffectorForces(SerialChainRobotDynamics* fd, VectorXd q, VectorXd Ft
         VectorXd Fee = fd->EndEffectorForces(q, Ftip);
 
         std::cout << "\n TestEndEffectorForces\n";
-        std::cout << "\n Fee - Fee_expected :\n" << Fee.transpose() - Fee_expected.transpose();
+        if (((Fee - Fee_expected).array().abs() < 1e-5).all()) {
+                std::cout << "\ntest successful!\n";
+        } else {
+                std::cout << "\ntest failed!\n";
+        }
         std::cout << "\n";
 
 }
@@ -82,7 +103,11 @@ void TestForwardDynamics(SerialChainRobotDynamics* fd, VectorXd q, VectorXd dq, 
         VectorXd d2q = fd->ForwardDynamics(q, dq, Ftip, tau);
 
         std::cout << "\n TestForwardDynamics\n";
-        std::cout << "\n d2q - d2q_expected :\n" << d2q.transpose() - d2q_expected.transpose();
+        if (((d2q - d2q_expected).array().abs() < 1e-5).all()) {
+                std::cout << "\ntest successful!\n";
+        } else {
+                std::cout << "\ntest failed!\n";
+        }
         std::cout << "\n";
 
 }
