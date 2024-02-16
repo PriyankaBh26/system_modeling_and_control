@@ -4,7 +4,6 @@
 # include <Eigen/Dense>
 
 # include "system_models/mass_spring_damper.h"
-# include "numerical_solvers/solver_helper_funs.h"
 # include "controllers/pid_controller.h"
 # include "data_logging/data_logging_helper_funs.h"
 
@@ -106,14 +105,17 @@ int main () {
         system->IntegrateODE(ode_timesteps, u);
 
         VectorXd x = system->GetX();
-        meas_history.push_back(x + measurement_noise * VectorXd::Random(2));
+        VectorXd z = x + measurement_noise * VectorXd::Random(num_states);
+        meas_history.push_back(z);
 
         x_ref = CalculateXref(reference_trajectory_type, num_states, t);
 
         if (control_type == "closed_loop") {
-            u = CalculateControlInput(x_ref, x, pid_controller, num_states);
+            pid_controller->CalculateError(x_ref, z);
+            u = pid_controller->GenerateControlInput();
         } else if (control_type == "open_loop") {
-            u = CalculateControlInput(x_ref, num_states);
+            double A = 10;
+            u = A * x_ref;
             u_history.push_back(u);
         }
 
