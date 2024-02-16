@@ -29,9 +29,9 @@ class ForwardKinematics {
 
         MatrixXd BodyJacobian(VectorXd q);
 
-        VectorXd CalculateTwist(MatrixXd jacobian, VectorXd qd);
+        VectorXd TwistFromJointVelocity(MatrixXd jacobian, VectorXd qd);
     
-        VectorXd CalculateJointTorques(MatrixXd jacobian, VectorXd F);
+        VectorXd JointTorqueFromEEForce(MatrixXd jacobian, VectorXd F);
 
         MatrixXd GetTfSpace();
 

@@ -109,12 +109,12 @@ MatrixXd ForwardKinematics::BodyJacobian(VectorXd q) {
     return body_jacobian;
 };
 
-VectorXd ForwardKinematics::CalculateTwist(MatrixXd jacobian, VectorXd qd) {
+VectorXd ForwardKinematics::TwistFromJointVelocity(MatrixXd jacobian, VectorXd qd) {
     VectorXd twist = jacobian * qd;
     return twist;
 };
 
-VectorXd ForwardKinematics::CalculateJointTorques(MatrixXd jacobian, VectorXd F) {
+VectorXd ForwardKinematics::JointTorqueFromEEForce(MatrixXd jacobian, VectorXd F) {
     VectorXd joint_torque = jacobian.transpose() * F;
     return joint_torque;
 };
