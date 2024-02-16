@@ -55,39 +55,78 @@ MatrixXd ProductOfTFMatrices(VectorXd L, VectorXd theta, VectorXd r0) {
 void TestTfMatrixInSpaceFrame(ForwardKinematics* robot, VectorXd q, VectorXd r0, MatrixXd tf_space_expected) {
     robot->TfInSpaceFrame(q);
     MatrixXd tf_space = robot->GetTfSpace();
-    std::cout << "\ntf_space - tf_space_expected:\n" << tf_space - tf_space_expected;
+
+    std::cout << "\n TestTfMatrixInSpaceFrame \n";
+    // std::cout << "\ntf_space - tf_space_expected:\n" << tf_space - tf_space_expected;
 
     std::cout << "\ntf * r: \n" << (tf_space * r0).transpose();
+
+    if (((tf_space - tf_space_expected).array().abs() < 1e-8).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
+    std::cout << "\n";
 }
 
 void TestTfMatrixInBodyFrame(ForwardKinematics* robot, VectorXd q, VectorXd r0, MatrixXd tf_body_expected) {
     robot->TfInBodyFrame(q);
     MatrixXd tf_body = robot->GetTfBody();
-    std::cout << "\ntf_body - tf_body_expected:\n" << tf_body - tf_body_expected;
+
+    std::cout << "\n TestTfMatrixInBodyFrame \n";
+    // std::cout << "\ntf_body - tf_body_expected:\n" << tf_body - tf_body_expected;
 
     std::cout << "\ntf * r: \n" << (tf_body * r0).transpose();
+
+    if (((tf_body - tf_body_expected).array().abs() < 1e-8).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
+    std::cout << "\n";
+
 }
 
 void TestSpaceJacobian(ForwardKinematics* robot, VectorXd q, VectorXd qd, VectorXd F, MatrixXd space_jacobian_expected) {
     MatrixXd space_jacobian = robot->SpaceJacobian(q);
-    std::cout << "\nspace_jacobian - space_jacobian_expected:\n" << space_jacobian - space_jacobian_expected;
+
+    std::cout << "\n TestSpaceJacobian \n";
+    // std::cout << "\nspace_jacobian - space_jacobian_expected:\n" << space_jacobian - space_jacobian_expected;
 
     VectorXd space_twist = robot->TwistFromJointVelocity(space_jacobian, qd);
     std::cout << "\nspace_twist:\n" << space_twist.transpose();
 
     VectorXd space_joint_torques = robot->JointTorqueFromEEForce(space_jacobian, F);
     std::cout << "\nspace_joint_torques:\n" << space_joint_torques.transpose();
+
+    if (((space_jacobian - space_jacobian_expected).array().abs() < 1e-8).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
+    std::cout << "\n";
+
 }
 
 void TestBodyJacobian(ForwardKinematics* robot, VectorXd q, VectorXd qd, VectorXd F, MatrixXd body_jacobian_expected) {
     MatrixXd body_jacobian = robot->BodyJacobian(q);
-    std::cout << "\nbody_jacobian - body_jacobian_expected:\n" << body_jacobian - body_jacobian_expected;
+
+    std::cout << "\n TestBodyJacobian \n";
+    // std::cout << "\nbody_jacobian - body_jacobian_expected:\n" << body_jacobian - body_jacobian_expected;
 
     VectorXd body_twist = robot->TwistFromJointVelocity(body_jacobian, qd);
     std::cout << "\nbody_twist:\n" << body_twist.transpose();
 
     VectorXd body_joint_torques = robot->JointTorqueFromEEForce(body_jacobian, F);
     std::cout << "\nbody_joint_torques:\n" << body_joint_torques.transpose();
+
+    if (((body_jacobian - body_jacobian_expected).array().abs() < 1e-8).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
+    std::cout << "\n";
+
 
 }
 
