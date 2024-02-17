@@ -1,12 +1,32 @@
 
 # My System Modeling, Motion Planning, State Estimation, and Control System Design Project
 ------------------
-* **controllers:** pid controller, Ackerman's pole placement formula, Model Reference Adpative Controller (MRAC)
-* **data logging:** data storage in csv file. Figures plotted using python and saved in png files 
-* **numerical solvers:** Newton-Raphson root finding, RK4 ode solver
-* **serial chain robots:** forward and inverse kinematics, dynamics, trajectory generation, PID control
-* **state estimators:** Kalman filter, Extended Kalman filter, Unscented Kalman filter
-* **system models:** DC motor velocity model, LTI system model, Mass-spring-damper system, Van der Pol oscillator, wing rock model
+* **controllers:** 
+1) pid controller, 
+2) Ackerman's pole placement formula, 
+3) Model Reference Adpative Controller (MRAC)
+* **data logging:** 
+1) data storage in csv file. 
+2) Figures plotted using python and saved in png files 
+* **numerical solvers:** 
+1) Newton-Raphson root finding, 
+2) RK4 ode solver
+* **serial chain robots:** 
+1) Forward kinematics,
+2) Inverse kinematics, 
+3) Forwards and inverse dynamics, 
+4) Joint Trajectory generation, 
+5) PID control
+* **state estimators:** 
+1) Kalman filter, 
+2) Extended Kalman filter, 
+3) Unscented Kalman filter
+* **system models:** 
+1) DC motor velocity model, 
+2) LTI system model, 
+3) Mass-spring-damper system, 
+4) Van der Pol oscillator, 
+5) wing rock model
 
 
 ## Project Folder Tree (UNDER PROGRSS)
