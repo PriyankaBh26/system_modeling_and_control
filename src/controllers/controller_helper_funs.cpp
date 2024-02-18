@@ -3,7 +3,6 @@
 # include <iostream>
 # include <Eigen/Dense>
 
-# include "controllers/pid_controller.h"
 # include "controllers/ackermans_formula_pole_placement.h"
 # include "controllers/controller_helper_funs.h"
 
@@ -40,7 +39,7 @@ VectorXd FindKAckermanFormula(MatrixXd A, MatrixXd B, VectorXd coeffs) {
     return K;
 }
 
-VectorXd ScaleCLTransferFunction(MatrixXd A, MatrixXd B, MatrixXd C, VectorXd K, double r_ss) {
+VectorXd ScaleCLTransferFunction(MatrixXd A, MatrixXd B, MatrixXd C, VectorXd K, VectorXd r_ss) {
     int num_states = A.rows();
     int num_op = C.rows();
 
