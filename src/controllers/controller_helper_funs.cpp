@@ -32,14 +32,14 @@ void CheckSysStability(MatrixXd A, std::string system_type) {
     }
 }
 
-VectorXd FindKAckermanFormula(MatrixXd A, MatrixXd B, VectorXd coeffs) {
-    AckermansFormulaPolePlacement* system = new AckermansFormulaPolePlacement("coeffs", coeffs, A, B);
+VectorXd FindKAckermanFormula(MatrixXd A, MatrixXd B, VectorXd coeffs, std::string ip_vector_type) {
+    AckermansFormulaPolePlacement* system = new AckermansFormulaPolePlacement(ip_vector_type, coeffs, A, B);
     VectorXd K = system->AckermansFormula();
     delete system;
     return K;
 }
 
-VectorXd ScaleCLTransferFunction(MatrixXd A, MatrixXd B, MatrixXd C, VectorXd K, VectorXd r_ss) {
+VectorXd ScaleCLTransferFunction(MatrixXd A, MatrixXd B, MatrixXd C, VectorXd K, double r_ss) {
     int num_states = A.rows();
     int num_op = C.rows();
 
