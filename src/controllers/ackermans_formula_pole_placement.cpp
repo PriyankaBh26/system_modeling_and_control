@@ -67,7 +67,6 @@ bool AckermansFormulaPolePlacement::CheckSystemControllability(MatrixXd C) {
 VectorXd AckermansFormulaPolePlacement::AckermansFormula() {
     VectorXd one_n(n);
     one_n(n-1) = 1;
-    std::cout << "\none_n:\n" << one_n;
     MatrixXd C = AckermansFormulaPolePlacement::ControllabilityMatrix();
 
     bool controllability = AckermansFormulaPolePlacement::CheckSystemControllability(C);
