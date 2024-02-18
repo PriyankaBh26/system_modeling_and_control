@@ -54,6 +54,16 @@ MatrixXd AckermansFormulaPolePlacement::ControllabilityMatrix() {
     return C;
 };
 
+bool AckermansFormulaPolePlacement::CheckSystemControllability(MatrixXd C) {
+    Eigen::FullPivLU<MatrixXd> lu_decomp(C);
+    int rank = lu_decomp.rank();
+    bool controllability = false;
+    if (rank == n) {
+        controllability = true;
+    }
+    return controllability;
+}
+
 VectorXd AckermansFormulaPolePlacement::AckermansFormula() {
     VectorXd one_n(n);
     one_n(n-1) = 1;
