@@ -60,7 +60,7 @@ int main () {
     KP(0,0) = K(0);
     
     MatrixXd KI(1,1);
-    KI(0,0) = 0.0; // ki < (1+kp) // ki < b/m(k+kp)
+    KI(0,0) = 0.0;
 
     MatrixXd KD(1,1);
     KD(0,0) = K(1);
