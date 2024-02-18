@@ -36,6 +36,10 @@ int main() {
     MatrixXd exp_C_inv(num_states, num_states);
     exp_C_inv << 1, -1,
              0, 1;
+
+    bool controllability = system->CheckSystemControllability(C);
+    
+    std::cout << "\n controllability = " << controllability; 
             
     MatrixXd err_C_inv = exp_C_inv - C.inverse();
     std::cout << "\nerror in C_inverse: \n" << err_C_inv;
