@@ -26,7 +26,8 @@ SRCS="examples/lti_sys_pid_control.cpp
       src/data_logging/savecsv.cpp
       src/data_logging/data_logging_helper_funs.cpp
       src/system_models/linear_time_invariant_system.cpp
-      src/controllers/ackermans_formula_pole_placement.cpp"
+      src/controllers/ackermans_formula_pole_placement.cpp
+      src/controllers/controller_helper_funs.cpp"
 
 # Output executable name
 TARGET="build/myprogram"
