@@ -50,7 +50,7 @@ int main () {
     VectorXd coeffs(num_states+1);
     coeffs << 1, 4, 4;
 
-    VectorXd K = FindKAckermanFormula(A, B, coeffs);
+    VectorXd K = FindKAckermanFormula(A, B, coeffs, "coeffs");
 
     CheckSysStability(A - B * K.transpose(), "Closed Loop");
 
