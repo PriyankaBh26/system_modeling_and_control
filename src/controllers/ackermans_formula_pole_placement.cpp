@@ -75,8 +75,7 @@ VectorXd AckermansFormulaPolePlacement::AckermansFormula() {
         // K = [0 0 .. 1] * C.inv() * delta(A);
         K = one_n.transpose() * C.inverse() * delta_A;
     } else {
-        std::cout << "system is not controllable.";
-        throw 0;
+        throw "system is not controllable.";
     }
     return K.transpose();
 
