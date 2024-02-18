@@ -12,6 +12,28 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
+void CheckOLSysStability(MatrixXd A) {
+    // Compute the eigenvalues of A
+    Eigen::EigenSolver<MatrixXd> solver1(A);
+    Eigen::VectorXcd evals = solver1.eigenvalues();
+    std::cout << "A eigenvalues:\n"  << evals.transpose();
+    int stable_eval = 0;
+    for (const auto& eval : evals) {
+        if (eval.real() > 0) {
+            std::cout << "\n Open Loop System is unstable \n";
+            break;
+        } else if (eval.real() == 0) {
+            std::cout << "\n Open Loop System is marginally stable \n";
+            break;
+        } else {
+            stable_eval += 1;
+        }
+    }
+    if (stable_eval == evals.size()) {
+        std::cout << "\n Open Loop System is stable \n";
+    }
+}
+
 VectorXd FindK(MatrixXd A, MatrixXd B, VectorXd coeffs) {
     AckermansFormulaPolePlacement* system = new AckermansFormulaPolePlacement("coeffs", coeffs, A, B);
     VectorXd K = system->AckermansFormula();
@@ -57,10 +79,7 @@ int main () {
     A << 1, 1,
          1, 2;
 
-    // Compute the eigenvalues of A
-    Eigen::EigenSolver<MatrixXd> solver1(A);
-    Eigen::VectorXcd eigenvalues1 = solver1.eigenvalues();
-    std::cout << "A eigenvalues:\n"  << eigenvalues1;
+    CheckOLSysStability(A);
 
     MatrixXd B(num_states, 1);    
     B << 1, 0;
@@ -88,7 +107,7 @@ int main () {
     KP(0,0) = K(0);
     
     MatrixXd KI(1,1);
-    KI(0,0) = 0.01; // ki < (1+kp) // ki < b/m(k+kp)
+    KI(0,0) = 0.0; // ki < (1+kp) // ki < b/m(k+kp)
 
     MatrixXd KD(1,1);
     KD(0,0) = K(1);
@@ -103,7 +122,7 @@ int main () {
 
     // set integration duration
     double dt = 1e-2; 
-    double time_final = 2;
+    double time_final = 10;
 
      // initialize measured output z
     std::vector<VectorXd> meas_history;
@@ -135,9 +154,9 @@ int main () {
         meas_history.push_back(z);
 
         VectorXd x_err(1);
-        x_err << x(0);
+        x_err << z(0);
         VectorXd dxdt_err(1);
-        dxdt_err << x(1);
+        dxdt_err << z(1);
 
         u = N_bar * x_ref(0) - pid_controller->GenerateControlInput(x_err, dxdt_err);
 
