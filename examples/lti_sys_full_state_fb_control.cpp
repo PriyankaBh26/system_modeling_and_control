@@ -43,8 +43,8 @@ int main () {
     std::cout << *system;
 
     // choose reference trajectory 
-    VectorXd x_ref(num_states);
-    x_ref << 1.0, 0.0;
+    VectorXd x_ref(1);
+    x_ref << 1.0;
 
     // coefficients of desired characteristic polynomial
     VectorXd coeffs(num_states+1);
