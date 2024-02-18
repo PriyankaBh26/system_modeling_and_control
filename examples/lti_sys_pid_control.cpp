@@ -12,25 +12,25 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-void CheckOLSysStability(MatrixXd A) {
+void CheckSysStability(MatrixXd A, std::string system_type) {
     // Compute the eigenvalues of A
     Eigen::EigenSolver<MatrixXd> solver1(A);
     Eigen::VectorXcd evals = solver1.eigenvalues();
-    std::cout << "A eigenvalues:\n"  << evals.transpose();
+    std::cout << "\n" << system_type << " eigenvalues:\n"  << evals.transpose();
     int stable_eval = 0;
     for (const auto& eval : evals) {
         if (eval.real() > 0) {
-            std::cout << "\n Open Loop System is unstable \n";
+            std::cout << "\n" << system_type << " System is unstable \n";
             break;
         } else if (eval.real() == 0) {
-            std::cout << "\n Open Loop System is marginally stable \n";
+            std::cout << "\n" << system_type << " System is marginally stable \n";
             break;
         } else {
             stable_eval += 1;
         }
     }
     if (stable_eval == evals.size()) {
-        std::cout << "\n Open Loop System is stable \n";
+        std::cout << "\n" << system_type << " System is stable \n";
     }
 }
 
@@ -79,7 +79,7 @@ int main () {
     A << 1, 1,
          1, 2;
 
-    CheckOLSysStability(A);
+    CheckSysStability(A, "Open Loop");
 
     MatrixXd B(num_states, 1);    
     B << 1, 0;
@@ -100,6 +100,8 @@ int main () {
     coeffs << 1, 11, 30;
 
     VectorXd K = FindK(A, B, coeffs);
+
+    CheckSysStability(A - B * K.transpose(), "Closed Loop");
 
     PID* pid_controller = new PID(1);
     // initialize PID controller
