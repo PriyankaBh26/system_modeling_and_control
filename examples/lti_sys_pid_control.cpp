@@ -12,6 +12,34 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
+VectorXd FindK(MatrixXd A, MatrixXd B, VectorXd coeffs) {
+    AckermansFormulaPolePlacement* system = new AckermansFormulaPolePlacement("coeffs", coeffs, A, B);
+    VectorXd K = system->AckermansFormula();
+    delete system;
+    return K;
+}
+
+VectorXd ScaleCLTransferFunction(MatrixXd A, MatrixXd B, MatrixXd C, VectorXd K, double r_ss) {
+    int num_states = A.rows();
+    int num_op = C.rows();
+
+    MatrixXd AR(num_states+num_op,num_states+num_op);
+    AR.block(0,0,num_states,num_states) = A;
+    AR.block(0,num_states,num_states,1) = B;
+    AR.block(num_states,0,num_op,num_states) = C;
+
+    VectorXd b = VectorXd::Zero(num_states+num_op);
+    b(num_states+num_op-1) = r_ss;
+
+    VectorXd xu = AR.colPivHouseholderQr().solve(b);
+    VectorXd Nx = xu.head(2).array() / r_ss;
+    VectorXd Nu = xu.tail(1) / r_ss;
+
+    VectorXd N_bar = Nu + K.transpose() * Nx;
+    // u = N_bar * r - K * x;
+    return N_bar;
+}
+
 int main () {
 
     std::string soln_directory = "examples";
@@ -19,7 +47,6 @@ int main () {
 
     // initialize state
     int num_states = 2; 
-    int num_inputs = 2;
     VectorXd x0(num_states);
     x0 << 0.0, 0.0;
     double t0 = 0.0;
@@ -27,17 +54,20 @@ int main () {
 
     // initialize LTI system
     MatrixXd A(num_states, num_states);
-    A << 0, 1,
-         -1, -2;
+    A << 1, 1,
+         1, 2;
 
     // Compute the eigenvalues of A
     Eigen::EigenSolver<MatrixXd> solver1(A);
     Eigen::VectorXcd eigenvalues1 = solver1.eigenvalues();
     std::cout << "A eigenvalues:\n"  << eigenvalues1;
 
-    MatrixXd B(num_states, num_inputs);
-    B << 0, 0,
-         1, 1;
+    MatrixXd B(num_states, 1);    
+    B << 1, 0;
+    
+    MatrixXd C(1, num_states);    
+    C << 1, 0;
+
     LinearTimeInvariantSys* system = new LinearTimeInvariantSys(x0, t0, dh, 
                                                                 num_states, problem, A, B);
     std::cout << *system;
@@ -46,30 +76,39 @@ int main () {
     VectorXd x_ref(num_states);
     x_ref << 1.0, 0.0;
 
-    // set integration duration
-    double dt = 1e-2; 
-    double time_final = 20;
+    // coefficients of desired characteristic polynomial
+    VectorXd coeffs(num_states+1);
+    coeffs << 1, 11, 30;
 
-    PID* pid_controller = new PID(num_states);
+    VectorXd K = FindK(A, B, coeffs);
+
+    PID* pid_controller = new PID(1);
     // initialize PID controller
-    MatrixXd KP = MatrixXd::Constant(2,2,0.0);
-    KP(0,0) = 2.0;
+    MatrixXd KP(1,1);
+    KP(0,0) = K(0);
     
-    MatrixXd KI = MatrixXd::Constant(2,2,0.0);
-    KI(0,0) = 0.00; // ki < (1+kp) // ki < b/m(k+kp)
+    MatrixXd KI(1,1);
+    KI(0,0) = 0.01; // ki < (1+kp) // ki < b/m(k+kp)
 
-    MatrixXd KD = MatrixXd::Constant(2,2,0.0);
-    KD(1,1) = 2.0;
+    MatrixXd KD(1,1);
+    KD(0,0) = K(1);
 
     // set PID gains
     pid_controller->SetGains(KP, KI, KD);
 
     std::cout << *pid_controller << "\n";
 
+    VectorXd N_bar = ScaleCLTransferFunction(A, B, C, K, x_ref(0));
+    std::cout << "\n N_bar = " << N_bar << "\n";
+
+    // set integration duration
+    double dt = 1e-2; 
+    double time_final = 2;
+
      // initialize measured output z
     std::vector<VectorXd> meas_history;
     double measurement_noise = 0.01;
-    
+
     // save x and t history
     std::vector<VectorXd> x_history;
     std::vector<double> t_history;
@@ -85,25 +124,23 @@ int main () {
     int ode_timesteps = dt/dh;
 
     // initialize control input
-    VectorXd u(2);
+    VectorXd u(1);
     std::vector<VectorXd> u_history;
 
     while (t < time_final) {
-        // std::cout << "\nBu0:\n" << B * u(0);
-        // std::cout << "\nBu1:\n" << B * u(1);
-
-        // VectorXd uk(1);
         system->IntegrateODE(ode_timesteps, u);
-
         VectorXd x = system->GetX();
+
         VectorXd z = x + measurement_noise * VectorXd::Random(num_states);
         meas_history.push_back(z);
 
-        pid_controller->CalculateError(x_ref, z);
+        VectorXd x_err(1);
+        x_err << x_ref(0) - x(0);
+        VectorXd dxdt_err(1);
+        dxdt_err << x_ref(1) - x(1);
 
-        u = pid_controller->GenerateControlInput();
+        u = N_bar * x_ref(0) - pid_controller->GenerateControlInput(x_err, dxdt_err);
 
-        // std::cout << "entered here";
         t += dt;
         x_history.push_back(x);
         x_ref_history.push_back(x_ref);
@@ -116,7 +153,7 @@ int main () {
     SaveSimDataHistory(soln_directory, problem, "meas_history", system->GetColumnNames(), meas_history, "replace");
     SaveSimDataHistory(soln_directory, problem, "ref_history", system->GetColumnNames(), x_ref_history, "replace");
     SaveSimDataHistory(soln_directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory(), "replace");
-    SaveSimDataHistory(soln_directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory(), "replace");
+    SaveSimDataHistory(soln_directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetXErrorHistory(), "replace");
 
     delete system;
     delete pid_controller;
