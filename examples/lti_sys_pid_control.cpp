@@ -110,7 +110,7 @@ int main () {
         x_err << z(0);
         VectorXd dxdt_err(1);
         dxdt_err << z(1);
-
+        // u = N_bar * x_ref - K * x;
         u = N_bar * x_ref(0) - pid_controller->GenerateControlInput(x_err, dxdt_err);
 
         t += dt;
