@@ -135,9 +135,9 @@ int main () {
         meas_history.push_back(z);
 
         VectorXd x_err(1);
-        x_err << x_ref(0) - x(0);
+        x_err << x(0);
         VectorXd dxdt_err(1);
-        dxdt_err << x_ref(1) - x(1);
+        dxdt_err << x(1);
 
         u = N_bar * x_ref(0) - pid_controller->GenerateControlInput(x_err, dxdt_err);
 
