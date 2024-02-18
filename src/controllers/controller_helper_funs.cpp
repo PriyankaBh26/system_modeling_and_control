@@ -33,9 +33,21 @@ void CheckSysStability(MatrixXd A, std::string system_type) {
 }
 
 VectorXd FindKAckermanFormula(MatrixXd A, MatrixXd B, VectorXd coeffs, std::string ip_vector_type) {
-    AckermansFormulaPolePlacement* system = new AckermansFormulaPolePlacement(ip_vector_type, coeffs, A, B);
-    VectorXd K = system->AckermansFormula();
-    delete system;
+    VectorXd K;
+    try {
+        AckermansFormulaPolePlacement* system = new AckermansFormulaPolePlacement(ip_vector_type, coeffs, A, B);
+        VectorXd K = system->AckermansFormula();
+        CheckSysStability(A - B * K.transpose(), "CL");
+        delete system;
+        return K;
+    }
+    catch (const std::exception& e) {
+        // Catch block to handle the exception
+        std::cerr << "An exception occurred: " << e.what() << std::endl;
+    }
+    catch (const char* err_msg) {
+        std::cout << "Exception: " << err_msg << std::endl;
+    }
     return K;
 }
 
