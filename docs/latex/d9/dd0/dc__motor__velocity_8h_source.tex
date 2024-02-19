@@ -1,0 +1,47 @@
+\doxysection{dc\+\_\+motor\+\_\+velocity.\+h}
+\hypertarget{dc__motor__velocity_8h_source}{}\label{dc__motor__velocity_8h_source}\index{src/system\_models/dc\_motor\_velocity.h@{src/system\_models/dc\_motor\_velocity.h}}
+\mbox{\hyperlink{dc__motor__velocity_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ DC\_MOTOR\_VELOCITY\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ DC\_MOTOR\_VELOCITY\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#\ include\ <Eigen/Dense>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ include\ "{}numerical\_solvers/rk\_ode\_solver.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{using\ }Eigen::MatrixXd;}
+\DoxyCodeLine{00017\ \textcolor{keyword}{using\ }Eigen::VectorXd;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_d_c_motor_velocity}{DCMotorVelocity}}\ :\ \textcolor{keyword}{public}\ OdeSolver\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{public}:\ }
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_d_c_motor_velocity_a90061165ff35c975f1e1b224fb9730d8}{DCMotorVelocity}}(VectorXd\ y0,\ \textcolor{keywordtype}{double}\ t0,\ \textcolor{keywordtype}{double}\ dt0,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num\_states,\ std::string\ name,\ \textcolor{keywordtype}{double}\ J,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ b,\ \textcolor{keywordtype}{double}\ K,\ \textcolor{keywordtype}{double}\ R,\ \textcolor{keywordtype}{double}\ L);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ VectorXd\ \mbox{\hyperlink{class_d_c_motor_velocity_a13b996f515a31d1e99f072b3de245554}{f}}(\textcolor{keywordtype}{double}\ t,\ VectorXd\ y,\ VectorXd\ u)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ std::string\ GetName()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ std::vector<std::string>\ GetColumnNames()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ MatrixXd\ GetA();}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ VectorXd\ GetB();}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ std::ostream\&\ operator<<(std::ostream\&\ out,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_d_c_motor_velocity}{DCMotorVelocity}}\&\ system);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num\_states;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ MatrixXd\ A;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ VectorXd\ B;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ std::string\ sys\_name;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ J;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ b;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ K;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ R;}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ L;}
+\DoxyCodeLine{00047\ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

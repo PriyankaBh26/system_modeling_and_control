@@ -8,6 +8,23 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
+/**
+ * @brief Brief description of the class/struct.
+ *
+ * Detailed description (optional).
+ * You can provide more detailed information about the purpose of the class/struct,
+ * its member variables, methods, etc.
+ */
+
+/**
+ * Brief description of the constructor.
+ *
+ * Detailed description (optional).
+ * You can provide more detailed information about what the constructor does,
+ * its parameters, etc.
+ *
+ * @param parameter Description of the parameter.
+ */
 DCMotorVelocity::DCMotorVelocity(VectorXd y0, double t0, double dt0,
             int n, std::string name, double J0,
             double b0, double K0, double R0, double L0) : OdeSolver(y0, t0, dt0),
@@ -18,6 +35,16 @@ DCMotorVelocity::DCMotorVelocity(VectorXd y0, double t0, double dt0,
                                                             B << 0, 1/L;
                                                           };
 
+/**
+ * Brief description of the method.
+ *
+ * Detailed description (optional).
+ * You can provide more detailed information about what the method does,
+ * its parameters, return value, etc.
+ *
+ * @param parameter Description of the parameter.
+ * @return Description of the return value.
+ */
 VectorXd DCMotorVelocity::f(double t, VectorXd y, VectorXd u) {
     VectorXd yd = A * y + B * u;
     return yd;
