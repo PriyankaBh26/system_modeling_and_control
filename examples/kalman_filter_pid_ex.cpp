@@ -107,6 +107,7 @@ int main() {
     std::vector<VectorXd> x_history;
     std::vector<VectorXd> x_ref_history;
     std::vector<VectorXd> x_est_history;
+    std::vector<VectorXd> x_err_history;
     std::vector<double> t_history;
 
     // system dynamics and controller action
@@ -116,6 +117,7 @@ int main() {
     x_history.push_back(x0);
     x_ref_history.push_back(x0);
     x_est_history.push_back(x0);
+    x_err_history.push_back(x0 - x0);
     t_history.push_back(t);
 
     while (t < time_final) {
@@ -126,12 +128,12 @@ int main() {
 
         meas_history.push_back(x + R * VectorXd::Random(num_states));
         
-        VectorXd x_est = kf->ComputeEstimate(meas_history.back());
+        VectorXd x_est = kf->ComputeEstimate(meas_history.back(), B * u * dt);
 
         VectorXd x_err(1);
-        x_err << x(0);
+        x_err << x_est(0);
         VectorXd dxdt_err(1);
-        dxdt_err << x(1);
+        dxdt_err << x_est(1);
         // u = N_bar * x_ref - K * x;
         u = N_bar * x_ref(0) - pid_controller->GenerateControlInput(x_err, dxdt_err);
 
@@ -140,6 +142,7 @@ int main() {
         x_history.push_back(x);
         x_ref_history.push_back(x_ref);
         x_est_history.push_back(x_est);
+        x_err_history.push_back(x_ref - x);
         t_history.push_back(t);
     }
     // save simulation data for plotting
@@ -151,7 +154,7 @@ int main() {
     SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history, "replace");
     SaveSimDataHistory(directory, problem, "est_history", system->GetColumnNames(), x_est_history, "replace");
     SaveSimDataHistory(directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory(), "replace");
-    SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetXErrorHistory(), "replace");
+    SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), x_err_history, "replace");
 
 
     delete kf;
