@@ -6,6 +6,8 @@
 # include "system_models/dc_motor_velocity.h"
 # include "controllers/pid_controller.h"
 # include "data_logging/data_logging_helper_funs.h"
+# include "controllers/ackermans_formula_pole_placement.h"
+# include "controllers/controller_helper_funs.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -46,17 +48,18 @@ int main () {
     // reference: https://ctms.engin.umich.edu/CTMS/index.php?example=MotorSpeed&section=SystemModeling
     double J = 0.01; // kg.m^2
     double b = 0.1; // N.m.s
-    double K = 0.01; // V/rad/s
+    double Kd = 0.01; // V/rad/s
     double R = 1; // ohm
     double L = 0.5; // H
 
     DCMotorVelocity* system = new DCMotorVelocity(x0, t0, dh,
                                             num_states, "dc_motor_vel", 
-                                            J, b, K, R, L);
+                                            J, b, Kd, R, L);
 
     // choose reference trajectory 
     std::string reference_trajectory_type = "step";
     VectorXd x_ref(num_states);
+    x_ref << 1, 0;
 
     // choose control action: open_loop or closed_loop
     std::string control_type = "closed_loop";
@@ -66,25 +69,36 @@ int main () {
     
     // set integration duration
     double dt = 0.01; 
-    double time_final = 1;
+    double time_final = 5;
 
     PID* pid_controller = new PID(1);
-    if (control_type == "closed_loop") {
-        // initialize PID controller
-        MatrixXd KP = MatrixXd::Constant(1,1,0.0);
-        KP(0,0) = 11.0;
         
-        MatrixXd KI = MatrixXd::Constant(1,1,0.0);
-        KI(0,0) = 0.6; // ki < (1+kp) // ki < b/m(k+kp)
+    // coefficients of desired characteristic polynomial
+    VectorXd coeffs(num_states+1);
+    coeffs << 1, 4, 4;
 
-        MatrixXd KD = MatrixXd::Constant(1,1,0.0);
-        KD(0,0) = 0.05;
+    VectorXd K = FindKAckermanFormula(system->GetA(), system->GetB(), coeffs, "coeffs");
 
-        // set PID gains
-        pid_controller->SetGains(KP, KI, KD);
+    // initialize PID controller
+    MatrixXd KP = MatrixXd::Constant(1,1,0.0);
+    KP(0,0) = K(0);
+    
+    MatrixXd KI = MatrixXd::Constant(1,1,0.0);
+    KI(0,0) = 0.0; // ki < (1+kp) // ki < b/m(k+kp)
 
-        std::cout << *pid_controller << "\n";
-    } 
+    MatrixXd KD = MatrixXd::Constant(1,1,0.0);
+    KD(0,0) = K(1);
+
+    // set PID gains
+    pid_controller->SetGains(KP, KI, KD);
+
+    std::cout << *pid_controller << "\n";
+
+    MatrixXd C(1, num_states);    
+    C << 1, 0;
+    
+    VectorXd N_bar = ScaleCLTransferFunction(system->GetA(), system->GetB(), C, K, x_ref(0));
+    std::cout << "\n N_bar = " << N_bar << "\n";
 
     // initialize measured output z
     std::vector<VectorXd> meas_history;
@@ -92,6 +106,7 @@ int main () {
     
     // save x and t history
     std::vector<VectorXd> x_history;
+    std::vector<VectorXd> x_ref_history;
     std::vector<double> t_history;
 
     // system dynamics and controller action
@@ -99,6 +114,7 @@ int main () {
 
     meas_history.push_back(x0);
     x_history.push_back(x0);
+    x_ref_history.push_back(x_ref);
     t_history.push_back(t);
 
     while (t < time_final) {
@@ -106,23 +122,21 @@ int main () {
         system->IntegrateODE(ode_timesteps, u);
 
         VectorXd x = system->GetX();
-        meas_history.push_back(x + measurement_noise * VectorXd::Random(2));
+        VectorXd z = x + measurement_noise * VectorXd::Random(num_states);
+        meas_history.push_back(z);
 
         x_ref = CalculateXref(reference_trajectory_type, 1, t);
 
-        if (control_type == "closed_loop") {
-            VectorXd x_in(1);
-            x_in << x(0);
-            pid_controller->CalculateError(x_ref, x_in);
-            u = pid_controller->GenerateControlInput();
-        } else if (control_type == "open_loop") {
-            double A = 10;
-            u = A * x_ref;
-            u_history.push_back(u);
-        }
+        VectorXd x_err(1);
+        x_err << z(0);
+        VectorXd dxdt_err(1);
+        dxdt_err << z(1);
+        // u = N_bar * x_ref - K * x;
+        u = N_bar * x_ref(0) - pid_controller->GenerateControlInput(x_err, dxdt_err);
 
         t += dt;
         x_history.push_back(x);
+        x_ref_history.push_back(x_ref);
         t_history.push_back(t);
     }
 
@@ -131,16 +145,12 @@ int main () {
     std::string problem = "pid_dc_motor";
     SaveTimeHistory(directory, problem, t_history, "replace");
     SaveSimDataHistory(directory, problem, "state_history", system->GetColumnNames(), x_history, "replace");
+    SaveSimDataHistory(directory, problem, "ref_history", system->GetColumnNames(), x_ref_history, "replace");
+
     SaveSimDataHistory(directory, problem, "meas_history", system->GetColumnNames(), meas_history, "replace");
 
-    if (control_type == "closed_loop") {
-        SaveSimDataHistory(directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory(), "replace");
-        SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetErrorHistory(), "replace");
-
-
-    } else if (control_type == "open_loop") {
-        SaveSimDataHistory(directory, problem, "control_history", system->GetColumnNames(), u_history, "replace");
-    }
+    SaveSimDataHistory(directory, problem, "control_history", pid_controller->GetColumnNames(), pid_controller->GetControlInputHistory(), "replace");
+    SaveSimDataHistory(directory, problem, "err_history", system->GetColumnNames(), pid_controller->GetXErrorHistory(), "replace");
 
     delete system;
     delete pid_controller;
