@@ -1,0 +1,44 @@
+\doxysection{Wing\+Rock\+Model Class Reference}
+\hypertarget{class_wing_rock_model}{}\label{class_wing_rock_model}\index{WingRockModel@{WingRockModel}}
+Inheritance diagram for Wing\+Rock\+Model\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{d3/df3/class_wing_rock_model}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_wing_rock_model_ab8f5797f9563dccdd70ae2c22e473b40}\label{class_wing_rock_model_ab8f5797f9563dccdd70ae2c22e473b40} 
+{\bfseries Wing\+Rock\+Model} (Vector\+Xd y0, double t0, double dt0, int n, std\+::string name, Matrix\+Xd A\+\_\+in, Matrix\+Xd B\+\_\+in)
+\item 
+\Hypertarget{class_wing_rock_model_aa6905a6fe26994a3beeab267e41cb6ca}\label{class_wing_rock_model_aa6905a6fe26994a3beeab267e41cb6ca} 
+Vector\+Xd {\bfseries f} (double t, Eigen\+::\+Vector\+Xd X, Eigen\+::\+Vector\+Xd u) override
+\item 
+\Hypertarget{class_wing_rock_model_a4f09f5479d083c67e4580649a9b3b7a3}\label{class_wing_rock_model_a4f09f5479d083c67e4580649a9b3b7a3} 
+std\+::string {\bfseries Get\+Name} () override
+\item 
+\Hypertarget{class_wing_rock_model_a593e962d2237fcfdce9a3bcc2d474011}\label{class_wing_rock_model_a593e962d2237fcfdce9a3bcc2d474011} 
+Vector\+Xd {\bfseries Nonlinear\+Disturbance} (Eigen\+::\+Vector\+Xd X)
+\item 
+\Hypertarget{class_wing_rock_model_a6978fd169ecc8584e132fea73e5dbd47}\label{class_wing_rock_model_a6978fd169ecc8584e132fea73e5dbd47} 
+Vector\+Xd {\bfseries GetA} ()
+\item 
+\Hypertarget{class_wing_rock_model_a591c7f3dd40857adc98cfa2eec5b6ad2}\label{class_wing_rock_model_a591c7f3dd40857adc98cfa2eec5b6ad2} 
+Vector\+Xd {\bfseries GetB} ()
+\item 
+\Hypertarget{class_wing_rock_model_ac52a028d5ed82750727ab5148073675c}\label{class_wing_rock_model_ac52a028d5ed82750727ab5148073675c} 
+std\+::vector$<$ Vector\+Xd $>$ {\bfseries Get\+Disturbance} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_wing_rock_model_af146bea1509509d281437e3486a001ab}\label{class_wing_rock_model_af146bea1509509d281437e3486a001ab} 
+std\+::ostream \& {\bfseries operator$<$$<$} (std\+::ostream \&out, const \mbox{\hyperlink{class_wing_rock_model}{Wing\+Rock\+Model}} \&system)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/system\+\_\+models/wing\+\_\+rock\+\_\+model.\+h\item 
+src/system\+\_\+models/wing\+\_\+rock\+\_\+model.\+cpp\end{DoxyCompactItemize}

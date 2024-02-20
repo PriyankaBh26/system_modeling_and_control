@@ -1,0 +1,41 @@
+\doxysection{Van\+Der\+Pol\+Oscillator Class Reference}
+\hypertarget{class_van_der_pol_oscillator}{}\label{class_van_der_pol_oscillator}\index{VanDerPolOscillator@{VanDerPolOscillator}}
+Inheritance diagram for Van\+Der\+Pol\+Oscillator\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{d1/d2f/class_van_der_pol_oscillator}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_van_der_pol_oscillator_ae99773410177ee14757886586dd331e2}\label{class_van_der_pol_oscillator_ae99773410177ee14757886586dd331e2} 
+{\bfseries Van\+Der\+Pol\+Oscillator} (Vector\+Xd x0, double t0, double dt0, int num\+\_\+states, std\+::string name, double mu0)
+\item 
+\Hypertarget{class_van_der_pol_oscillator_aaeeae7161f0b1b3a9c3b5885a5c6d43e}\label{class_van_der_pol_oscillator_aaeeae7161f0b1b3a9c3b5885a5c6d43e} 
+Vector\+Xd {\bfseries f} (double t, Vector\+Xd X, Vector\+Xd u) override
+\item 
+\Hypertarget{class_van_der_pol_oscillator_af8295d8f65a2c4e265557a6b977b127b}\label{class_van_der_pol_oscillator_af8295d8f65a2c4e265557a6b977b127b} 
+Matrix\+Xd {\bfseries Calculate\+Fx\+Jacobian} (Vector\+Xd X)
+\item 
+\Hypertarget{class_van_der_pol_oscillator_ab66d6682eefc4bddf23444706a73bb01}\label{class_van_der_pol_oscillator_ab66d6682eefc4bddf23444706a73bb01} 
+std\+::string {\bfseries Get\+Name} () override
+\item 
+\Hypertarget{class_van_der_pol_oscillator_a36210d214bdadd957d66e8471131a5e0}\label{class_van_der_pol_oscillator_a36210d214bdadd957d66e8471131a5e0} 
+std\+::vector$<$ std\+::string $>$ {\bfseries Get\+Column\+Names} () override
+\item 
+\Hypertarget{class_van_der_pol_oscillator_a09ae7ed599268f72e06172185aa60011}\label{class_van_der_pol_oscillator_a09ae7ed599268f72e06172185aa60011} 
+Vector\+Xd {\bfseries GetB} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_van_der_pol_oscillator_a4a6db93b33852f12d2d79bee538c803d}\label{class_van_der_pol_oscillator_a4a6db93b33852f12d2d79bee538c803d} 
+std\+::ostream \& {\bfseries operator$<$$<$} (std\+::ostream \&out, const \mbox{\hyperlink{class_van_der_pol_oscillator}{Van\+Der\+Pol\+Oscillator}} \&system)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/system\+\_\+models/van\+\_\+der\+\_\+pol\+\_\+oscillator.\+h\item 
+src/system\+\_\+models/van\+\_\+der\+\_\+pol\+\_\+oscillator.\+cpp\end{DoxyCompactItemize}

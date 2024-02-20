@@ -1,6 +1,15 @@
 #ifndef DC_MOTOR_VELOCITY_H
 #define DC_MOTOR_VELOCITY_H
 
+/**
+ * @file
+ * Brief description of the file.
+ *
+ * Detailed description (optional).
+ * You can provide more detailed information about the contents of the file,
+ * its purpose, usage, etc.
+ */
+
 # include <Eigen/Dense>
 # include "numerical_solvers/rk_ode_solver.h"
 
