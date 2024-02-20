@@ -15,7 +15,8 @@ SimplePendulum::SimplePendulum(VectorXd y0, double t0,
 
 VectorXd SimplePendulum::f(double t, VectorXd X, VectorXd u) {
     VectorXd xd(num_states);
-    xd << X(1), -9.81/l * sin(X(0)) - b/(m*l*l) * X(1) + u(0)/(m*l*l);
+    xd << X(1), -9.81/l * sin(X(0)) - b/(m*l*l) * X(1);
+    xd += B * u/(m*l*l);
     return xd;
 };
 
