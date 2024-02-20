@@ -10,16 +10,7 @@ CXXFLAGS="-std=c++17 -Wall"
 EIGEN_PATH="/Users/priyankabhovad/Downloads/cpp_libs/eigen"
 
 # Include flags for Eigen
-EIGEN_FLAGS="-I$EIGEN_PATH"
-
-# Path to Eigen library (change this to match your Eigen installation path)
-NLOPT_PATH="/opt/homebrew/Cellar/nlopt/2.7.1/include"
-NLOPT_LIB_PATH="/opt/homebrew/Cellar/nlopt/2.7.1/lib"
-
-# Include flags for Eigen
-NLOPT_FLAGS="-I$NLOPT_PATH"
-
-NLOPT_LIB_FLAGS="-L$NLOPT_LIB_PATH"
+INCLUDE_FLAGS="-I$EIGEN_PATH"
 
 # Include local include path
 LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_control/src"
@@ -28,15 +19,20 @@ LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_c
 LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
 # Source files
-SRCS="examples/nlopt_usage_vec_constraint.cpp 
+SRCS="examples/dc_motor_vel_full_state_fb_control.cpp 
+      src/controllers/pid_controller.cpp 
+      src/numerical_solvers/rk_ode_solver.cpp 
+      src/system_models/dc_motor_velocity.cpp
       src/data_logging/savecsv.cpp
-      src/data_logging/data_logging_helper_funs.cpp"
+      src/data_logging/data_logging_helper_funs.cpp
+      src/controllers/ackermans_formula_pole_placement.cpp
+      src/controllers/controller_helper_funs.cpp"
 
 # Output executable name
 TARGET="build/myprogram"
 
 # Compilation command
-$CXX $CXXFLAGS $EIGEN_FLAGS $NLOPT_FLAGS $NLOPT_LIB_FLAGS $LOCAL_INCLUDE_FLAGS -o $TARGET $SRCS -lnlopt
+$CXX $CXXFLAGS $INCLUDE_FLAGS $LOCAL_INCLUDE_FLAGS -o $TARGET $SRCS
 
 # Check if compilation was successful
 if [ $? -eq 0 ]; then
