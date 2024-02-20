@@ -15,11 +15,11 @@ double b_1 = 1;
 double l_1 = 1;
 
 // update state variables, f(x) = [x1dot, x2dot .. xndot]T
-VectorXd ExtendedKalmanFilter::f(VectorXd Budt) {
+VectorXd ExtendedKalmanFilter::f(VectorXd Bu) {
     VectorXd xd(n);
     xd << x(1), -9.81/l_1 * sin(x(0)) - b_1/(m_1*l_1*l_1) * x(1);
     
-    xd += Budt/(m_1*l_1*l_1);
+    xd += Bu/(m_1*l_1*l_1);
     
     x = x + xd*dt;
     return x;
@@ -30,7 +30,7 @@ VectorXd ExtendedKalmanFilter::h() {
     VectorXd y(n);
     MatrixXd H(m, n);
     H << 1, 0,
-        0, 1;
+        0, 0;
     y = H * x;
     return y;
 };
@@ -48,7 +48,7 @@ MatrixXd ExtendedKalmanFilter::CalculateFxJacobian() {
 MatrixXd ExtendedKalmanFilter::CalculateHxJacobian() {
     MatrixXd H(m, n);
     H << 1, 0,
-        0, 1;
+        0, 0;
     return H;
 };
 
@@ -145,7 +145,7 @@ int main() {
         
         meas_history.push_back(x + R * VectorXd::Random(num_states));
 
-        VectorXd x_est = ekf->ComputeEstimate(meas_history.back(), B * u * dt);
+        VectorXd x_est = ekf->ComputeEstimate(meas_history.back(), B * u);
 
         VectorXd x_err(1);
         x_err << x_ref(0) - x_est(0);
