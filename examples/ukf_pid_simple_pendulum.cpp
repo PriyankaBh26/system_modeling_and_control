@@ -51,7 +51,7 @@ int main() {
 
     // initialize simple pendulum model
     double m = 1;
-    double b = 1;
+    double b = 0.3;
     double l = 1;
         
     SimplePendulum* system = new SimplePendulum(x0, t0, dh,
@@ -65,12 +65,16 @@ int main() {
 
     // define process noise matrix
     MatrixXd Q(num_states, num_states);
-    Q << 1e-1, 0.0,
-          0.0, 1e-1;
+    Q << 1e-3, 0.0,
+          0.0, 1e-2;
     // define measurement noise matrix
     MatrixXd R(num_states, num_outputs);
-    R << 1e-1, 0.0,
-          0.0, 1e-1;
+    R << 1e-2, 0.0,
+          0.0, 1e-3;
+
+    MatrixXd H(num_states, num_outputs);
+    H << 1, 0,
+        0, 0;
 
     // initialize kalman filter object
     VectorXd x0_m(num_states);
@@ -86,7 +90,7 @@ int main() {
 
     // intialize pid controller
     VectorXd K(2);
-    K << 3, 1.0;
+    K << 1, 2.0;
     PID* pid_controller = new PID(1);
     MatrixXd KP(1,1);
     KP(0,0) = K(0);
@@ -121,7 +125,7 @@ int main() {
 
     // choose reference trajectory 
     VectorXd x_ref(num_states);
-    x_ref << 1, 1.0;
+    x_ref << 1, 0;
 
     // system dynamics and controller action
     while (t < time_final) {
@@ -130,7 +134,7 @@ int main() {
 
         VectorXd x = system->GetX();
         
-        meas_history.push_back(x + R * VectorXd::Random(num_states));
+        meas_history.push_back(H * (x + R * VectorXd::Random(num_states)));
 
         VectorXd x_est = ukf->ComputeEstimate(meas_history.back(), B * u);
 
