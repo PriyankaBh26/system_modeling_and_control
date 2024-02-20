@@ -13,8 +13,8 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(VectorXd x0, MatrixXd P0,
                                                              dt(dt), n(n_in), m(m_in) {};
 
 // predict state and error covariance
-void ExtendedKalmanFilter::Predict(MatrixXd A) {
-    x = f();
+void ExtendedKalmanFilter::Predict(MatrixXd A, VectorXd Budt) {
+    x = f(Budt);
     P = A * P * A.transpose() + Q;
 }
 // compute Kalman gain
@@ -23,10 +23,10 @@ MatrixXd ExtendedKalmanFilter::ComputeKalmanGain(MatrixXd H) {
     return K;
 }
 // compute the estimate
-VectorXd ExtendedKalmanFilter::ComputeEstimate(VectorXd z) {
+VectorXd ExtendedKalmanFilter::ComputeEstimate(VectorXd z, VectorXd Budt) {
     MatrixXd A = CalculateFxJacobian();
     MatrixXd H = CalculateHxJacobian();
-    Predict(A);
+    Predict(A, Budt);
     MatrixXd K = ComputeKalmanGain(H);
     Update(K, H, z);
     return x;

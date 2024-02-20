@@ -14,7 +14,7 @@ class UnscentedKalmanFilter {
         virtual ~UnscentedKalmanFilter();
 
         // update state variables
-        virtual VectorXd f(VectorXd Y);
+        virtual VectorXd f(VectorXd Y, VectorXd Bu);
 
         // update outputs
         virtual VectorXd h(VectorXd Y);
@@ -32,7 +32,7 @@ class UnscentedKalmanFilter {
                                     MatrixXd h_xi, VectorXd z_cap);
 
         // compute the estimate
-        VectorXd ComputeEstimate(VectorXd z);
+        VectorXd ComputeEstimate(VectorXd z, VectorXd Bu);
 
         // getter functions
         int GetN();

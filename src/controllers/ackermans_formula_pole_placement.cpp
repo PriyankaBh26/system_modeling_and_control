@@ -54,14 +54,29 @@ MatrixXd AckermansFormulaPolePlacement::ControllabilityMatrix() {
     return C;
 };
 
+bool AckermansFormulaPolePlacement::CheckSystemControllability(MatrixXd C) {
+    Eigen::FullPivLU<MatrixXd> lu_decomp(C);
+    int rank = lu_decomp.rank();
+    bool controllability = false;
+    if (rank == n) {
+        controllability = true;
+    }
+    return controllability;
+}
+
 VectorXd AckermansFormulaPolePlacement::AckermansFormula() {
     VectorXd one_n(n);
     one_n(n-1) = 1;
-    std::cout << "\none_n:\n" << one_n;
     MatrixXd C = AckermansFormulaPolePlacement::ControllabilityMatrix();
-    MatrixXd delta_A = AckermansFormulaPolePlacement::CharacteristicPolynomial();
-    // K = [0 0 .. 1] * C.inv() * delta(A);
-    K = one_n.transpose() * C.inverse() * delta_A;
+
+    bool controllability = AckermansFormulaPolePlacement::CheckSystemControllability(C);
+    if (controllability) {
+        MatrixXd delta_A = AckermansFormulaPolePlacement::CharacteristicPolynomial();
+        // K = [0 0 .. 1] * C.inv() * delta(A);
+        K = one_n.transpose() * C.inverse() * delta_A;
+    } else {
+        throw "system is not controllable.";
+    }
     return K.transpose();
 
 };

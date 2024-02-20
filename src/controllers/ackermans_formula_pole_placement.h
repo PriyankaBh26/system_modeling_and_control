@@ -20,6 +20,8 @@ class AckermansFormulaPolePlacement {
 
         MatrixXd ControllabilityMatrix();
 
+        bool CheckSystemControllability(MatrixXd C);
+        
         VectorXd AckermansFormula();
 
         MatrixXd CalculateResultantA();

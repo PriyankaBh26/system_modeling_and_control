@@ -15,7 +15,7 @@ class ExtendedKalmanFilter {
         virtual ~ExtendedKalmanFilter();
 
         // update state variables
-        virtual VectorXd f();
+        virtual VectorXd f(VectorXd Budt);
 
         // update outputs
         virtual VectorXd h();
@@ -27,13 +27,13 @@ class ExtendedKalmanFilter {
         virtual MatrixXd CalculateHxJacobian();
 
         // predict state and error covariance
-        void Predict(MatrixXd A);
+        void Predict(MatrixXd A, VectorXd Budt);
 
         // compute Kalman gain
         MatrixXd ComputeKalmanGain(MatrixXd H);
 
         // compute the estimate
-        VectorXd ComputeEstimate(VectorXd z);
+        VectorXd ComputeEstimate(VectorXd z, VectorXd Budt);
 
         // update the error covariance
         void Update(MatrixXd K, MatrixXd H, VectorXd z);

@@ -13,7 +13,7 @@ using Eigen::VectorXd;
 static const double MU_1 = 5.5;
 
 // update state variables, f(x) = [x1dot, x2dot .. xndot]T
-VectorXd UnscentedKalmanFilter::f(VectorXd Y) {
+VectorXd UnscentedKalmanFilter::f(VectorXd Y, VectorXd u) {
     MatrixXd ydot(n, 1);
     ydot << Y[1], MU_1 * (1 - std::pow(Y[0], 2)) * Y[1] - Y[0];
     
@@ -95,7 +95,7 @@ int main() {
         
         meas_history.push_back(x + R * VectorXd::Random(num_states));
 
-        VectorXd x_est = ukf->ComputeEstimate(meas_history.back());
+        VectorXd x_est = ukf->ComputeEstimate(meas_history.back(), VectorXd::Zero(1));
 
         system->IntegrateODE(ode_timesteps, u);
 
