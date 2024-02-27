@@ -29,7 +29,7 @@ MatrixXd LinearTimeInvariantSys::GetA() {return A;};
 MatrixXd LinearTimeInvariantSys::GetB() {return B;};
 
 std::ostream& operator << (std::ostream& out, const LinearTimeInvariantSys& system) {
-    out << "LTI system:\n";
+    out << system.sys_name << ": \n";
     out << "x_dot = " << system.A << " * x + " << system.B << " * u \n";
     return out;
 
