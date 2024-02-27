@@ -1,0 +1,44 @@
+\doxysection{Mass\+Spring\+Damper\+Sys Class Reference}
+\hypertarget{class_mass_spring_damper_sys}{}\label{class_mass_spring_damper_sys}\index{MassSpringDamperSys@{MassSpringDamperSys}}
+Inheritance diagram for Mass\+Spring\+Damper\+Sys\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{d1/d1c/class_mass_spring_damper_sys}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_mass_spring_damper_sys_a78476de517cc0668106d3211c5a2c170}\label{class_mass_spring_damper_sys_a78476de517cc0668106d3211c5a2c170} 
+{\bfseries Mass\+Spring\+Damper\+Sys} (Vector\+Xd y0, double t0, double dt0, int num\+\_\+states, std\+::string name, double k0, double c0, double m0)
+\item 
+\Hypertarget{class_mass_spring_damper_sys_a3b94d10bdce3acb9d8d3c05cabdcf90c}\label{class_mass_spring_damper_sys_a3b94d10bdce3acb9d8d3c05cabdcf90c} 
+{\bfseries Mass\+Spring\+Damper\+Sys} (Vector\+Xd y0, double t0, double dt0, int num\+\_\+states, Matrix\+Xd B\+\_\+in, std\+::string name, double k0, double c0, double m0)
+\item 
+\Hypertarget{class_mass_spring_damper_sys_a87a0c7c0ab11700a98464350574a7e16}\label{class_mass_spring_damper_sys_a87a0c7c0ab11700a98464350574a7e16} 
+Vector\+Xd {\bfseries f} (double t, Vector\+Xd y, Vector\+Xd u) override
+\item 
+\Hypertarget{class_mass_spring_damper_sys_aeb22f37c7fbe4062493bce246aefa6a0}\label{class_mass_spring_damper_sys_aeb22f37c7fbe4062493bce246aefa6a0} 
+std\+::string {\bfseries Get\+Name} () override
+\item 
+\Hypertarget{class_mass_spring_damper_sys_a989375779a62bbd51cd4fc364d753640}\label{class_mass_spring_damper_sys_a989375779a62bbd51cd4fc364d753640} 
+std\+::vector$<$ std\+::string $>$ {\bfseries Get\+Column\+Names} () override
+\item 
+\Hypertarget{class_mass_spring_damper_sys_ace2c38e1eea121de8a2575d131c30c54}\label{class_mass_spring_damper_sys_ace2c38e1eea121de8a2575d131c30c54} 
+Matrix\+Xd {\bfseries GetA} ()
+\item 
+\Hypertarget{class_mass_spring_damper_sys_a1870f4ccb2aaa8807a2863c1af01dfb9}\label{class_mass_spring_damper_sys_a1870f4ccb2aaa8807a2863c1af01dfb9} 
+Matrix\+Xd {\bfseries GetB} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_mass_spring_damper_sys_af5629d68181964d4c0fab7a1a3f5e2df}\label{class_mass_spring_damper_sys_af5629d68181964d4c0fab7a1a3f5e2df} 
+std\+::ostream \& {\bfseries operator$<$$<$} (std\+::ostream \&out, const \mbox{\hyperlink{class_mass_spring_damper_sys}{Mass\+Spring\+Damper\+Sys}} \&system)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/system\+\_\+models/mass\+\_\+spring\+\_\+damper.\+h\item 
+src/system\+\_\+models/mass\+\_\+spring\+\_\+damper.\+cpp\end{DoxyCompactItemize}

@@ -21,7 +21,8 @@ LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 SRCS="test/system_models/test_van_der_pol_oscillator.cpp 
      src/numerical_solvers/rk_ode_solver.cpp
      src/system_models/van_der_pol_oscillator.cpp
-     src/data_logging/savecsv.cpp"
+     src/data_logging/savecsv.cpp
+     src/data_logging/data_logging_helper_funs.cpp"
 
 # Output executable name
 TARGET="build/myprogram"

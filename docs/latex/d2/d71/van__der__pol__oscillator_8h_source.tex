@@ -1,0 +1,42 @@
+\doxysection{van\+\_\+der\+\_\+pol\+\_\+oscillator.\+h}
+\hypertarget{van__der__pol__oscillator_8h_source}{}\label{van__der__pol__oscillator_8h_source}\index{src/system\_models/van\_der\_pol\_oscillator.h@{src/system\_models/van\_der\_pol\_oscillator.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ VAN\_DER\_POL\_OSCILLATOR\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ VAN\_DER\_POL\_OSCILLATOR\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#\ include\ <Eigen/Dense>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#\ include\ "{}numerical\_solvers/rk\_ode\_solver.h"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{using\ }Eigen::MatrixXd;}
+\DoxyCodeLine{00008\ \textcolor{keyword}{using\ }Eigen::VectorXd;}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_van_der_pol_oscillator}{VanDerPolOscillator}}\ :\ \textcolor{keyword}{public}\ OdeSolver\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_van_der_pol_oscillator}{VanDerPolOscillator}}(VectorXd\ x0,\ \textcolor{keywordtype}{double}\ t0,\ \textcolor{keywordtype}{double}\ dt0,\ }
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num\_states,\ std::string\ name,\ \textcolor{keywordtype}{double}\ mu0);}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ VectorXd\ f(\textcolor{keywordtype}{double}\ t,\ VectorXd\ X,\ VectorXd\ u)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ MatrixXd\ CalculateFxJacobian(VectorXd\ X);}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ std::string\ GetName()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ std::vector<std::string>\ GetColumnNames()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ VectorXd\ GetB();}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ std::ostream\&\ operator\ <<\ (std::ostream\&\ out,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_van_der_pol_oscillator}{VanDerPolOscillator}}\&\ system);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num\_states;}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ MatrixXd\ A;}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ VectorXd\ B;}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ std::string\ sys\_name;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ mu;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

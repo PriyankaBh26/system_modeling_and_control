@@ -5,7 +5,7 @@
 
 # include "numerical_solvers/rk_ode_solver.h"
 # include "system_models/van_der_pol_oscillator.h"
-# include "data_logging/savecsv.h"
+# include "data_logging/data_logging_helper_funs.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -41,14 +41,23 @@ int main () {
 
     std::cout << x_history.size() << " " << x_history[0].size();
 
-    std::string filename = "test/system_models/" + system->GetName() + "_solution.csv";
-    std::vector<std::string> columnNames = system->GetColumnNames();
-
-    WriteMatToFile(filename, columnNames, x_history);
+    // save simulation data 
+    std::string directory = "test/system_models/";
+    std::string problem = system->GetName();
+    std::string data_type = "solution";
+    std::vector<std::string> column_names = system->GetColumnNames();
+ 
+    SaveSimDataHistory(directory,
+                        problem,
+                        data_type,
+                        column_names,
+                        x_history,
+                        "replace");
     
-    filename = "test/system_models/" + system->GetName() + "_time.csv";
-    columnNames = {"time"};
-    WriteVecToFile(filename, columnNames, t_history);
+    SaveTimeHistory(directory, 
+                    problem, 
+                    t_history,
+                    "replace");
 
     delete system;
 

@@ -25,7 +25,9 @@ SRCS="examples/kalman_filter_pid_ex.cpp
         src/system_models/mass_spring_damper.cpp
         src/state_estimators/kalman_filter.cpp
         src/data_logging/savecsv.cpp
-        src/data_logging/data_logging_helper_funs.cpp"
+        src/data_logging/data_logging_helper_funs.cpp      
+        src/controllers/ackermans_formula_pole_placement.cpp
+        src/controllers/controller_helper_funs.cpp"
 
 # Output executable name
 TARGET="build/myprogram"

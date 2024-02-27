@@ -13,21 +13,23 @@ void SaveSimDataHistory(std::string directory,
                         std::string problem, 
                         std::string data_type, 
                         std::vector<std::string> column_names, 
-                        std::vector<VectorXd> x_history) {
+                        std::vector<VectorXd> x_history,
+                        std::string save_type) {
 
     // save final output x to csv file
     std::string filename = directory + "/" + problem + "_" + data_type + ".csv";
-    WriteMatToFile(filename, column_names, x_history);
+    WriteMatToFile(filename, column_names, x_history, save_type);
     std::cout << "\n" + data_type + " size: " << x_history.size() << " " << x_history.size();
 }
 
 
 void SaveTimeHistory(std::string directory, 
                      std::string problem, 
-                     std::vector<double> t_history) {
+                     std::vector<double> t_history,
+                     std::string save_type) {
 
     // save final output x to csv file
     std::string filename = directory + "/" + problem + "_time.csv";
-    WriteVecToFile(filename, {"time"}, t_history);
+    WriteVecToFile(filename, {"time"}, t_history, save_type);
     std::cout << "\ntime history size: " << t_history.size();
 }

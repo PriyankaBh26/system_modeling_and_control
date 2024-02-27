@@ -10,9 +10,13 @@ using Eigen::VectorXd;
 
 class FindRoot: public NewtonRaphson {
     public:
-        FindRoot(int num_states, int num_equations, VectorXd q0, 
-                double epsilon, int max_iterations) : NewtonRaphson(num_states, num_equations, q0, 
-                                            epsilon, max_iterations) {};
+        FindRoot(int num_states, 
+                int num_equations,
+                double epsilon, 
+                int max_iterations) : NewtonRaphson(num_states, 
+                                                    num_equations,
+                                                    epsilon, 
+                                                    max_iterations) {};
         VectorXd f(VectorXd q) override {
             VectorXd v(2);
             v << q(0)*q(0) - 1.0, q(1)*q(1) - 2.0;
@@ -34,10 +38,12 @@ int main() {
     double tolerance = 1e-3;
     int max_iterations = 50;
 
-    NewtonRaphson* eq1 = new FindRoot(num_states, num_equations, q0, 
-                                            tolerance, max_iterations);
+    NewtonRaphson* eq1 = new FindRoot(num_states, 
+                                      num_equations,
+                                      tolerance, 
+                                      max_iterations);
 
-    eq1->Iterate();
+    eq1->Iterate(q0);
     std::vector<VectorXd> q_history = eq1->GetSolutionHistory();
     std::cout << "Solution, q =\n" << q_history.back() << "\n";
     delete eq1;

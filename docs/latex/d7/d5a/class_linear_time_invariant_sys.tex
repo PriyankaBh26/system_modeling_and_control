@@ -1,0 +1,38 @@
+\doxysection{Linear\+Time\+Invariant\+Sys Class Reference}
+\hypertarget{class_linear_time_invariant_sys}{}\label{class_linear_time_invariant_sys}\index{LinearTimeInvariantSys@{LinearTimeInvariantSys}}
+Inheritance diagram for Linear\+Time\+Invariant\+Sys\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{d7/d5a/class_linear_time_invariant_sys}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_linear_time_invariant_sys_a0d5b9f9103e7651fa619728a7e371790}\label{class_linear_time_invariant_sys_a0d5b9f9103e7651fa619728a7e371790} 
+{\bfseries Linear\+Time\+Invariant\+Sys} (Vector\+Xd y0, double t0, double dt0, int num\+\_\+states, std\+::string name, Matrix\+Xd A\+\_\+in, Matrix\+Xd B\+\_\+in)
+\item 
+\Hypertarget{class_linear_time_invariant_sys_ade499802475d4d021014bb76d011fc42}\label{class_linear_time_invariant_sys_ade499802475d4d021014bb76d011fc42} 
+Vector\+Xd {\bfseries f} (double t, Vector\+Xd y, Vector\+Xd u) override
+\item 
+\Hypertarget{class_linear_time_invariant_sys_aa996a8e04ec46fe93df7d3405a115c89}\label{class_linear_time_invariant_sys_aa996a8e04ec46fe93df7d3405a115c89} 
+std\+::string {\bfseries Get\+Name} () override
+\item 
+\Hypertarget{class_linear_time_invariant_sys_a02796656dc63dadc561094780d3512aa}\label{class_linear_time_invariant_sys_a02796656dc63dadc561094780d3512aa} 
+Matrix\+Xd {\bfseries GetA} ()
+\item 
+\Hypertarget{class_linear_time_invariant_sys_a5f48f05c1c01c04a95c7dc69754752a9}\label{class_linear_time_invariant_sys_a5f48f05c1c01c04a95c7dc69754752a9} 
+Matrix\+Xd {\bfseries GetB} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_linear_time_invariant_sys_ae283bb58ceeaa6c6c43b653b680191aa}\label{class_linear_time_invariant_sys_ae283bb58ceeaa6c6c43b653b680191aa} 
+std\+::ostream \& {\bfseries operator$<$$<$} (std\+::ostream \&out, const \mbox{\hyperlink{class_linear_time_invariant_sys}{Linear\+Time\+Invariant\+Sys}} \&system)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/system\+\_\+models/linear\+\_\+time\+\_\+invariant\+\_\+system.\+h\item 
+src/system\+\_\+models/linear\+\_\+time\+\_\+invariant\+\_\+system.\+cpp\end{DoxyCompactItemize}

@@ -75,13 +75,13 @@ MatrixXd UnscentedKalmanFilter::ComputeKalmanGain(MatrixXd Pz, MatrixXd f_xi,
 };
 
 // compute the estimate
-VectorXd UnscentedKalmanFilter::ComputeEstimate(VectorXd z) {
+VectorXd UnscentedKalmanFilter::ComputeEstimate(VectorXd z, VectorXd Bu) {
     MatrixXd Xi = UnscentedKalmanFilter::ComputeSigmaPointsXi();
 
     // predict state
     MatrixXd f_xi(n, 2*n+1);
     for (int i{0}; i<Xi.cols(); i++) {
-        f_xi.col(i) = f(Xi.col(i));
+        f_xi.col(i) = f(Xi.col(i), Bu);
     }
     x = UnscentedKalmanFilter::PredictMean(f_xi);
     // predict state covariance

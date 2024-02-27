@@ -1,0 +1,68 @@
+# include <iostream>
+# include <vector>
+# include <cmath>
+# include <Eigen/Dense>
+
+# include "numerical_solvers/newton_raphson.h"
+
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
+
+class FindRoot: public NewtonRaphson {
+    public:
+        FindRoot(int num_states, 
+                int num_equations,
+                double epsilon, 
+                int max_iterations) : NewtonRaphson(num_states, 
+                                                    num_equations,
+                                                    epsilon, 
+                                                    max_iterations) {};
+        VectorXd f(VectorXd q) override {
+            VectorXd v(2);
+            v << q(0)*q(0) - 1.0, q(1)*q(1) - 2.0;
+            return v;};
+        
+        MatrixXd dfdq(VectorXd q) override {
+            MatrixXd mat(2, 2);
+            mat << 2*q(0), 0.0,
+                    0.0, 2*q(1);
+            return mat;};
+
+
+};
+
+int main() {
+
+    int num_states = 2;
+    int num_equations = 2;
+    VectorXd q0(num_states);
+    q0 << 0.5, 0.5;
+    double tolerance = 1e-3;
+    int max_iterations = 50;
+
+    FindRoot* eq1 = new FindRoot(num_states, 
+                                num_equations,
+                                tolerance, 
+                                max_iterations);
+
+    eq1->Iterate(q0);
+    std::vector<VectorXd> q_history = eq1->GetSolutionHistory();
+
+    VectorXd q_solution = q_history.back();
+
+    std::cout << "Solution, q =\n" << q_solution << "\n";
+
+    VectorXd q_expected(num_states);
+    q_expected << 1.0, sqrt(2);
+
+    if (((q_solution - q_expected).array().abs() < tolerance).all()) {
+        std::cout << "\ntest successful!\n";
+    } else {
+        std::cout << "\ntest failed!\n";
+    }
+    std::cout << "\n";
+
+    delete eq1;
+
+    return 0;
+}
