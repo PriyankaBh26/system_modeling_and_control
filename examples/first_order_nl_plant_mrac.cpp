@@ -11,15 +11,6 @@ using Eigen::VectorXd;
 # include "data_logging/data_logging_helper_funs.h"
 # include "controllers/controller_helper_funs.h"
 
-# include <vector>
-# include <Eigen/Dense>
-
-# include "numerical_solvers/rk_ode_solver.h"
-# include "system_models/linear_time_invariant_system.h"
-
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
-
 class nonlinear_sys : public OdeSolver {
     public: 
         nonlinear_sys(VectorXd y0, double t0, 
