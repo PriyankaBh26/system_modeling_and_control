@@ -39,9 +39,13 @@ def main():
     fig1.suptitle(f"{problem}")
     for j in range(num_states):
         print(f"plotting {states[j]}")
-        ax1[j].plot(t, y[:,j], label = states[j])
-        ax1[j].grid(True)
-        ax1[j].legend()
+        if (num_states == 1):
+            ax = ax1
+        else:
+            ax = ax1[j]
+        ax.plot(t, y[:,j], label = states[j])
+        ax.grid(True)
+        ax.legend()
 
     # Access and process optional argument if provided
     control_history = args.control_history
@@ -62,19 +66,27 @@ def main():
         error = error.to_numpy()
 
         # Create a figure and axis
-        fig2, ax2 = plt.subplots(num_control_ips+1)
+        fig2, ax2 = plt.subplots(num_control_ips, figsize=(10, 8))
         fig2.suptitle(f"{problem} Control Inputs")
         for k in range(num_control_ips):
-            ax2[k].plot(t, u[:,k], label = control_ips[k])
-            ax2[k].grid(True)
-            ax2[k].legend()
+            if (num_control_ips == 1):
+                ax = ax2
+            else:
+                ax = ax2[k]
+            ax.plot(t, u[:,k], label = control_ips[k])
+            ax.grid(True)
+            ax.legend()
 
-        fig3, ax3 = plt.subplots(num_err_ips)
+        fig3, ax3 = plt.subplots(num_err_ips, figsize=(10, 8))
         fig3.suptitle(f"{problem} Error")
         for k in range(num_err_ips):
-            ax3[k].plot(t, error[:,k], label = "err_" + err_ips[k])
-            ax3[k].grid(True)
-            ax3[k].legend()
+            if (num_err_ips == 1):
+                ax = ax3
+            else:
+                ax = ax3[k]
+            ax.plot(t, error[:,k], label = "err_" + err_ips[k])
+            ax.grid(True)
+            ax.legend()
 
     if measurement_history:
         print("Measurement history is present")
@@ -82,9 +94,13 @@ def main():
         y_meas = y_meas.to_numpy()
         num_meas_states = y_meas.shape[1]
         for j in range(num_meas_states):
-            ax1[j].plot(t, y_meas[:,j], label = "meas_" + states[j])
-            ax1[j].grid(True)
-            ax1[j].legend()
+            if (num_states == 1):
+                ax = ax1
+            else:
+                ax = ax1[j]
+            ax.plot(t, y_meas[:,j], label = "meas_" + states[j])
+            ax.grid(True)
+            ax.legend()
 
     if estimated_state_history:
         print("Estimated state history is present")
@@ -92,9 +108,13 @@ def main():
         y_est = y_est.to_numpy()
         num_est_states = y_est.shape[1]
         for j in range(num_est_states):
-            ax1[j].plot(t, y_est[:,j], label = "est_" + states[j])
-            ax1[j].grid(True)
-            ax1[j].legend()
+            if (num_states == 1):
+                ax = ax1
+            else:
+                ax = ax1[j]
+            ax.plot(t, y_est[:,j], label = "est_" + states[j])
+            ax.grid(True)
+            ax.legend()
 
     if reference_state_history:
         print("Reference state history is present")
@@ -102,9 +122,13 @@ def main():
         y_ref = y_ref.to_numpy()
         num_ref_states = y_ref.shape[1]
         for j in range(num_ref_states):
-            ax1[j].plot(t, y_ref[:,j], label = "ref_" + states[j])
-            ax1[j].grid(True)
-            ax1[j].legend()
+            if (num_states == 1):
+                ax = ax1
+            else:
+                ax = ax1[j]
+            ax.plot(t, y_ref[:,j], label = "ref_" + states[j])
+            ax.grid(True)
+            ax.legend()
     
     # Adjust layout to prevent overlapping
     plt.tight_layout()
