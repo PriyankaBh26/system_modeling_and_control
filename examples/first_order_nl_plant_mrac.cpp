@@ -112,7 +112,7 @@ int main() {
 
     int ode_timesteps = dt/dh;
     double t_final = 20;
-    double measurement_noise = 0.01;
+    double measurement_noise = 0.1;
 
     // save x and t history
     std::vector<VectorXd> meas_history;
@@ -139,13 +139,13 @@ int main() {
         VectorXd z = x + measurement_noise * VectorXd::Random(num_states);
         meas_history.push_back(z);
 
-        error = x - x_m;
+        error = z - x_m;
 
-        VectorXd f = x * x;
+        VectorXd f = z * z;
 
         x_ref = reference_traj(traj_type, num_states, t); 
         ar = update_parameter(ar, signbp, gamma, error, x_ref, dt);
-        ax = update_parameter(ax, signbp, gamma, error, x, dt);
+        ax = update_parameter(ax, signbp, gamma, error, z, dt);
         af = update_parameter(af, signbp, gamma, error, f, dt);
 
         u = ar * x_ref + ax * x + af * f;
