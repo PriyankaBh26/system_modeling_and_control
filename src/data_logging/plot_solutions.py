@@ -3,6 +3,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import argparse
 
+def legend_without_duplicate_labels(ax):
+    handles, labels = ax.get_legend_handles_labels()
+    unique = [(h, l) for i, (h, l) in enumerate(zip(handles, labels)) if l not in labels[:i]]
+    ax.legend(*zip(*unique))
+
 def main():
     # Create argument parser
     parser = argparse.ArgumentParser(description="This program plots various solution csv.")
@@ -45,7 +50,7 @@ def main():
             ax = ax1[j]
         ax.plot(t, y[:,j], label = states[j])
         ax.grid(True)
-        ax.legend()
+        legend_without_duplicate_labels(ax)
 
     # Access and process optional argument if provided
     control_history = args.control_history
@@ -75,7 +80,7 @@ def main():
                 ax = ax2[k]
             ax.plot(t, u[:,k], label = control_ips[k])
             ax.grid(True)
-            ax.legend()
+            legend_without_duplicate_labels(ax)
 
         fig3, ax3 = plt.subplots(num_err_ips, figsize=(10, 8))
         fig3.suptitle(f"{problem} Error")
@@ -86,7 +91,7 @@ def main():
                 ax = ax3[k]
             ax.plot(t, error[:,k], label = "err_" + err_ips[k])
             ax.grid(True)
-            ax.legend()
+            legend_without_duplicate_labels(ax)
 
     if measurement_history:
         print("Measurement history is present")
@@ -100,7 +105,7 @@ def main():
                 ax = ax1[j]
             ax.plot(t, y_meas[:,j], label = "meas_" + states[j])
             ax.grid(True)
-            ax.legend()
+            legend_without_duplicate_labels(ax)
 
     if estimated_state_history:
         print("Estimated state history is present")
@@ -114,7 +119,7 @@ def main():
                 ax = ax1[j]
             ax.plot(t, y_est[:,j], label = "est_" + states[j])
             ax.grid(True)
-            ax.legend()
+            legend_without_duplicate_labels(ax)
 
     if reference_state_history:
         print("Reference state history is present")
@@ -128,7 +133,7 @@ def main():
                 ax = ax1[j]
             ax.plot(t, y_ref[:,j], label = "ref_" + states[j])
             ax.grid(True)
-            ax.legend()
+            legend_without_duplicate_labels(ax)
     
     # Adjust layout to prevent overlapping
     plt.tight_layout()
