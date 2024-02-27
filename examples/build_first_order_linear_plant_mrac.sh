@@ -19,7 +19,7 @@ LOCAL_INCLUDE_PATH="/Users/priyankabhovad/Downloads/cpp_ex/system_modeling_and_c
 LOCAL_INCLUDE_FLAGS="-I$LOCAL_INCLUDE_PATH"
 
 # Source files
-SRCS="examples/first_order_plant_mrac.cpp 
+SRCS="examples/first_order_linear_plant_mrac.cpp 
       src/numerical_solvers/rk_ode_solver.cpp 
       src/data_logging/savecsv.cpp
       src/data_logging/data_logging_helper_funs.cpp
